@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use TR-EIF in your work, please cite it using the metadata provided in this file."
+title: "TR-EIF: Ternary Resonant Equivariant Interatomic Framework"
+type: software
+authors:
+  - family-names: "Marnov"
+    given-names: "Maksym"
+license: "Apache-2.0"
+abstract: >-
+  TR-EIF is a mathematical and computational framework integrating balanced
+  ternary -1/0/1 dynamics, nonlinear resonance, equivariant mappings, and
+  interatomic system modeling.
+keywords:
+  - balanced ternary
+  - nonlinear resonance
+  - equivariant modeling
+  - interatomic systems
