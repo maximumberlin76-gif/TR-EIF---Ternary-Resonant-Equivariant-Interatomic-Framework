@@ -8,12 +8,14 @@ from .model import EnergyModelResult, ReferenceEnergyModel
 from .state import AtomicEnergies, EnergyState
 from .strain import CellStrainDifferentiation
 from .stress import StressState, StressTensor
+from .stress_evaluator import ConservativeStressEvaluator
 
 __all__ = [
     "AtomicEnergies",
     "AtomicForces",
     "CellStrainDifferentiation",
     "ConservativeForceEvaluator",
+    "ConservativeStressEvaluator",
     "CoordinateDifferentiation",
     "EnergyModelResult",
     "EnergyState",
