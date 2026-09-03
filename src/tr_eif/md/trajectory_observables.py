@@ -164,7 +164,7 @@ def evaluate_trajectory_energy(
             cutoff=cutoff,
         )
 
-        potential = model.evaluate(
+        model_result = model.evaluate(
             configuration=state.configuration,
             features=features,
             execution=execution,
@@ -174,7 +174,7 @@ def evaluate_trajectory_energy(
         observed.append(
             molecular_dynamics_energy(
                 state=state,
-                potential=potential,
+                potential=model_result.energy,
             )
         )
 
