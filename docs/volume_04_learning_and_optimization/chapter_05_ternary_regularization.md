@@ -2,7 +2,7 @@
 
 ## 1. Purpose
 
-This chapter defines ternary regularization for the TR-EIF learning and optimization layer.
+This chapter defines ternary regularization for the TR-EIP learning and optimization layer within TR-EIF.
 
 Ternary regularization acts on differentiable training representations associated with ternary prediction while preserving the exact semantic ternary state space:
 
@@ -2181,7 +2181,7 @@ Any ternary-conditioned mechanical model must define:
 
 ## 213. Canonical Ternary Regularization Invariants
 
-Every conforming TR-EIF ternary regularization layer preserves:
+Every conforming TR-EIP ternary regularization layer within TR-EIF preserves:
 
 1. exact semantic state space `{-1,0,1}`;
 
