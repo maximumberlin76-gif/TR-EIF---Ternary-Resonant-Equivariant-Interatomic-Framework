@@ -2,50 +2,38 @@
 
 ## 1. Purpose
 
-This chapter defines equivariance constraints for TR-EIP learning and optimization within TR-EIF.
+This chapter defines equivariance constraints for the TR-EIF learning and optimization layer.
 
-The equivariance layer preserves the spatial and permutation transformation laws established in Volume 03 while model parameters are learned from data.
+The equivariance layer specifies how model inputs, latent representations, resonance variables, ternary outputs, energies, forces, stresses, and uncertainty quantities transform under declared symmetry operations.
 
-The canonical symmetry chain is:
+It also defines the distinction between:
 
-`atomic configuration`
-
-`→ symmetry transformation`
-
-`→ graph transformation`
-
-`→ equivariant representation`
-
-`→ message passing`
-
-`→ resonance transformation`
-
-`→ ternary feature transformation`
-
-`→ invariant energy`
-
-`→ equivariant force`
-
-`→ tensorial stress`.
-
-Equivariance constraints apply to:
-
-- atomic configurations;
-- interaction graphs;
-- node features;
-- edge features;
-- irreducible representations;
-- messages;
-- resonance state;
-- ternary channels;
-- energy;
-- force;
-- stress;
-- uncertainty outputs where applicable.
+- invariance;
+- equivariance;
+- permutation consistency;
+- architectural symmetry;
+- symmetry regularization;
+- symmetry validation.
 
 ---
 
-## 2. Group Action
+## 2. Dependencies
+
+This chapter depends on:
+
+- Volume 01 — Mathematical Foundations;
+- Volume 02 — Ternary Resonance Theory;
+- Volume 03 — Equivariant Interatomic Framework;
+- Volume 04 Chapter 01 — Model Architecture;
+- Volume 04 Chapter 02 — Training Data;
+- Volume 04 Chapter 03 — Loss Functionals;
+- Volume 04 Chapter 04 — Energy-Force-Stress Training;
+- Volume 04 Chapter 05 — Ternary Regularization;
+- Volume 04 Chapter 06 — Resonance Regularization.
+
+---
+
+## 3. Symmetry Group
 
 Let:
 
@@ -53,157 +41,341 @@ Let:
 
 denote the declared symmetry group.
 
-A group element is:
+For:
 
-`g ∈ G`.
+`g ∈ G`
 
-For a state space:
+the action of:
+
+`g`
+
+on an input space:
 
 `X`
 
-the group action is:
+is represented by:
 
 `rho_X(g)`.
 
 ---
 
-## 3. Equivariance
+## 4. Output Representation
+
+For an output space:
+
+`Y`
+
+the corresponding group action is:
+
+`rho_Y(g)`.
+
+---
+
+## 5. Equivariance
 
 A mapping:
 
 `F: X → Y`
 
-is equivariant when:
+is equivariant under:
 
-`F(rho_X(g)x) = rho_Y(g)F(x)`.
+`G`
 
-This relation must hold for every admissible:
+when:
 
-`x ∈ X`
+`F(rho_X(g)x) = rho_Y(g)F(x)`
+
+for every admissible:
+
+`g ∈ G`
 
 and:
 
-`g ∈ G`.
+`x ∈ X`.
 
 ---
 
-## 4. Invariance
+## 6. Invariance
 
-A mapping is invariant when the output representation is trivial:
+A mapping is invariant when:
+
+`rho_Y(g)`
+
+acts trivially on its output.
+
+Then:
 
 `F(rho_X(g)x) = F(x)`.
 
 ---
 
-## 5. Equivariance versus Invariance
+## 7. Invariance versus Equivariance
 
-The distinction remains:
+The framework preserves:
 
-`equivariance ≠ invariance`.
+`invariance ≠ equivariance`.
 
-Invariant output remains numerically unchanged.
+Invariance is a special transformation behavior in which the output remains unchanged.
 
-Equivariant output transforms according to its representation.
-
----
-
-## 6. Spatial Symmetry Groups
-
-A TR-EIP model may declare:
-
-- `SO(3)`;
-- `O(3)`;
-- `SE(3)`;
-- `E(3)`;
-- an explicitly defined subgroup.
-
-The exact symmetry group is part of model identity.
+Equivariance allows the output to transform according to its declared representation.
 
 ---
 
-## 7. Euclidean Transformation
+## 8. Declared Symmetry Scope
 
-For:
+Every TR-EIF model must specify which symmetry group or subgroup applies to each relevant module.
 
-`g = (Q,c)`
+Possible groups include:
 
-the atomic coordinate action is:
+- translation groups;
+- rotation groups;
+- reflection-inclusive orthogonal groups;
+- rigid-motion groups;
+- permutation groups;
+- problem-specific symmetry subgroups.
 
-`r_i' = Qr_i + c`.
+---
 
-Here:
+## 9. Rotation Group
+
+For three-dimensional proper rotations:
+
+`SO(3)`
+
+may be used.
+
+---
+
+## 10. Orthogonal Group
+
+If reflections are included:
+
+`O(3)`
+
+may be used.
+
+---
+
+## 11. Euclidean Group
+
+If translation and orthogonal transformations are included:
+
+`E(3)`
+
+may be used.
+
+---
+
+## 12. Special Euclidean Group
+
+If translation and proper rotation are included without reflections:
+
+`SE(3)`
+
+may be used.
+
+---
+
+## 13. Group Declaration Requirement
+
+The model must not use:
+
+`SO(3)`
+
+`O(3)`
+
+`SE(3)`
+
+or:
+
+`E(3)`
+
+interchangeably.
+
+The selected group must be explicit.
+
+---
+
+## 14. Translation
+
+For atomic positions:
+
+`R_i`
+
+a global translation:
+
+`a`
+
+acts as:
+
+`R_i → R_i + a`.
+
+---
+
+## 15. Relative Coordinates
+
+Relative displacement:
+
+`R_ij = R_j - R_i`
+
+is translation invariant.
+
+---
+
+## 16. Rotation
+
+For rotation matrix:
 
 `Q`
 
-is orthogonal and:
+a position vector transforms as:
 
-`c`
-
-is a translation vector.
+`R_i → Q R_i`.
 
 ---
 
-## 8. Relative Vector Transformation
+## 17. Relative Vector Rotation
+
+A relative vector transforms as:
+
+`R_ij → Q R_ij`.
+
+---
+
+## 18. Reflection
+
+For an orthogonal transformation:
+
+`Q`
+
+with:
+
+`det(Q) = -1`
+
+the transformation includes reflection or inversion-related behavior.
+
+---
+
+## 19. Translation Invariance of Scalar Energy
+
+For an isolated system with no external position-dependent field:
+
+`E({R_i + a}) = E({R_i})`.
+
+---
+
+## 20. Rotational Invariance of Scalar Energy
+
+Under an admissible rotation:
+
+`E({Q R_i}) = E({R_i})`.
+
+---
+
+## 21. Force Equivariance
+
+For force:
+
+`F_i`
+
+under an admissible rotation:
+
+`F_i({Q R_j}) = Q F_i({R_j})`.
+
+---
+
+## 22. Stress Transformation
+
+For second-order stress tensor:
+
+`Sigma`
+
+under rotation:
+
+`Q`
+
+the transformed tensor is:
+
+`Sigma' = Q Sigma Q^T`.
+
+---
+
+## 23. Scalar Quantity
+
+A scalar transforms trivially under the declared spatial group.
+
+Examples may include:
+
+- total energy;
+- invariant distance;
+- scalar resonance coordinate;
+- scalar uncertainty score.
+
+---
+
+## 24. Vector Quantity
+
+A polar vector transforms through:
+
+`Q`.
+
+Examples include:
+
+- position displacement;
+- force;
+- declared vector-valued latent state.
+
+---
+
+## 25. Tensor Quantity
+
+A second-order tensor transforms according to its declared tensor law.
+
+---
+
+## 26. Representation Type
+
+Every latent or output quantity must have a declared transformation type.
+
+---
+
+## 27. Irreducible Representations
+
+For rotation-equivariant architectures, features may be organized by irreducible representations indexed by angular degree:
+
+`l`.
+
+---
+
+## 28. Scalar Irrep
 
 For:
 
-`r_ij = r_j - r_i`
+`l = 0`
 
-the transformed relative vector is:
-
-`r_ij' = Qr_ij`.
-
-Global translation cancels.
+the feature is rotationally invariant.
 
 ---
 
-## 9. Distance Invariance
-
-Pair distance:
-
-`d_ij = ||r_ij||`
-
-satisfies:
-
-`d_ij' = d_ij`.
-
----
-
-## 10. SO(3)
+## 29. Higher-Order Irreps
 
 For:
 
-`Q ∈ SO(3)`:
+`l > 0`
 
-`Q^TQ = I`
-
-and:
-
-`det(Q) = 1`.
+features transform nontrivially under rotation.
 
 ---
 
-## 11. O(3)
+## 30. Parity
 
-For:
-
-`Q ∈ O(3)`:
-
-`Q^TQ = I`
-
-and:
-
-`det(Q) ∈ {-1,1}`.
+Under reflection-inclusive groups, representation type may also require parity.
 
 ---
 
-## 12. Reflection
+## 31. Parity Declaration
 
-Improper orthogonal transformations have:
-
-`det(Q) = -1`.
-
-Reflection behavior must be explicit when the model declares:
+A feature's behavior under reflection must be explicit when:
 
 `O(3)`
 
@@ -211,519 +383,465 @@ or:
 
 `E(3)`
 
-symmetry.
+symmetry is claimed.
 
 ---
 
-## 13. Translation
+## 32. Polar versus Axial Vectors
 
-Translation is represented by:
+Polar vectors and axial vectors have different reflection behavior.
 
-`c ∈ R^3`.
+The model must distinguish them when reflections are part of:
 
-Internal geometric relations based on relative coordinates remain translation invariant.
+`G`.
 
 ---
 
-## 14. Atom Permutation
+## 33. Permutation Symmetry
+
+For chemically identical entities, relabeling must not alter permutation-invariant global outputs.
+
+---
+
+## 34. Permutation Action
 
 Let:
 
 `pi`
 
-denote an admissible species-preserving atom permutation.
+denote an admissible permutation.
 
-Permutation acts on atom indexing independently of spatial transformation.
-
----
-
-## 15. Combined Symmetry
-
-A complete atomistic transformation may contain:
-
-`(g,pi)`.
-
-Spatial and permutation transformations remain separate operations even when evaluated jointly.
+Per-entity quantities transform by corresponding reindexing.
 
 ---
 
-## 16. Configuration Equivariance
+## 35. Global Scalar under Permutation
 
-The configuration state transforms as:
+For a permutation-invariant scalar output:
 
-`X_conf' = rho_conf(g,pi)X_conf`.
-
----
-
-## 17. Graph Equivariance
-
-Graph construction:
-
-`P_G`
-
-must satisfy:
-
-`P_G(rho_conf(g,pi)X) = rho_G(g,pi)P_G(X)`.
+`E(pi X) = E(X)`.
 
 ---
 
-## 18. Graph Node Permutation
+## 36. Per-Entity Output under Permutation
 
-Node indices must permute consistently with atom indices.
+For a per-entity output:
 
----
+`Y`
 
-## 19. Graph Edge Permutation
+equivariance requires:
 
-Directed edge:
-
-`j → i`
-
-becomes:
-
-`pi(j) → pi(i)`.
+`Y(pi X) = pi Y(X)`.
 
 ---
 
-## 20. Periodic Edge Transformation
+## 37. Species-Preserving Permutation
 
-Periodic-image displacement vectors must transform consistently with the cell and atomic coordinates.
-
----
-
-## 21. Graph Topology under Rigid Transformations
-
-A distance-based graph must preserve adjacency under rigid translation and rotation.
+Permutation symmetry applies only to exchanges allowed by the declared species and entity typing.
 
 ---
 
-## 22. Reflection-Compatible Graph
+## 38. Species Labels
 
-A graph defined through reflection-invariant quantities such as distance preserves topology under reflection.
+Atomic species are part of the input state.
 
----
-
-## 23. Graph Equivariance versus Graph Identity
-
-The transformed graph need not have byte-identical indexing.
-
-It must represent the correctly transformed and permuted relational structure.
+A permutation must preserve the semantic association between species and entity index.
 
 ---
 
-## 24. Scalar Feature
+## 39. Graph Representation
 
-A scalar feature:
+An interatomic configuration may be represented as a graph:
 
-`s`
-
-transforms as:
-
-`s' = s`.
+`G_X = (V, E)`.
 
 ---
 
-## 25. Vector Feature
+## 40. Node Features
 
-A polar vector:
+Node features may include:
 
-`v`
-
-transforms as:
-
-`v' = Qv`.
-
----
-
-## 26. Tensor Feature
-
-A rank-two Cartesian tensor transforms:
-
-`T' = QTQ^T`.
+- species;
+- invariant scalar descriptors;
+- equivariant latent features;
+- resonance variables;
+- ternary variables;
+- uncertainty variables.
 
 ---
 
-## 27. Pseudoscalar
+## 41. Edge Features
 
-A pseudoscalar may change sign under improper rotations according to its parity.
+Edge features may include:
 
----
-
-## 28. Axial Vector
-
-An axial vector has parity behavior distinct from a polar vector.
-
----
-
-## 29. Irreducible Representation
-
-A representation channel of degree:
-
-`l`
-
-transforms through:
-
-`D^l(Q)`.
+- relative distance;
+- relative direction;
+- pair descriptors;
+- resonance-conditioned quantities.
 
 ---
 
-## 30. Representation Multiplicity
+## 42. Graph Permutation Equivariance
 
-Multiple channels may share the same:
-
-`l`
-
-and parity while carrying independent learned features.
+Graph message passing must remain consistent under admissible node reindexing.
 
 ---
 
-## 31. Representation-Type Constraint
+## 43. Message Function
 
-Training must not mix incompatible representation types through arbitrary learned operations.
+A message may be written:
 
----
-
-## 32. Scalar-Vector Mixing Boundary
-
-A scalar cannot be added directly to a vector without an explicit representation-compatible mapping.
+`m_ij = M(h_i, h_j, e_ij)`.
 
 ---
 
-## 33. Vector-Tensor Mixing Boundary
+## 44. Aggregation
 
-Likewise:
+A node update may use:
 
-`vector ≠ tensor`.
-
----
-
-## 34. Parity Constraint
-
-Channels of different parity must remain distinct unless combined through a mathematically valid parity-aware operation.
+`m_i = A({m_ij})`.
 
 ---
 
-## 35. Equivariant Linear Map
+## 45. Permutation-Invariant Aggregation
 
-A linear map:
+For neighbor ordering invariance, aggregation may use operations such as:
 
-`L`
-
-between representation spaces is equivariant when:
-
-`L rho_X(g) = rho_Y(g)L`.
+- sum;
+- mean;
+- another explicitly permutation-invariant operator.
 
 ---
 
-## 36. Learned Equivariant Linear Map
+## 46. Ordered Concatenation Constraint
 
-Trainable parameters may vary while the map structure preserves the commutation relation.
-
----
-
-## 37. Tensor-Product Constraint
-
-Tensor products must couple representation channels through permitted angular-momentum paths.
+Arbitrary neighbor-order concatenation does not preserve permutation invariance unless an explicit canonical ordering rule is defined.
 
 ---
 
-## 38. Angular Selection Rule
+## 47. Equivariant Linear Mapping
 
-For:
+A linear map between representation spaces must intertwine the group actions:
 
-`l_1`
-
-and:
-
-`l_2`
-
-the output degree satisfies:
-
-`|l_1-l_2| ≤ l ≤ l_1+l_2`.
+`L rho_X(g) = rho_Y(g) L`.
 
 ---
 
-## 39. Clebsch-Gordan Structure
+## 48. Tensor Product
 
-Coupling coefficients or equivalent basis transforms must preserve the declared representation decomposition.
-
----
-
-## 40. Radial Features
-
-Radial features derived from distance are rotationally invariant.
+Equivariant architectures may construct higher-order features through tensor products of representations.
 
 ---
 
-## 41. Angular Features
+## 49. Tensor-Product Decomposition
 
-Angular features transform according to their declared irreducible representation.
-
----
-
-## 42. Spherical Harmonics
-
-For directional unit vector:
-
-`e_hat_ij`
-
-spherical harmonics:
-
-`Y_lm(e_hat_ij)`
-
-provide angular representation channels.
+The resulting representation must be decomposed according to the declared symmetry representation rules.
 
 ---
 
-## 43. Radial-Angular Product
+## 50. Nonlinearity Constraint
 
-A feature:
-
-`R_n(d_ij)Y_lm(e_hat_ij)`
-
-transforms according to the angular channel:
-
-`l`.
+A nonlinear operation must preserve the transformation law of the representation on which it acts.
 
 ---
 
-## 44. Equivariant Nonlinearity
+## 51. Scalar Nonlinearity
 
-Nonlinear operations must preserve representation type.
-
----
-
-## 45. Scalar Nonlinearity
-
-An arbitrary scalar nonlinearity may act on invariant scalar channels.
+Ordinary pointwise nonlinearities may be applied directly to invariant scalar channels.
 
 ---
 
-## 46. Vector Gating
+## 52. Non-Scalar Nonlinearity
 
-A vector may be multiplied by an invariant scalar gate:
-
-`v' = a v`.
-
-This preserves vector transformation.
+A general component-wise nonlinearity applied independently to vector or higher-order representation components does not automatically preserve equivariance.
 
 ---
 
-## 47. Tensor Gating
+## 53. Equivariant Gating
 
-A tensor or irrep channel may likewise be scaled by an invariant scalar.
-
----
-
-## 48. Componentwise Nonlinearity Boundary
-
-Applying an arbitrary nonlinear function independently to Cartesian vector components generally does not preserve rotation equivariance.
+A non-scalar equivariant feature may be modulated by an invariant scalar gate.
 
 ---
 
-## 49. Norm-Based Nonlinearity
+## 54. Norm-Based Nonlinearity
 
-A vector may be transformed using its invariant norm and preserved direction through an equivariant construction.
-
----
-
-## 50. Message Equivariance
-
-For message:
-
-`m_ij`
-
-the message function must satisfy its declared transformation law.
+A feature norm may be used to construct an invariant scalar control quantity where the representation and norm are explicitly defined.
 
 ---
 
-## 51. Scalar Message
+## 55. Normalization
 
-A scalar message remains invariant under rigid rotation.
-
----
-
-## 52. Vector Message
-
-A vector message transforms:
-
-`m_ij' = Qm_ij`.
+Normalization operations must preserve the declared transformation structure.
 
 ---
 
-## 53. Higher-Order Message
+## 56. Scalar Normalization
 
-Higher-order messages transform according to their representation.
-
----
-
-## 54. Message Aggregation
-
-Aggregation over incoming neighbors must preserve representation type.
+Invariant scalar channels may use scalar normalization schemes.
 
 ---
 
-## 55. Sum Aggregation
+## 57. Equivariant Channel Normalization
 
-Summation of compatible equivariant features preserves equivariance.
-
----
-
-## 56. Mean Aggregation
-
-Mean aggregation also preserves equivariance when the denominator is an invariant scalar.
+Non-scalar channels require normalization that preserves orientation-dependent transformation behavior.
 
 ---
 
-## 57. Weighted Aggregation
+## 58. Coordinate Construction
 
-For:
-
-`m_i = sum_j a_ij m_ij`
-
-the weight:
-
-`a_ij`
-
-must be an invariant scalar if:
-
-`m_ij`
-
-is to retain its representation type.
+Coordinate-dependent features must be constructed so their transformation law is known.
 
 ---
 
-## 58. Attention Weight
+## 59. Distance
 
-An attention weight applied to an equivariant message must have appropriate transformation behavior.
+Euclidean distance:
 
-For scalar attention, it must be invariant.
+`d_ij = ||R_j - R_i||`
 
----
-
-## 59. Componentwise Maximum Boundary
-
-A componentwise maximum over Cartesian vector components is not generally rotation equivariant.
+is invariant under rigid translation and orthogonal transformation.
 
 ---
 
-## 60. Neighbor Ordering
+## 60. Direction
 
-Message aggregation must remain independent of arbitrary neighbor ordering.
+Normalized direction:
 
----
+`u_ij = R_ij / ||R_ij||`
 
-## 61. Permutation Equivariance of Messages
-
-Atom permutation must induce corresponding permutation of:
-
-- source nodes;
-- receiver nodes;
-- messages;
-- aggregates;
-- updated node state.
+is translation invariant and rotation equivariant.
 
 ---
 
-## 62. Node Update Equivariance
+## 61. Zero-Distance Handling
 
-For node-update map:
+Any use of:
 
-`U`
+`u_ij`
 
-the transformation law must remain compatible with node representation type.
-
----
-
-## 63. Edge Update Equivariance
-
-Dynamic edge states must preserve their declared scalar/equivariant structure.
+must define behavior for zero or numerically unresolved separation.
 
 ---
 
-## 64. Global State
+## 62. Angular Features
 
-A global state may contain:
-
-- invariant scalars;
-- global equivariant channels;
-- externally defined frame-dependent state.
-
-Each component requires an explicit transformation law.
+Angular quantities constructed from relative vectors must have declared transformation and parity properties.
 
 ---
 
-## 65. Resonance Equivariance
+## 63. Local Reference Frames
 
-The resonance mapping:
-
-`P_R`
-
-satisfies:
-
-`P_R(rho_EQ(g)x) = rho_R(g)P_R(x)`.
+A local reference frame may be used only when its construction is deterministic and symmetry-compatible.
 
 ---
 
-## 66. Scalar Resonance Channel
+## 64. Frame Ambiguity
 
-A scalar resonance channel is invariant.
+Degenerate local environments may make a local frame non-unique.
 
----
-
-## 67. Vector Resonance Channel
-
-A vector resonance channel transforms:
-
-`r_v' = Qr_v`.
+Such cases require explicit handling.
 
 ---
 
-## 68. Tensor Resonance Channel
+## 65. External Reference Frame
 
-A tensor resonance channel transforms:
+A laboratory-frame axis is not symmetry-neutral.
 
-`R_T' = QR_TQ^T`.
+If used, it becomes part of the model input or reduces the symmetry group.
 
 ---
 
-## 69. Resonance-Class Invariance
+## 66. External Field
 
-A resonance class such as:
+An external vector or tensor field must transform with the system when full covariance is intended.
+
+---
+
+## 67. Reduced Symmetry
+
+A fixed external field may reduce:
+
+`G`
+
+to a subgroup that preserves that field configuration.
+
+---
+
+## 68. Periodic Systems
+
+For periodic boundary conditions, symmetry definitions must include the simulation cell and periodic-image convention.
+
+---
+
+## 69. Cell Matrix
+
+Let:
+
+`H`
+
+denote the periodic cell matrix.
+
+Under rigid rotation:
+
+`H → Q H`.
+
+---
+
+## 70. Fractional Coordinates
+
+Fractional coordinates transform differently from Cartesian coordinates and must not be treated as ordinary physical vectors under arbitrary cell transformation.
+
+---
+
+## 71. Minimum-Image Convention
+
+Neighbor construction under periodic boundaries must preserve consistency under equivalent periodic representations.
+
+---
+
+## 72. Lattice Translation
+
+Periodic image relabeling must not change physical predictions.
+
+---
+
+## 73. Resonance State Symmetry
+
+Each resonance quantity must have a declared transformation behavior.
+
+---
+
+## 74. Scalar Resonance Quantity
+
+If:
+
+`r_scalar`
+
+is a scalar invariant:
+
+`r_scalar(gX) = r_scalar(X)`.
+
+---
+
+## 75. Vector Resonance Quantity
+
+If:
+
+`r_vec`
+
+is equivariant:
+
+`r_vec(gX) = rho_R(g) r_vec(X)`.
+
+---
+
+## 76. Tensor Resonance Quantity
+
+A tensorial resonance quantity transforms according to its declared tensor representation.
+
+---
+
+## 77. Resonance Window Symmetry
+
+A resonance window:
+
+`W_R`
+
+must be compatible with the transformation law of its ambient resonance space.
+
+---
+
+## 78. Invariant Resonance Window
+
+If:
+
+`W_R`
+
+is defined only in invariant scalar coordinates, rigid spatial transformations leave its membership relation unchanged.
+
+---
+
+## 79. Equivariant Resonance Window
+
+If a window is defined in an equivariant vector or tensor space, the window itself must transform consistently.
+
+---
+
+## 80. Resonance Classification Invariance
+
+For an invariant resonance classifier:
+
+`C_R(gX) = C_R(X)`.
+
+---
+
+## 81. Resonance Class Permutation
+
+Per-entity resonance classifications must permute with their associated entities.
+
+---
+
+## 82. Resonance Boundary
+
+The boundary:
+
+`∂W_R`
+
+must transform consistently with:
+
+`W_R`.
+
+---
+
+## 83. Resonance Symmetry Is Not Resonance Identity
+
+Symmetry behavior does not determine whether a state is:
 
 `OUTSIDE`
 
 `BOUNDARY`
 
-`INSIDE`
+or:
 
-should remain unchanged under a rigid transformation when its classifier depends only on invariant resonance geometry.
-
----
-
-## 70. Resonance Window Symmetry
-
-A resonance window used for invariant classification must itself be defined consistently with the resonance representation.
+`INSIDE`.
 
 ---
 
-## 71. Laboratory-Axis Resonance Boundary
+## 84. Resonance Classification Is Not Ternary State
 
-A resonance classifier depending on one fixed Cartesian axis breaks full rotational invariance unless that axis is an explicit external model state.
+The framework preserves:
 
----
-
-## 72. Ternary Feature Equivariance
-
-Canonical scalar ternary features satisfy:
-
-`t(gX) = t(X)`.
+`OUTSIDE/BOUNDARY/INSIDE ≠ -1/0/1`.
 
 ---
 
-## 73. Ternary Polarity
+## 85. Ternary State Symmetry
 
-The states:
+The semantic ternary state space is:
+
+`T = {-1,0,1}`.
+
+These values are semantic states.
+
+They are not spatial vector components.
+
+---
+
+## 86. Active Neutral
+
+The state:
+
+`0`
+
+remains active neutral.
+
+Its semantics are not defined by spatial orientation.
+
+---
+
+## 87. Spatial Rotation and Ternary State
+
+An admissible rigid rotation does not exchange:
 
 `-1`
 
@@ -731,1396 +849,917 @@ and:
 
 `1`
 
-are semantic polarities.
-
-They are not Cartesian directions.
+for a scalar ternary variable.
 
 ---
 
-## 74. Spatial Rotation versus Ternary Polarity
+## 88. Spatial Reflection and Ternary State
 
-The invariant remains:
+An admissible spatial reflection does not automatically exchange:
+
+`-1`
+
+and:
+
+`1`.
+
+---
+
+## 89. Spatial Rotation Is Not Ternary Polarity Reversal
+
+The framework preserves:
 
 `spatial rotation ≠ ternary polarity reversal`.
 
 ---
 
-## 75. Reflection versus Ternary Polarity
+## 90. Spatial Reflection Is Not Ternary Polarity Reversal
 
-Reflection does not automatically map:
+The framework preserves:
 
-`-1 ↔ 1`.
+`spatial reflection ≠ ternary polarity reversal`
 
-Such behavior requires an explicitly defined parity-like ternary channel.
-
----
-
-## 76. Active Neutral under Symmetry
-
-The state:
-
-`0`
-
-remains active neutral under spatial transformation.
+unless a separate semantic transformation is explicitly defined.
 
 ---
 
-## 77. Ternary Decision Invariance
+## 91. Scalar Ternary Invariance
 
-If ternary target is generated from invariant decision variable:
+For an invariant scalar ternary target:
 
-`z`
-
-then:
-
-`z(gX) = z(X)`
-
-implies identical target classification under rigid transformation.
+`t_target(gX) = t_target(X)`.
 
 ---
 
-## 78. Equivariant Ternary Source
+## 92. Per-Entity Ternary Permutation
 
-If a ternary decision originates from a vector or tensor state, it must first use a declared symmetry-compatible reduction or transformation rule.
+For per-entity ternary targets:
 
----
-
-## 79. Target State under Permutation
-
-Per-atom targets must permute with atoms.
+`t_target(pi X) = pi t_target(X)`.
 
 ---
 
-## 80. Executed State under Permutation
+## 93. Executed State Symmetry
 
-Per-atom executed states must permute with atoms.
-
----
-
-## 81. Pending State under Permutation
-
-Pending destinations must permute with their associated entities.
+Per-entity executed ternary states must permute consistently with entity indexing.
 
 ---
 
-## 82. Execution Topology under Symmetry
+## 94. Pending State Symmetry
 
-Symmetry transformation does not alter the ternary execution graph:
+Pending destinations must permute with the associated entities.
+
+---
+
+## 95. Target, Pending, and Executed Separation
+
+The framework preserves:
+
+`t_target ≠ t_pending ≠ t_exec`
+
+as semantic roles.
+
+---
+
+## 96. Equivariance Does Not Alter Ternary Execution Topology
+
+The committed ternary graph remains:
 
 `-1 ↔ 0 ↔ 1`.
 
 ---
 
-## 83. Direct-Opposite Constraint
+## 97. Forbidden Direct Opposite Transitions
 
-Spatial transformation cannot authorize:
+Direct committed transitions:
 
 `-1 → 1`
 
-or:
+and:
 
 `1 → -1`
 
-as direct committed transitions.
+remain forbidden.
 
 ---
 
-## 84. Energy Invariance
+## 98. Neutral-Mediated Opposite Routes
 
-Energy must satisfy:
+The required routes remain:
 
-`E(gX) = E(X)`
+`-1 → 0 → 1`
 
-under the declared symmetry of the complete physical state.
+and:
 
----
-
-## 85. Translation-Invariant Energy
-
-For an isolated internal energy:
-
-`E(R+c) = E(R)`.
+`1 → 0 → -1`.
 
 ---
 
-## 86. Rotation-Invariant Energy
+## 99. Symmetry Does Not Collapse Transition Legs
 
-For rigid rotation:
-
-`E(QR) = E(R)`.
+A symmetry operation does not merge separate committed transition events.
 
 ---
 
-## 87. Reflection-Invariant Energy
+## 100. Energy Symmetry
 
-For an:
-
-`O(3)`-invariant model:
-
-`E(QR) = E(R)`
-
-also for:
-
-`det(Q) = -1`.
+Total energy is a scalar invariant under the declared rigid-motion symmetry when no external symmetry-breaking field is present.
 
 ---
 
-## 88. Permutation-Invariant Energy
+## 101. Atomic Energy Decomposition
 
-For admissible atom permutation:
+If energy is decomposed into per-entity scalar contributions:
 
-`E(pi X) = E(X)`.
+`E = sum_i E_i`
 
----
+then each:
 
-## 89. Force Equivariance
+`E_i`
 
-For conservative force:
-
-`F_i = -grad_(r_i)E`.
-
-Under rotation:
-
-`F_i(QR) = QF_i(R)`.
+must permute with the associated entity index.
 
 ---
 
-## 90. Translation Behavior of Force
+## 102. Force Symmetry
 
-For a translation-invariant internal model:
-
-`F_i(R+c) = F_i(R)`.
+Force is a polar vector field.
 
 ---
 
-## 91. Force Permutation Equivariance
+## 103. Force from Energy
 
-Atom permutation must permute force vectors consistently.
+For a conservative energy model:
 
----
-
-## 92. Reflection Behavior of Force
-
-A polar force vector transforms:
-
-`F_i' = QF_i`
-
-under improper orthogonal transformation.
+`F_i = -grad_(R_i) E`.
 
 ---
 
-## 93. Stress Equivariance
+## 104. Energy Invariance Implies Force Equivariance
 
-Stress transforms:
-
-`Sigma' = QSigma Q^T`.
+If the differentiable scalar energy is invariant under the declared rotation group and coordinates transform conventionally, its coordinate gradient transforms covariantly as the corresponding force vector.
 
 ---
 
-## 94. Stress Permutation Invariance
+## 105. Direct Force Branch
 
-Global stress remains unchanged under atom relabeling.
-
----
-
-## 95. Stress Reflection Behavior
-
-The tensor transformation law remains valid under:
-
-`O(3)`
-
-when reflection symmetry is declared.
+A directly predicted force branch must satisfy force equivariance independently of whether an energy branch is present.
 
 ---
 
-## 96. Pressure Invariance
+## 106. Energy-Force Consistency
 
-A scalar pressure derived from rotational tensor invariants remains invariant under rigid rotation.
+Equivariance does not by itself guarantee:
 
----
-
-## 97. Conservative Relation and Symmetry
-
-Energy invariance and differentiation produce force equivariance under the applicable smoothness assumptions.
+`F_i = -grad_(R_i) E`.
 
 ---
 
-## 98. Equivariance versus Conservativity
+## 107. Equivariance Is Not Conservativity
 
-The distinction remains:
+The framework preserves:
 
 `equivariance ≠ conservativity`.
 
-A direct force model can be equivariant without being the gradient of a scalar potential.
+---
+
+## 108. Equivariance Is Not Accuracy
+
+The framework preserves:
+
+`equivariance ≠ predictive accuracy`.
 
 ---
 
-## 99. Architectural Equivariance
+## 109. Conservativity Is Not Accuracy
 
-Architectural equivariance is satisfied by construction for all admissible parameter values.
+The framework preserves:
 
----
-
-## 100. Learned Equivariance
-
-A generic architecture may instead attempt to learn approximate symmetry from data.
-
-This is distinct from architectural equivariance.
+`conservativity ≠ predictive accuracy`.
 
 ---
 
-## 101. Equivariance Constraint
+## 110. Stress Symmetry
 
-A learning constraint may compare model output on transformed input with the transformed original output.
+Stress transforms as a second-order tensor under the declared spatial transformation.
 
 ---
 
-## 102. Transformation Pair
+## 111. Scalar Pressure
 
-Given:
+If scalar pressure is defined from stress through a trace operation under a declared convention, it transforms invariantly.
 
-`X`
+---
 
-and:
+## 112. Virial Terms
+
+Virial-like quantities involving positions and forces must preserve the required tensor transformation behavior.
+
+---
+
+## 113. Stress Convention
+
+The exact stress sign, normalization, volume convention, and cell derivative definition must remain explicit.
+
+---
+
+## 114. Equivariant Latent Architecture
+
+A latent state may contain multiple representation types.
+
+---
+
+## 115. Typed Latent State
+
+A latent state may be represented as:
+
+`H = {H^(l,p)}`
+
+where:
+
+- `l` identifies rotation representation order;
+- `p` identifies parity where applicable.
+
+---
+
+## 116. Typed Message Passing
+
+Messages between nodes must map declared input representation types to declared output representation types.
+
+---
+
+## 117. Scalar-to-Scalar Mapping
+
+An invariant scalar input may generate invariant scalar output.
+
+---
+
+## 118. Scalar-to-Vector Mapping
+
+A scalar alone cannot define an oriented vector without an equivariant directional input.
+
+---
+
+## 119. Vector-to-Scalar Mapping
+
+An invariant scalar may be formed from vector quantities through an invariant contraction.
+
+---
+
+## 120. Tensor Contraction
+
+Contraction rules must preserve the intended representation type.
+
+---
+
+## 121. Representation Mixing
+
+Features with different transformation types must not be mixed through unrestricted arithmetic that destroys their declared behavior.
+
+---
+
+## 122. Residual Connections
+
+Residual connections require matching representation types.
+
+---
+
+## 123. Concatenation
+
+Features may be concatenated within a representation structure only when the resulting transformation law remains explicit.
+
+---
+
+## 124. Attention
+
+Attention mechanisms must preserve the declared symmetry properties of:
+
+- queries;
+- keys;
+- values;
+- attention weights;
+- aggregation.
+
+---
+
+## 125. Scalar Attention Weight
+
+An invariant scalar attention weight may modulate an equivariant value without changing the value's representation type.
+
+---
+
+## 126. Direction-Dependent Attention
+
+Direction-dependent attention must itself transform consistently.
+
+---
+
+## 127. Equivariance Constraint Functional
+
+Let:
+
+`R_EQ`
+
+denote an equivariance regularization functional.
+
+A general form may be:
+
+`R_EQ = R_E + R_F + R_S + R_R + R_T + R_H + R_aux`.
+
+---
+
+## 128. Energy Invariance Residual
+
+For transformed input:
 
 `gX`
 
-compute:
+an energy residual may be:
 
-`Y = M(X)`
-
-and:
-
-`Y_g = M(gX)`.
-
-The expected transformed output is:
-
-`rho_Y(g)Y`.
+`epsilon_E(g,X) = |E(gX) - E(X)|`.
 
 ---
 
-## 103. Equivariance Residual
+## 129. Force Equivariance Residual
 
-Define:
+For force prediction:
 
-`epsilon_eq = d_Y(Y_g, rho_Y(g)Y)`.
-
----
-
-## 104. Equivariance Loss
-
-A soft constraint may use:
-
-`L_eq = A(epsilon_eq)`.
+`epsilon_F(g,X) = ||F(gX) - rho_F(g)F(X)||`.
 
 ---
 
-## 105. Scalar Invariance Residual
-
-For energy:
-
-`epsilon_E = |E(gX) - E(X)|`.
-
----
-
-## 106. Force Equivariance Residual
-
-For force:
-
-`epsilon_F = ||F(gX) - rho_F(g)F(X)||`.
-
----
-
-## 107. Stress Equivariance Residual
+## 130. Stress Equivariance Residual
 
 For stress:
 
-`epsilon_S = ||Sigma(gX) - QSigma(X)Q^T||`.
+`epsilon_S(g,X) = ||Sigma(gX) - rho_S(g)Sigma(X)||`.
 
 ---
 
-## 108. Resonance Equivariance Residual
+## 131. Resonance Equivariance Residual
 
-For resonance:
+For resonance quantity:
 
-`epsilon_R = d_R(P_R(gX), rho_R(g)P_R(X))`.
+`r`
 
----
+the residual is:
 
-## 109. Representation Equivariance Residual
-
-For latent equivariant representation:
-
-`h`
-
-define a representation-specific residual between:
-
-`h(gX)`
-
-and:
-
-`rho_h(g)h(X)`.
+`epsilon_R(g,X) = ||r(gX) - rho_R(g)r(X)||`.
 
 ---
 
-## 110. Message Equivariance Residual
+## 132. Ternary Symmetry Residual
 
-Individual message channels may be tested analogously.
-
----
-
-## 111. Ternary Invariance Residual
-
-For scalar ternary state, a mismatch is:
-
-`I(t(gX) ≠ t(X))`.
+For exact scalar ternary prediction, a categorical mismatch indicator may be used.
 
 ---
 
-## 112. Permutation Residual
+## 133. Latent Equivariance Residual
 
-For per-atom output:
+For latent representation:
 
-`Y_atom`
+`H`
 
-compare:
+a residual may compare:
 
-`Y_atom(pi X)`
+`H(gX)`
 
 with:
 
-`pi Y_atom(X)`.
+`rho_H(g)H(X)`.
 
 ---
 
-## 113. Global Permutation Residual
+## 134. Residual Norm
 
-For invariant global output compare:
+Every equivariance residual must define:
 
-`Y_global(pi X)`
-
-with:
-
-`Y_global(X)`.
-
----
-
-## 114. Combined Transformation Residual
-
-A validation may apply both:
-
-`g`
-
-and:
-
-`pi`
-
-in one test.
+- norm;
+- normalization;
+- aggregation;
+- tolerance.
 
 ---
 
-## 115. Exact versus Numerical Symmetry
+## 135. Absolute Tolerance
 
-Formal symmetry may be exact.
+A validation may use:
 
-Floating-point implementation may exhibit finite numerical residuals.
-
----
-
-## 116. Numerical Tolerance
-
-A validation tolerance:
-
-`epsilon_tol`
-
-must be declared for continuous outputs.
+`epsilon ≤ tau_abs`.
 
 ---
 
-## 117. Exact Categorical Symmetry
+## 136. Relative Tolerance
 
-Canonical ternary categorical outputs should match exactly under transformations that leave their semantic classifier invariant.
-
----
-
-## 118. Tolerance Does Not Redefine Symmetry
-
-A numerical tolerance is an implementation comparison rule.
-
-It does not change the mathematical transformation law.
+A relative residual may use a scale-normalized criterion.
 
 ---
 
-## 119. Relative Residual
+## 137. Mixed Tolerance
 
-A relative equivariance residual may normalize by output magnitude.
-
----
-
-## 120. Absolute Residual
-
-An absolute residual may be preferable near zero output.
+A numerical validation may use both absolute and relative thresholds.
 
 ---
 
-## 121. Hybrid Residual
+## 138. Numerical Tolerance Is Not Semantic Approximation
 
-A combined absolute/relative criterion may be used.
-
-The exact formula must be explicit.
+Finite arithmetic tolerance does not redefine the exact mathematical transformation law.
 
 ---
 
-## 122. Zero Vector Boundary
+## 139. Architectural Equivariance
 
-Relative error becomes ill-conditioned when reference vector norm approaches zero.
-
-A numerical floor may therefore be required.
+A model is architecturally equivariant when its permitted operations preserve the declared group action by construction.
 
 ---
 
-## 123. Zero Force Symmetry Test
+## 140. Soft Equivariance
 
-A zero force vector remains exactly compatible with rotation.
-
-Its numerical comparison must not create artificial direction.
+A model may instead use an ordinary architecture plus a finite symmetry penalty.
 
 ---
 
-## 124. Zero Tensor Symmetry Test
+## 141. Architectural Equivariance versus Soft Constraint
 
-Likewise for zero stress or zero tensor state.
+The framework preserves:
 
----
-
-## 125. Symmetry Sampling
-
-Training or validation need not enumerate every possible group element.
-
-A declared subset may be sampled.
+`architectural equivariance ≠ symmetry-penalty training`.
 
 ---
 
-## 126. Rotation Sampling
+## 142. Data Augmentation
 
-Rotation tests may use:
-
-- random rotations;
-- fixed-axis rotations;
-- canonical finite sets;
-- adversarially selected rotations.
+A dataset may contain symmetry-transformed samples.
 
 ---
 
-## 127. Uniform Rotation Sampling
+## 143. Data Augmentation versus Architectural Equivariance
 
-Random rotations may be sampled according to a declared distribution over:
-
-`SO(3)`.
-
----
-
-## 128. Reflection Sampling
-
-Reflection tests may use selected improper orthogonal matrices.
-
----
-
-## 129. Translation Sampling
-
-Translation vectors may be sampled from a declared domain.
-
----
-
-## 130. Permutation Sampling
-
-Permutations may be sampled within admissible species-preserving permutations.
-
----
-
-## 131. Symmetry Augmentation
-
-Training samples may be augmented using transformations from the declared symmetry group.
-
----
-
-## 132. Augmentation Labels
-
-Transformed labels must obey:
-
-`energy → invariant`
-
-`force → vector transformed`
-
-`stress → tensor transformed`
-
-`scalar ternary → invariant`.
-
----
-
-## 133. Augmentation versus Constraint
-
-The distinction remains:
-
-`data augmentation ≠ equivariance constraint`.
-
----
-
-## 134. Augmentation versus Architecture
-
-The distinction remains:
+The framework preserves:
 
 `data augmentation ≠ architectural equivariance`.
 
 ---
 
-## 135. Constraint versus Architecture
+## 144. Symmetry Loss versus Exact Symmetry
 
-A soft symmetry penalty is not equivalent to a structurally equivariant architecture.
+The framework preserves:
 
----
-
-## 136. Architectural Constraint Priority
-
-Where an invariant is fundamental to the declared model family, architectural enforcement provides exact state-space restriction independent of dataset coverage.
+`finite symmetry loss ≠ exact mathematical equivariance`.
 
 ---
 
-## 137. Equivariance Regularization
+## 145. Combined Strategy
 
-A symmetry penalty may still be used to monitor or reduce finite numerical residuals.
+A model may use:
 
----
+- architectural equivariance;
+- symmetry augmentation;
+- numerical symmetry validation;
+- optional residual penalties.
 
-## 138. Layerwise Equivariance Testing
-
-Symmetry can be tested at:
-
-- graph layer;
-- representation layer;
-- message layer;
-- resonance layer;
-- energy layer;
-- force layer;
-- stress layer.
+These mechanisms remain separately identifiable.
 
 ---
 
-## 139. Layerwise Failure Localization
+## 146. Symmetry Sampling
 
-Testing intermediate states can identify the layer where transformation consistency first fails.
+For numerical validation or regularization, transformations:
 
----
+`g`
 
-## 140. End-to-End Equivariance Test
-
-An end-to-end test evaluates final outputs only.
+may be sampled from the declared group.
 
 ---
 
-## 141. Intermediate Equivariance Test
+## 147. Rotation Sampling
 
-Intermediate tests evaluate internal representation states.
+Rotation sampling must define the distribution over:
 
----
+`SO(3)`
 
-## 142. Invariant Hidden Scalar Test
-
-Scalar hidden features should remain unchanged under declared rigid rotations.
+or the selected subgroup.
 
 ---
 
-## 143. Vector Hidden Feature Test
+## 148. Reflection Sampling
 
-Vector hidden features should rotate by:
+If reflections are part of:
 
-`Q`.
+`G`
 
----
-
-## 144. Higher-Irrep Test
-
-For channel:
-
-`l`
-
-compare transformed features against:
-
-`D^l(Q)`.
+they must be included explicitly.
 
 ---
 
-## 145. Parity Test
+## 149. Permutation Sampling
 
-For:
-
-`O(3)`
-
-models, reflection tests verify parity behavior.
+Permutation tests must use admissible species-preserving permutations.
 
 ---
 
-## 146. Periodic Equivariance
+## 150. Translation Sampling
 
-Periodic systems require simultaneous transformation of:
-
-- atomic positions;
-- cell vectors;
-- periodic-image geometry.
+Translation tests may apply arbitrary global shifts consistent with the coordinate and boundary convention.
 
 ---
 
-## 147. Periodic Translation
+## 151. Deterministic Symmetry Fixtures
 
-Lattice-equivalent translations must preserve physical output.
+A validation suite may use fixed transformations as:
 
----
-
-## 148. Cell Rotation
-
-For:
-
-`H' = QH`
-
-and:
-
-`R' = QR`
-
-energy remains invariant, forces rotate, and stress transforms tensorially.
+`TEST_FIXTURE`.
 
 ---
 
-## 149. Cell Reflection
+## 152. Random Symmetry Tests
 
-If the model supports:
-
-`O(3)`
-
-and the transformed cell remains a valid representation of the reflected state, parity semantics must be preserved.
+Randomly sampled transformations may supplement fixed fixtures.
 
 ---
 
-## 150. Cell Deformation Boundary
+## 153. Symmetry Test Provenance
 
-A nonrigid strain is not an element of rigid Euclidean symmetry.
-
-Energy and stress may change under strain.
+The source of each transformation set must be traceable.
 
 ---
 
-## 151. Rotation versus Deformation
+## 154. Numerical Precision
 
-The distinction remains:
-
-`rotation ≠ deformation`.
+Equivariance residuals depend on arithmetic precision.
 
 ---
 
-## 152. External Field
+## 155. Floating-Point Effects
 
-A fixed external field can reduce the model symmetry group.
-
----
-
-## 153. External Vector
-
-For external vector:
-
-`b`
-
-the complete state transforms consistently only if:
-
-`b' = Qb`.
+Floating-point roundoff may produce nonzero numerical residual even for an architecturally equivariant implementation.
 
 ---
 
-## 154. Fixed Laboratory Field
+## 156. Mixed Precision
 
-If the field remains fixed while atoms rotate, full rotational invariance is not expected.
-
----
-
-## 155. Residual Symmetry Group
-
-The correct symmetry constraint is defined by the complete system including external state.
+Mixed-precision execution may change residual magnitude.
 
 ---
 
-## 156. Directional Boundary Condition
+## 157. Fixed-Point Arithmetic
 
-A directional boundary condition may likewise reduce symmetry.
+Fixed-point implementations require explicit scale, rounding, and saturation behavior.
 
 ---
 
-## 157. Surface System
+## 158. Quantization
 
-A surface may distinguish normal and tangential directions.
+Quantized representations may introduce symmetry residuals if transformed values cross quantization boundaries differently.
 
-The admissible symmetry group may therefore be smaller than full:
+---
+
+## 159. Quantization Validation
+
+Quantized implementations must evaluate equivariance under their deployed arithmetic contract.
+
+---
+
+## 160. Quantization Residual Is Not Symmetry Redefinition
+
+Quantization error does not redefine the mathematical group action.
+
+---
+
+## 161. Determinism versus Equivariance
+
+The framework preserves:
+
+`determinism ≠ equivariance`.
+
+---
+
+## 162. Equivariance versus Deterministic Replay
+
+A deterministic model may violate equivariance.
+
+An equivariant model may use stochastic components unless constrained otherwise.
+
+---
+
+## 163. Reproducibility
+
+A symmetry test should record:
+
+- model version;
+- code revision;
+- arithmetic precision;
+- transformation;
+- tolerance;
+- random seed where applicable.
+
+---
+
+## 164. External Fields
+
+A model may include:
+
+- electric field;
+- magnetic field;
+- strain direction;
+- flow direction;
+- another external vector or tensor.
+
+---
+
+## 165. Field Transformation
+
+If the field is physically transformed with the system, it must transform according to its declared representation.
+
+---
+
+## 166. Fixed Laboratory Field
+
+If an external field is held fixed while the atomic system is rotated, the transformed state represents a different physical configuration.
+
+---
+
+## 167. Symmetry Group with External Field
+
+The admissible symmetry group must be reduced or extended to include the field transformation contract.
+
+---
+
+## 168. Anisotropic Material
+
+A material may possess internal anisotropy.
+
+The relevant symmetry group must correspond to the declared physical configuration and material representation.
+
+---
+
+## 169. Crystal Symmetry
+
+Crystal point-group or space-group structure may impose a subgroup distinct from full:
+
+`SO(3)`
+
+or:
 
 `E(3)`.
 
 ---
 
-## 158. Symmetry Declaration
+## 170. Learned Representation and Crystal Symmetry
 
-Every model must declare the actual symmetry it claims to preserve.
-
----
-
-## 159. Symmetry Mismatch
-
-Testing a model against a symmetry not present in the complete physical state is an invalid validation condition.
+The architecture may retain full Euclidean covariance while the input structure itself possesses lower physical symmetry.
 
 ---
 
-## 160. Species Permutation
+## 171. Symmetry of Data versus Symmetry of Model
 
-Only atoms whose relabeling is admissible under species semantics may be freely permuted.
-
----
-
-## 161. Different Species Exchange
-
-Swapping atom coordinates while also swapping species labels is a relabeling operation.
-
-Changing species identity at fixed labels is a different physical configuration.
+The symmetry of a particular sample is not identical to the covariance group of the model mapping.
 
 ---
 
-## 162. Permutation Invariance versus Chemical Exchange
+## 172. Symmetric Sample
 
-The distinction remains:
+A specific configuration may be invariant under a subgroup of:
 
-`atom relabeling ≠ species transmutation`.
-
----
-
-## 163. Batch Permutation
-
-Reordering independent configurations inside a batch must not change per-configuration outputs.
+`G`.
 
 ---
 
-## 164. Neighbor-List Permutation
+## 173. Generic Sample
 
-Changing storage order of neighbors must not alter mathematical aggregation semantics.
+A generic configuration may have no nontrivial stabilizer while the model remains equivariant under:
 
----
-
-## 165. Floating-Point Neighbor Ordering
-
-Finite-precision sum ordering may produce small numerical differences.
-
-Exact replay may therefore require canonical reduction order.
+`G`.
 
 ---
 
-## 166. Equivariance and Determinism
+## 174. Stabilizer
 
-Equivariance and deterministic replay are separate properties.
+For input:
 
----
+`X`
 
-## 167. Equivariant but Nondeterministic
+the stabilizer is:
 
-A stochastic model may preserve symmetry statistically while producing different samples.
-
----
-
-## 168. Deterministic but Nonequivariant
-
-A deterministic model may reproduce the same incorrect symmetry behavior.
+`Stab(X) = {g ∈ G | rho_X(g)X = X}`.
 
 ---
 
-## 169. Deterministic Equivariant Model
+## 175. Symmetric Output Constraint
 
-A model may satisfy both contracts.
+If:
 
----
+`g ∈ Stab(X)`
 
-## 170. Random State under Transformation
+equivariance constrains the output to satisfy:
 
-For stochastic equivariance tests, random-state treatment must be explicitly defined.
-
----
-
-## 171. Shared Randomness Test
-
-One validation strategy may use the same random realization for original and transformed inputs.
+`F(X) = rho_Y(g)F(X)`.
 
 ---
 
-## 172. Distributional Equivariance
+## 176. Force at Symmetry Center
 
-A stochastic output distribution may satisfy symmetry even when individual samples differ.
-
----
-
-## 173. Distributional Metric
-
-Distribution-level symmetry requires an appropriate statistical comparison.
+Symmetry may constrain particular force components to vanish when required by the stabilizer representation.
 
 ---
 
-## 174. Equivariance under Quantization
+## 177. Equivariance and Resonance Conditioning
 
-Numerical quantization may introduce finite equivariance residual.
+A resonance-conditioned model may be written:
 
----
+`F(X, r)`.
 
-## 175. Fixed-Point Representation
+The pair:
 
-Fixed-point implementation requires explicit scaling for scalar, vector, and tensor channels.
+`(X, r)`
 
----
-
-## 176. Componentwise Saturation
-
-Independent Cartesian saturation may break exact vector equivariance.
+must transform consistently.
 
 ---
 
-## 177. Norm-Preserving Saturation
+## 178. Invariant Resonance Conditioning
 
-Representation-aware magnitude control can preserve direction.
+If:
 
----
+`r`
 
-## 178. Quantization Validation
-
-Quantized implementations should measure symmetry residuals after encoding and decoding.
+is invariant, it may condition equivariant mappings as an invariant scalar control variable.
 
 ---
 
-## 179. Mixed Precision
+## 179. Equivariant Resonance Conditioning
 
-Different channels may use different floating-point precision.
+If:
 
-The resulting equivariance residual must remain within the declared numerical contract.
+`r`
 
----
-
-## 180. Compiler and Kernel Effects
-
-Parallel kernel ordering and numerical approximations may affect measured residuals.
+is vectorial or tensorial, conditioning operations must preserve its representation type.
 
 ---
 
-## 181. Equivariance Loss Weight
+## 180. Resonance Window and External Axes
 
-A soft symmetry loss may use:
-
-`lambda_eq`.
+A resonance window defined relative to a preferred axis must include that axis in the transformation contract.
 
 ---
 
-## 182. Composite Symmetry Loss
+## 181. Equivariance and Ternary Conditioning
 
-A model may use:
-
-`L_eq = lambda_G L_G + lambda_H L_H + lambda_R L_R + lambda_E L_E + lambda_F L_F + lambda_S L_S`.
+A scalar ternary variable may condition an equivariant interaction as an invariant semantic channel.
 
 ---
 
-## 183. Graph Symmetry Term
-
-`L_G`
-
-measures graph transformation consistency when graph construction is learned or approximate.
-
----
-
-## 184. Hidden Representation Term
-
-`L_H`
-
-measures internal representation consistency.
-
----
-
-## 185. Resonance Symmetry Term
-
-`L_R`
-
-measures resonance transformation consistency.
-
----
-
-## 186. Energy Symmetry Term
-
-`L_E`
-
-measures scalar invariance.
-
----
-
-## 187. Force Symmetry Term
-
-`L_F`
-
-measures vector equivariance.
-
----
-
-## 188. Stress Symmetry Term
-
-`L_S`
-
-measures tensor transformation consistency.
-
----
-
-## 189. Ternary Symmetry Term
-
-A separate categorical or surrogate term may monitor scalar ternary invariance.
-
----
-
-## 190. Loss Weight Scheduling
-
-Symmetry-loss coefficients may vary through training.
-
----
-
-## 191. Symmetry Curriculum
-
-A training procedure may increase transformation complexity over time.
-
----
-
-## 192. Curriculum Is Not Symmetry Definition
-
-Training schedule does not alter the actual declared group.
-
----
-
-## 193. Exact Architecture with Zero Symmetry Loss
-
-For a mathematically exact equivariant architecture under exact arithmetic, the formal symmetry residual is zero.
-
-Finite-precision implementations may produce nonzero numerical residuals.
-
----
-
-## 194. Symmetry Loss and Data Fit
-
-Symmetry and reference-data objectives may produce different parameter gradients in an approximately equivariant architecture.
-
----
-
-## 195. Gradient Conflict
-
-Conflicting optimization gradients are a training phenomenon.
-
-They do not alter the symmetry definition.
-
----
-
-## 196. Constraint Projection
-
-A parameter update may be projected back onto a symmetry-compatible parameter manifold where such a parameterization is used.
-
----
-
-## 197. Parameter Sharing
-
-Symmetry may be encoded through parameter sharing.
-
----
-
-## 198. Species-Shared Parameters
-
-Parameters shared across atoms of the same species preserve permutation semantics when indexing does not enter arbitrarily.
-
----
-
-## 199. Edge-Type Sharing
-
-Relation-specific parameter sharing must depend on declared edge type rather than arbitrary edge index.
-
----
-
-## 200. Rotationally Invariant Parameter
-
-A scalar learned parameter has no orientation.
-
----
-
-## 201. Learned Vector Parameter
-
-A fixed learned laboratory-frame vector breaks rotational invariance unless it is part of an explicitly symmetry-breaking model.
-
----
-
-## 202. Learned Tensor Parameter
-
-A fixed anisotropic tensor likewise changes the symmetry group unless transformed as part of the state.
-
----
-
-## 203. External Learned Frame
-
-A learned frame is not automatically E(3)-equivariant.
-
-Its construction must itself transform consistently.
-
----
-
-## 204. Canonicalization Boundary
-
-Choosing a canonical orientation can create discontinuities or ambiguities in symmetric configurations.
-
----
-
-## 205. Equivariant Representation Preferred over Arbitrary Frame Fixing
-
-An explicitly equivariant representation avoids dependence on arbitrary laboratory orientation.
-
----
-
-## 206. Symmetry Breaking
-
-A model may intentionally represent symmetry-broken states.
-
-The relevant transformation laws must then include the symmetry-breaking order parameter or external state.
-
----
-
-## 207. Spontaneous Symmetry Breaking Boundary
-
-A symmetry-equivariant model can represent outputs whose particular state is not invariant.
-
-Model equivariance and state symmetry remain distinct.
-
----
-
-## 208. State Symmetry versus Model Symmetry
-
-The distinction remains:
-
-`symmetry of one configuration ≠ symmetry of model law`.
-
----
-
-## 209. Crystal Symmetry
-
-A particular crystal may possess a point-group symmetry smaller than:
-
-`O(3)`.
-
-The interatomic model may still be globally E(3)-equivariant.
-
----
-
-## 210. Material Anisotropy
-
-An anisotropic material response can emerge from configuration geometry while the model remains equivariant.
-
----
-
-## 211. Equivariance versus Isotropy
-
-The distinction remains:
-
-`equivariance ≠ isotropic output`.
-
----
-
-## 212. Stress Anisotropy
-
-A stress tensor may be anisotropic while transforming correctly.
-
----
-
-## 213. Resonance Anisotropy
-
-A resonance tensor or vector may be anisotropic while preserving equivariance.
-
----
-
-## 214. Force Direction
-
-A nonzero force selects a direction in a particular configuration.
-
-This does not violate rotational equivariance.
-
----
-
-## 215. Symmetry Constraint and Energy Conservation
-
-Equivariance constraints do not by themselves guarantee conservative force.
-
----
-
-## 216. Symmetry Constraint and Momentum Conservation
-
-Translation-invariant conservative energy implies the associated internal force-sum relation under applicable assumptions.
-
-An arbitrary translation-equivariant direct force model does not automatically inherit the same conservative structure.
-
----
-
-## 217. Rotation and Torque
-
-Rotational invariance of a conservative energy supports the corresponding internal torque relation.
-
----
-
-## 218. Equivariance versus Conservation
+## 182. Ternary State Is Not Spatial Orientation
 
 The framework preserves:
 
-`equivariance ≠ conservation`.
+`ternary state ≠ spatial direction`.
 
 ---
 
-## 219. Equivariance versus Stability
+## 183. Ternary State Is Not Irreducible Representation Index
+
+The values:
+
+`-1/0/1`
+
+must not be interpreted as:
+
+`l`
+
+indices or parity labels.
+
+---
+
+## 184. Equivariance and Uncertainty
+
+Uncertainty outputs require transformation typing.
+
+---
+
+## 185. Scalar Uncertainty
+
+A scalar uncertainty score should remain invariant under admissible rigid transformations.
+
+---
+
+## 186. Per-Entity Uncertainty
+
+Per-entity scalar uncertainty values must permute with entities.
+
+---
+
+## 187. Vector Uncertainty
+
+If a vector-valued uncertainty representation is defined, it must transform equivariantly.
+
+---
+
+## 188. Tensor Uncertainty
+
+A covariance tensor must transform according to its tensor law.
+
+---
+
+## 189. Uncertainty Is Not Equivariance Residual
 
 The framework preserves:
 
-`equivariance ≠ stability`.
+`predictive uncertainty ≠ symmetry residual`.
 
 ---
 
-## 220. Equivariance versus Accuracy
+## 190. Symmetry Residual as Diagnostic
+
+A symmetry residual is a validation quantity for transformation consistency.
+
+It is not automatically a calibrated predictive uncertainty measure.
+
+---
+
+## 191. Domain Detection
+
+A domain detector must preserve the declared symmetry structure.
+
+---
+
+## 192. Scalar Domain Score
+
+A scalar in-domain or out-of-domain score should remain invariant under admissible rigid transformations.
+
+---
+
+## 193. Domain Class
+
+For invariant domain classification:
+
+`D(gX) = D(X)`.
+
+---
+
+## 194. OOD Is Not Symmetry Violation
 
 The framework preserves:
 
-`equivariance ≠ prediction accuracy`.
-
-A symmetry-correct model may still fit reference data poorly.
+`OUT_OF_DOMAIN ≠ equivariance failure`.
 
 ---
 
-## 221. Accuracy versus Symmetry
+## 195. Symmetry Violation Is Not OOD
 
-A numerically accurate model on one orientation may still violate symmetry elsewhere.
+The reverse distinction also holds:
 
----
-
-## 222. Symmetry Validation Domain
-
-Equivariance must be evaluated across the declared configuration domain.
+`equivariance residual ≠ domain state`.
 
 ---
 
-## 223. Transformation Coverage
+## 196. Missing Data
 
-Validation should cover a representative set of transformations relevant to the declared group.
-
----
-
-## 224. Extreme Rotation
-
-All rotations are mathematically equivalent under exact symmetry.
-
-Numerical residuals may nevertheless depend on representation and arithmetic.
+Missing data are represented separately from symmetry states.
 
 ---
 
-## 225. Reflection Coverage
+## 197. Mask Transformation
 
-Parity-sensitive models should include explicit improper-transform tests.
-
----
-
-## 226. Near-Symmetric Configuration
-
-Configurations with internal geometric symmetries can expose permutation or frame ambiguities.
+Per-entity masks must permute with entities.
 
 ---
 
-## 227. Degenerate Geometry
+## 198. Mask Is Not Ternary Neutral
 
-Coincident or collinear geometries may create special representation behavior.
+The framework preserves:
 
-Their admissibility must be defined by the model domain.
-
----
-
-## 228. Zero Relative Vector
-
-When:
-
-`r_ij = 0`
-
-the direction:
-
-`e_hat_ij`
-
-is undefined.
-
-Graph and representation layers must handle or exclude such configurations explicitly.
+`mask ≠ ternary 0`.
 
 ---
 
-## 229. Symmetry Test Fixture
+## 199. Padding
 
-A deterministic symmetry fixture may contain:
-
-- base configuration;
-- transformation;
-- expected transformed output.
+Padding elements must be excluded through an explicit mask or equivalent mechanism.
 
 ---
 
-## 230. Rotation Fixture
+## 200. Padding Permutation
 
-A rotation fixture specifies:
-
-`Q`.
+Padding behavior must not change physical predictions under admissible permutations of real entities.
 
 ---
 
-## 231. Translation Fixture
+## 201. Invalid Coordinates
 
-A translation fixture specifies:
-
-`c`.
+Invalid coordinates must not be converted into valid invariant or equivariant features silently.
 
 ---
 
-## 232. Reflection Fixture
+## 202. Non-Finite Input Handling
 
-A reflection fixture specifies an improper:
-
-`Q`.
+NaN or infinite values require an explicit validity path.
 
 ---
 
-## 233. Permutation Fixture
+## 203. Provenance Classes
 
-A permutation fixture specifies:
-
-`pi`.
-
----
-
-## 234. Combined Fixture
-
-A combined fixture may specify:
-
-`(Q,c,pi)`.
-
----
-
-## 235. Expected Energy Output
-
-For symmetry-compatible rigid transformation:
-
-`E' = E`.
-
----
-
-## 236. Expected Force Output
-
-`F' = QF`
-
-with corresponding atom permutation where used.
-
----
-
-## 237. Expected Stress Output
-
-`Sigma' = QSigma Q^T`.
-
----
-
-## 238. Expected Ternary Output
-
-Scalar per-atom ternary channels permute but do not change semantic value under rigid spatial transformation.
-
----
-
-## 239. Expected Resonance Output
-
-Resonance output follows:
-
-`rho_R`.
-
----
-
-## 240. Transformation Trace
-
-A symmetry-validation trace may contain:
-
-- transformation identifier;
-- group element;
-- input hash;
-- output hash;
-- residuals by layer;
-- tolerance;
-- pass/fail state.
-
----
-
-## 241. Symmetry Pass Criterion
-
-A continuous channel passes when its residual satisfies the declared numerical condition.
-
----
-
-## 242. Ternary Pass Criterion
-
-A canonical scalar ternary channel passes when transformed categorical output matches exactly after reindexing.
-
----
-
-## 243. Graph Pass Criterion
-
-Graph adjacency and edge geometry must match transformed construction under the declared equivalence relation.
-
----
-
-## 244. Layerwise Residual Report
-
-A report may include:
-
-- graph residual;
-- representation residual;
-- message residual;
-- resonance residual;
-- energy residual;
-- force residual;
-- stress residual.
-
----
-
-## 245. Maximum Residual
-
-A validation suite may record maximum observed residual over tested transformations.
-
----
-
-## 246. Mean Residual
-
-Mean residual may also be reported.
-
-Maximum and mean capture different failure behavior.
-
----
-
-## 247. Relative Residual Distribution
-
-A benchmark may report residual distributions across the validation set.
-
----
-
-## 248. Symmetry Benchmark
-
-Symmetry residuals measured on a declared dataset carry:
-
-`BENCHMARK`
-
-provenance.
-
----
-
-## 249. Equivariance Provenance
-
-Equivariance constraints and artifacts retain the canonical provenance system:
+Equivariance definitions, constraints, and tests use the canonical provenance classes:
 
 `PRIMARY_SOURCE`
 
@@ -2140,590 +1779,572 @@ Equivariance constraints and artifacts retain the canonical provenance system:
 
 ---
 
-## 250. Primary-Source Symmetry Relation
+## 204. Primary-Source Symmetry Definition
 
-Established group-theoretic transformation laws carry:
+A symmetry construction adopted from an external mathematical or architectural source uses:
 
 `PRIMARY_SOURCE`.
 
 ---
 
-## 251. Derived Symmetry Test
+## 205. Derived Transformation Rule
 
-A test derived from a declared transformation law may carry:
+A transformation law derived from established tensor or group definitions may use:
 
 `DERIVED`.
 
 ---
 
-## 252. Author-Defined Symmetry Coupling
+## 206. Author-Defined Constraint
 
-A TR-EIF-specific coupling of resonance or ternary channels to symmetry constraints may carry:
+A TR-EIF-specific symmetry interface or validation rule may use:
 
 `AUTHOR_DEFINED`.
 
 ---
 
-## 253. Calibrated Tolerance
+## 207. Calibrated Tolerance
 
-A numerical tolerance determined through calibration carries:
+A numerical tolerance fitted or selected through an explicit calibration protocol uses:
 
 `CALIBRATED`.
 
 ---
 
-## 254. Benchmark Residual
+## 208. Benchmark Symmetry Result
 
-Measured implementation residuals carry:
+Measured symmetry residuals under a benchmark protocol use:
 
 `BENCHMARK`.
 
 ---
 
-## 255. Symmetry Test Fixture Provenance
+## 209. Symmetry Test Fixture
 
-Synthetic transformed configurations carry:
+Fixed transformed configurations used for testing use:
 
 `TEST_FIXTURE`.
 
 ---
 
-## 256. Graph-Equivariance Extension Rule
+## 210. Requires Source
 
-Any graph symmetry constraint must define:
+A claimed external symmetry property without established support uses:
 
-1. graph construction;
-
-2. transformation group;
-
-3. node permutation;
-
-4. edge permutation;
-
-5. geometric edge transformation;
-
-6. periodic handling;
-
-7. comparison relation.
+`REQUIRES_SOURCE`.
 
 ---
 
-## 257. Representation-Equivariance Extension Rule
+## 211. Requires Test
 
-Any representation constraint must define:
+An implementation-level symmetry claim without validation uses:
 
-1. representation type;
-
-2. degree;
-
-3. parity;
-
-4. transformation matrix;
-
-5. metric;
-
-6. tolerance.
+`REQUIRES_TEST`.
 
 ---
 
-## 258. Message-Equivariance Extension Rule
+## 212. Equivariance Constraint Coefficient
 
-Any message symmetry constraint must define:
+If a soft equivariance penalty is used, let:
 
-1. source/receiver convention;
-
-2. message representation;
-
-3. edge transformation;
-
-4. aggregation;
-
-5. transformed comparison.
+`lambda_EQ ≥ 0`.
 
 ---
 
-## 259. Resonance-Equivariance Extension Rule
+## 213. Component Coefficients
 
-Any resonance symmetry constraint must define:
+A composite symmetry regularizer may be:
 
-1. resonance state;
-
-2. transformation law;
-
-3. scalar/vector/tensor scope;
-
-4. window behavior;
-
-5. classifier behavior;
-
-6. metric.
+`R_EQ = sum_k lambda_k R_EQ,k`.
 
 ---
 
-## 260. Ternary-Symmetry Extension Rule
+## 214. Coefficient Declaration
 
-Any ternary symmetry constraint must define:
+Every:
 
-1. ternary channel scope;
+`lambda_k`
 
-2. spatial transformation behavior;
+must have explicit:
 
-3. permutation behavior;
-
-4. target/executed role;
-
-5. exact comparison rule.
-
----
-
-## 261. Energy-Invariance Extension Rule
-
-Any energy symmetry constraint must define:
-
-1. complete transformed state;
-
-2. declared symmetry group;
-
-3. external fields;
-
-4. numerical tolerance;
-
-5. periodic handling.
+- value;
+- schedule;
+- provenance;
+- dimensional interpretation where applicable.
 
 ---
 
-## 262. Force-Equivariance Extension Rule
+## 215. Hard Equivariance
 
-Any force symmetry constraint must define:
-
-1. polar-vector transformation;
-
-2. atom permutation;
-
-3. external-force state;
-
-4. comparison metric;
-
-5. tolerance.
+Architectural group constraints are hard model-structure constraints.
 
 ---
 
-## 263. Stress-Equivariance Extension Rule
+## 216. Soft Equivariance Penalty
 
-Any stress symmetry constraint must define:
+A finite:
 
-1. stress tensor type;
+`R_EQ`
 
-2. rotation law;
-
-3. sign convention;
-
-4. cell transformation;
-
-5. comparison metric;
-
-6. tolerance.
+is an optimization objective.
 
 ---
 
-## 264. Combined-Symmetry Extension Rule
-
-Any combined transformation test must define:
-
-1. spatial group element;
-
-2. permutation;
-
-3. transformation order where implementation-dependent;
-
-4. expected output transformation;
-
-5. comparison relation.
-
----
-
-## 265. Stochastic-Equivariance Extension Rule
-
-Any stochastic symmetry test must define:
-
-1. random-state handling;
-
-2. sample-level or distribution-level criterion;
-
-3. number of samples;
-
-4. statistical metric;
-
-5. confidence criterion.
-
----
-
-## 266. Numerical-Equivariance Extension Rule
-
-Any quantized or mixed-precision symmetry contract must define:
-
-1. arithmetic representation;
-
-2. scaling;
-
-3. rounding;
-
-4. saturation;
-
-5. residual metric;
-
-6. tolerance.
-
----
-
-## 267. Canonical Equivariance Invariants
-
-Every conforming TR-EIP model preserves:
-
-1. explicit symmetry group;
-
-2. explicit action on configuration;
-
-3. explicit permutation action;
-
-4. explicit representation type;
-
-5. explicit output transformation law;
-
-6. explicit periodic transformation semantics;
-
-7. explicit numerical comparison contract.
-
----
-
-## 268. Canonical Representation Invariants
+## 217. Hard versus Soft Symmetry
 
 The framework preserves:
 
-`scalar → invariant`
-
-`vector → equivariant`
-
-`tensor → tensor transformed`
-
-with parity distinctions where applicable.
+`architectural symmetry constraint ≠ soft symmetry loss`.
 
 ---
 
-## 269. Canonical Graph Invariants
+## 218. Symmetry Validation Set
 
-Rigid transformations preserve the graph relation according to its declared geometry.
-
-Atom permutation induces corresponding graph permutation.
+A validation suite should contain transformations representing the complete declared symmetry contract.
 
 ---
 
-## 270. Canonical Energy Invariant
+## 219. Translation Validation
 
-For every admissible rigid symmetry transformation:
-
-`E(gX) = E(X)`.
+The suite may include global translations.
 
 ---
 
-## 271. Canonical Force Invariant
+## 220. Rotation Validation
 
-Force transforms as a polar vector:
-
-`F(gX) = rho_F(g)F(X)`.
+The suite may include proper rotations.
 
 ---
 
-## 272. Canonical Stress Invariant
+## 221. Reflection Validation
 
-Stress transforms:
-
-`Sigma(gX) = QSigma(X)Q^T`.
+The suite must include reflections if reflection covariance or invariance is claimed.
 
 ---
 
-## 273. Canonical Resonance Invariant
+## 222. Permutation Validation
 
-Resonance state follows:
-
-`rho_R`.
-
-Scalar resonance channels remain invariant.
+The suite must include admissible entity permutations.
 
 ---
 
-## 274. Canonical Ternary Invariant
+## 223. Periodic Validation
 
-Canonical scalar ternary channels remain semantically unchanged under rigid spatial transformation and permute with their associated entities.
-
----
-
-## 275. Canonical Execution Invariant
-
-Equivariance constraints do not alter the balanced ternary execution graph:
-
-`-1 ↔ 0 ↔ 1`.
+Periodic systems require tests under equivalent image and cell representations.
 
 ---
 
-## 276. Canonical Active-Neutral Invariant
+## 224. Energy Validation
 
-The state:
+For each admissible transformation:
+
+`epsilon_E`
+
+is measured.
+
+---
+
+## 225. Force Validation
+
+For each admissible transformation:
+
+`epsilon_F`
+
+is measured.
+
+---
+
+## 226. Stress Validation
+
+For each admissible transformation:
+
+`epsilon_S`
+
+is measured.
+
+---
+
+## 227. Resonance Validation
+
+For each declared resonance representation:
+
+`epsilon_R`
+
+is measured.
+
+---
+
+## 228. Ternary Validation
+
+For invariant scalar ternary targets, transformed predictions must match exactly apart from declared numerical decision-boundary behavior.
+
+---
+
+## 229. Latent Validation
+
+Intermediate latent representations may be tested directly when their group action is available.
+
+---
+
+## 230. Numerical Tolerance Contract
+
+Every floating-point equivariance test must define its acceptance tolerance.
+
+---
+
+## 231. Exact Categorical Contract
+
+Discrete semantic states may require exact equality rather than floating-point tolerance.
+
+---
+
+## 232. Ternary Exactness
+
+A semantic ternary value must remain exactly one of:
+
+`-1`
 
 `0`
 
-remains active neutral under every admissible spatial or permutation transformation.
+`1`.
 
 ---
 
-## 277. Canonical Opposite Routes
+## 233. Reserved Codes
 
-Direct committed:
-
-`-1 → 1`
-
-and:
-
-`1 → -1`
-
-remain forbidden.
-
-Opposite routes remain:
-
-`-1 → 0 → 1`
-
-and:
-
-`1 → 0 → -1`.
+Any storage-level reserved code must remain outside semantic ternary equality tests.
 
 ---
 
-## 278. Canonical State-Separation Invariants
+## 234. Validation Failure
 
-The equivariance layer preserves:
-
-`scalar ≠ vector`
-
-`vector ≠ tensor`
-
-`energy ≠ generic scalar`
-
-`force ≠ generic vector`
-
-`stress ≠ generic tensor`
-
-`spatial rotation ≠ ternary polarity reversal`
-
-`atom permutation ≠ species transmutation`
-
-`rotation ≠ deformation`
-
-`equivariance ≠ invariance`.
+A failed symmetry test records a transformation inconsistency under the declared test contract.
 
 ---
 
-## 279. Canonical Scientific Distinctions
-
-The equivariance layer preserves:
-
-`equivariance ≠ conservativity`
-
-`equivariance ≠ stability`
-
-`equivariance ≠ accuracy`
-
-`architectural equivariance ≠ data augmentation`
-
-`architectural equivariance ≠ symmetry penalty`
-
-`phase coupling ≠ mechanical force`
-
-`phase relation ≠ chemical bond`
-
-`resonance state ≠ ternary state`
-
-`ternary transition ≠ structural transition`
-
-`structural transition ≠ physical phase transition`.
-
----
-
-## 280. Canonical Symmetry Chain
-
-The complete symmetry chain is:
-
-`X`
-
-`→ rho_X(g)X`
-
-`→ model evaluation`
-
-`→ Y_g`
-
-and:
-
-`X`
-
-`→ model evaluation`
-
-`→ Y`
-
-`→ rho_Y(g)Y`.
-
-Equivariance requires:
-
-`Y_g = rho_Y(g)Y`.
-
----
-
-## 281. Canonical Learning Constraint Chain
-
-During optimization:
-
-`base sample`
-
-`+ transformed sample`
-
-`→ paired model outputs`
-
-`→ transformation residual`
-
-`→ equivariance loss`
-
-`→ parameter update`.
-
----
-
-## 282. Canonical Validation Chain
-
-For validation:
-
-`configuration`
-
-`→ transformation set`
-
-`→ layerwise/end-to-end evaluation`
-
-`→ residuals`
-
-`→ tolerance comparison`
-
-`→ symmetry report`.
-
----
-
-## 283. Interface to Chapter 08
-
-Chapter 08 develops Uncertainty and Domain Detection.
-
-It defines how uncertainty estimates and out-of-domain state behave under the same symmetry and permutation contracts.
-
----
-
-## 284. Interface to Chapter 09
-
-Chapter 09 develops Optimization.
-
-It consumes:
-
-- mechanical loss;
-- ternary regularization;
-- resonance regularization;
-- equivariance constraints;
-- uncertainty objectives
-
-to update the trainable parameter set.
-
----
-
-## 285. Final Formal Structure
-
-The equivariance-constraint layer may be represented as:
-
-`EQC = (G, rho_X, rho_G, rho_EQ, rho_R, rho_T, rho_E, rho_F, rho_Sigma, L_eq, V_eq)`.
-
-Here:
-
-- `G` is the declared symmetry group;
-- `rho_X` is the configuration action;
-- `rho_G` is the graph action;
-- `rho_EQ` is the equivariant representation action;
-- `rho_R` is the resonance action;
-- `rho_T` is the ternary-channel action;
-- `rho_E` is the scalar energy action;
-- `rho_F` is the force action;
-- `rho_Sigma` is the stress action;
-- `L_eq` is optional symmetry regularization;
-- `V_eq` is the symmetry-validation contract.
-
-The canonical equivariance equation is:
-
-`M(rho_X(g)X) = rho_Y(g)M(X)`.
-
-For energy:
-
-`E(gX) = E(X)`.
-
-For force:
-
-`F(gX) = rho_F(g)F(X)`.
-
-For stress:
-
-`Sigma(gX) = QSigma(X)Q^T`.
-
----
-
-## 286. Final Statement
-
-Equivariance constraints preserve the geometric and permutation structure of TR-EIP throughout learning, validation, and inference.
-
-The model explicitly distinguishes:
-
-- invariant scalars;
-- equivariant vectors;
-- tensors;
-- parity-sensitive channels;
-- atom permutations;
-- spatial transformations.
-
-The canonical transformation laws remain:
-
-`energy → invariant`
-
-`force → polar-vector equivariant`
-
-`stress → tensor transformed`
-
-`scalar resonance → invariant`
-
-`vector resonance → equivariant`
-
-`scalar ternary → invariant`.
+## 235. Validation Failure Is Not Physical Phase Transition
 
 The framework preserves:
 
-`equivariance ≠ invariance`
+`symmetry-test failure ≠ physical phase transition`.
+
+---
+
+## 236. Validation Failure Is Not Ternary State
+
+The framework preserves:
+
+`validation status ≠ ternary state`.
+
+---
+
+## 237. Validation Failure Is Not Resonance Class
+
+The framework preserves:
+
+`validation status ≠ resonance class`.
+
+---
+
+## 238. Equivariance Extension Rule
+
+Any new equivariant mapping must define:
+
+1. symmetry group;
+
+2. input space;
+
+3. input representation;
+
+4. output space;
+
+5. output representation;
+
+6. transformation equation;
+
+7. implementation mechanism;
+
+8. validation residual;
+
+9. tolerance;
+
+10. provenance.
+
+---
+
+## 239. Invariant Quantity Extension Rule
+
+Any new invariant quantity must define:
+
+1. source variables;
+
+2. symmetry group;
+
+3. invariance equation;
+
+4. units;
+
+5. scale;
+
+6. provenance;
+
+7. validation.
+
+---
+
+## 240. Vector Quantity Extension Rule
+
+Any new vector quantity must define:
+
+1. polar or axial type;
+
+2. translation behavior;
+
+3. rotation behavior;
+
+4. reflection behavior where applicable;
+
+5. units;
+
+6. validation.
+
+---
+
+## 241. Tensor Quantity Extension Rule
+
+Any tensor quantity must define:
+
+1. rank;
+
+2. index convention;
+
+3. transformation law;
+
+4. symmetry or antisymmetry properties;
+
+5. units;
+
+6. validation.
+
+---
+
+## 242. Latent Representation Extension Rule
+
+Any latent equivariant representation must define:
+
+1. group;
+
+2. representation type;
+
+3. parity where applicable;
+
+4. multiplicity;
+
+5. nonlinear operations;
+
+6. normalization;
+
+7. validation.
+
+---
+
+## 243. Resonance Equivariance Extension Rule
+
+Any resonance quantity must define:
+
+1. resonance state space;
+
+2. spatial transformation type;
+
+3. permutation behavior;
+
+4. window transformation;
+
+5. classification transformation;
+
+6. validation.
+
+---
+
+## 244. Ternary Equivariance Extension Rule
+
+Any ternary output must define:
+
+1. semantic role;
+
+2. scalar or other transformation behavior;
+
+3. permutation behavior;
+
+4. target field;
+
+5. executed field where applicable;
+
+6. pending field where applicable;
+
+7. exact validation.
+
+---
+
+## 245. Mechanical Equivariance Extension Rule
+
+Any mechanical prediction interface must define:
+
+1. energy transformation;
+
+2. force transformation;
+
+3. stress transformation;
+
+4. conservativity relation where used;
+
+5. numerical tolerance;
+
+6. validation.
+
+---
+
+## 246. Uncertainty Equivariance Extension Rule
+
+Any uncertainty quantity must define:
+
+1. mathematical type;
+
+2. spatial transformation law;
+
+3. permutation behavior;
+
+4. aggregation;
+
+5. calibration relation;
+
+6. validation.
+
+---
+
+## 247. External-Field Extension Rule
+
+Any external field must define:
+
+1. field type;
+
+2. transformation law;
+
+3. whether it co-transforms with the system;
+
+4. resulting symmetry group;
+
+5. units;
+
+6. validation.
+
+---
+
+## 248. Canonical Equivariance Invariants
+
+Every conforming TR-EIF equivariance layer preserves:
+
+1. explicit symmetry group;
+
+2. explicit group action on each input type;
+
+3. explicit group action on each output type;
+
+4. explicit permutation behavior;
+
+5. explicit scalar/vector/tensor typing;
+
+6. explicit resonance transformation behavior;
+
+7. explicit ternary transformation behavior;
+
+8. explicit mechanical transformation behavior;
+
+9. explicit numerical validation;
+
+10. explicit provenance.
+
+---
+
+## 249. Canonical Mechanical Distinctions
+
+The framework preserves:
 
 `equivariance ≠ conservativity`
 
 `equivariance ≠ accuracy`
 
-`rotation ≠ deformation`
+`conservativity ≠ accuracy`
 
-`atom permutation ≠ species transmutation`
+`phase coupling ≠ mechanical force`
 
-`generic scalar ≠ energy`
+`phase relation ≠ chemical bond`.
 
-`generic vector ≠ force`
+---
 
-`generic tensor ≠ stress`
+## 250. Canonical Ternary Distinctions
 
-`spatial rotation ≠ ternary polarity reversal`.
+The framework preserves:
 
-Architectural equivariance, symmetry regularization, data augmentation, and numerical symmetry validation remain separate mechanisms.
+`spatial rotation ≠ ternary polarity reversal`
 
-The balanced ternary kernel remains:
+`spatial reflection ≠ ternary polarity reversal`
+
+`ternary state ≠ vector`
+
+`ternary state ≠ energy`
+
+`ternary state ≠ force`.
+
+---
+
+## 251. Canonical Resonance Distinctions
+
+The framework preserves:
+
+`resonance ≠ synchronization`
+
+`synchronization ≠ phase locking`
+
+`phase locking ≠ resonance`
+
+`coherence ≠ resonance`
+
+`R(t) ≠ C(t)`
+
+`OUTSIDE/BOUNDARY/INSIDE ≠ -1/0/1`.
+
+---
+
+## 252. Canonical Domain Distinctions
+
+The framework preserves:
+
+`OUT_OF_DOMAIN ≠ symmetry failure`
+
+`symmetry residual ≠ uncertainty`
+
+`domain state ≠ ternary state`
+
+`resonance class ≠ domain state`.
+
+---
+
+## 253. Canonical State Distinctions
+
+The framework preserves:
+
+`t_target ≠ t_pending`
+
+`t_pending ≠ t_exec`
+
+`t_target ≠ t_exec`.
+
+---
+
+## 254. Canonical Ternary Execution Invariants
+
+The semantic kernel remains:
 
 `-1/0/1`.
 
@@ -2733,9 +2354,149 @@ The state:
 
 remains active neutral.
 
-No spatial transformation, permutation, equivariance penalty, data augmentation procedure, numerical tolerance, or learned representation may bypass the committed execution topology:
+Direct committed:
 
-`-1 ↔ 0 ↔ 1`.
+`-1 → 1`
+
+and:
+
+`1 → -1`
+
+remain forbidden.
+
+The canonical opposite-polarity routes remain:
+
+`-1 → 0 → 1`
+
+and:
+
+`1 → 0 → -1`.
+
+---
+
+## 255. Interface to Chapter 08
+
+Chapter 08 defines uncertainty and domain detection.
+
+The equivariance interface requires:
+
+- invariant global scalar uncertainty where applicable;
+- permutation-consistent per-entity uncertainty;
+- declared covariance transformation for tensor uncertainty;
+- invariant domain classification under admissible symmetry operations;
+- separation between symmetry residual and uncertainty.
+
+---
+
+## 256. Interface to Chapter 09
+
+Chapter 09 defines optimization.
+
+The equivariance interface supplies:
+
+- hard architectural constraints;
+- optional soft symmetry residuals;
+- symmetry-aware parameterization;
+- transformed training fixtures;
+- numerical validation metrics.
+
+---
+
+## 257. Interface to Molecular Dynamics
+
+The molecular-dynamics layer receives mechanical outputs with the transformation behavior established here.
+
+The interface preserves:
+
+- scalar energy invariance;
+- force equivariance;
+- stress tensor transformation;
+- permutation consistency;
+- resonance transformation behavior;
+- ternary semantic invariance.
+
+---
+
+## 258. Final Formal Structure
+
+The equivariance layer may be represented as:
+
+`EQ = (G, rho_X, rho_H, rho_R, rho_T, rho_E, rho_F, rho_S, rho_U, C_EQ, V_EQ)`.
+
+Here:
+
+- `G` is the declared symmetry group;
+- `rho_X` is the action on model inputs;
+- `rho_H` is the action on latent representations;
+- `rho_R` is the action on resonance quantities;
+- `rho_T` is the action on ternary quantities;
+- `rho_E` is the energy representation;
+- `rho_F` is the force representation;
+- `rho_S` is the stress representation;
+- `rho_U` is the uncertainty representation;
+- `C_EQ` is the set of architectural or soft symmetry constraints;
+- `V_EQ` is the symmetry validation contract.
+
+For every equivariant mapping:
+
+`F`
+
+the defining relation is:
+
+`F(rho_X(g)x) = rho_Y(g)F(x)`.
+
+For every invariant scalar mapping:
+
+`S`
+
+the defining relation is:
+
+`S(rho_X(g)x) = S(x)`.
+
+---
+
+## 259. Final Statement
+
+The equivariance layer defines the transformation contract connecting atomic configurations, latent representations, resonance variables, ternary variables, mechanical outputs, uncertainty quantities, and domain quantities within TR-EIF.
+
+The framework preserves explicit distinctions among:
+
+- invariance;
+- equivariance;
+- permutation symmetry;
+- architectural constraints;
+- soft symmetry penalties;
+- numerical symmetry residuals.
+
+Scalar energy remains invariant under the declared admissible rigid transformations.
+
+Force remains polar-vector equivariant.
+
+Stress remains tensorially transformed.
+
+Scalar resonance quantities remain invariant when defined in invariant coordinates.
+
+Vector and tensor resonance quantities transform according to their declared representations.
+
+Scalar ternary states remain semantic values:
+
+`-1/0/1`.
+
+They are not spatial directions.
+
+The state:
+
+`0`
+
+remains active neutral.
+
+Spatial rotation or reflection does not automatically exchange:
+
+`-1`
+
+and:
+
+`1`.
 
 Direct committed:
 
@@ -2747,4 +2508,14 @@ and:
 
 remain forbidden.
 
-These definitions establish the symmetry constraints required for Uncertainty and Domain Detection developed in Chapter 08.
+The canonical opposite-polarity routes remain:
+
+`-1 → 0 → 1`
+
+and:
+
+`1 → 0 → -1`.
+
+Equivariance does not redefine resonance, ternary semantics, energy, force, stress, uncertainty, domain state, or physical dynamics.
+
+These definitions establish the symmetry constraints required by the uncertainty and optimization layers that follow.
