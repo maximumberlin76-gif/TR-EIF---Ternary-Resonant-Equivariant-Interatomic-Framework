@@ -1,5 +1,10 @@
 """Balanced ternary state and transition semantics for TR-EIF."""
 
+from .execution import (
+    TernaryExecutionState,
+    TernaryExecutionStep,
+    execute_ternary_step,
+)
 from .routing import (
     TernaryRoute,
     route_pending_target,
@@ -18,10 +23,13 @@ from .transition import (
 )
 
 __all__ = [
+    "TernaryExecutionState",
+    "TernaryExecutionStep",
     "TernaryRoute",
     "TernaryState",
     "TernaryTransition",
     "TernaryVector",
+    "execute_ternary_step",
     "is_committed_transition_allowed",
     "is_direct_opposite_transition",
     "route_pending_target",
