@@ -1,10 +1,5 @@
-"""Atomic configuration data structures for TR-EIF."""
+"""Ternary Resonant Equivariant Interatomic Framework."""
 
-from .state import AtomicConfiguration, Cell3x3, PeriodicAxes, Vector3
+__version__ = "0.1.0"
 
-__all__ = [
-    "AtomicConfiguration",
-    "Cell3x3",
-    "PeriodicAxes",
-    "Vector3",
-]
+__all__ = ["__version__"]
