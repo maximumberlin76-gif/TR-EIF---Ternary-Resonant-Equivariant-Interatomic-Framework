@@ -15,6 +15,11 @@ from .state import (
     wrap_phase,
     wrap_phases,
 )
+from .window import (
+    ResonanceCoordinate,
+    ResonanceSpace,
+    ResonanceWindow,
+)
 
 __all__ = [
     "CouplingVector",
@@ -23,7 +28,10 @@ __all__ = [
     "PhaseDynamicsParameters",
     "PhaseLagVector",
     "PhaseVector",
+    "ResonanceCoordinate",
+    "ResonanceSpace",
     "ResonanceState",
+    "ResonanceWindow",
     "euler_step",
     "phase_derivatives",
     "phase_order_parameter",
