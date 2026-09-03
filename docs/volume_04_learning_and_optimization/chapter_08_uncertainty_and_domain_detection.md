@@ -1942,7 +1942,7 @@ Every conforming TR-EIP uncertainty layer within TR-EIF preserves:
 
 ## 173. Canonical Domain Invariants
 
-Every conforming TR-EIF domain detector preserves:
+Every conforming TR-EIP domain detector within TR-EIF preserves:
 
 1. explicit target task;
 
@@ -2156,7 +2156,7 @@ These outputs remain separately typed.
 
 ## 184. Final Statement
 
-The TR-EIF uncertainty and domain-detection layer defines separate representations for predictive uncertainty, model-domain state, numerical validity, and selective acceptance.
+The TR-EIP uncertainty and domain-detection layer within TR-EIF defines separate representations for predictive uncertainty, model-domain state, numerical validity, and selective acceptance.
 
 The framework preserves:
 
