@@ -2,119 +2,975 @@
 
 ## 1. Purpose
 
-This chapter defines resonance regularization within the TR-EIP learning and optimization layer of TR-EIF.
+This chapter defines resonance regularization for the TR-EIF learning and optimization layer.
 
-Resonance regularization constrains learned resonance coordinates, resonance windows, temporal persistence, multiscale consistency, and resonance-to-ternary interfaces while preserving the state-space distinctions established in Volumes 01–03.
+Resonance regularization acts on:
 
-The canonical learning chain is:
+- resonance coordinates;
+- resonance windows;
+- resonance boundaries;
+- resonance classifications;
+- persistence variables;
+- hysteresis variables;
+- multiscale resonance relations;
+- resonance-conditioned mappings;
+- resonance-to-ternary interfaces.
 
-`equivariant representation`
+The regularization layer does not redefine resonance.
 
-`→ resonance parameterization`
-
-`→ resonance state`
-
-`→ resonance regularization`
-
-`→ ternary target interface`
-
-`→ optimization`.
-
-Resonance regularization does not redefine resonance.
-
-It constrains a declared resonance model.
+It constrains trainable resonance representations and mappings while preserving the formal distinctions established in Volume 02.
 
 ---
 
-## 2. Resonance State
+## 2. Dependencies
+
+This chapter depends on:
+
+- Volume 02 — Ternary Resonance Theory;
+- Volume 03 — Equivariant Interatomic Framework;
+- Volume 04 Chapter 01 — Model Architecture;
+- Volume 04 Chapter 02 — Training Data;
+- Volume 04 Chapter 03 — Loss Functionals;
+- Volume 04 Chapter 04 — Energy-Force-Stress Training;
+- Volume 04 Chapter 05 — Ternary Regularization.
+
+---
+
+## 3. Resonance State Space
 
 Let:
 
+`X_R`
+
+denote the resonance state space.
+
+A resonance state is:
+
 `r ∈ X_R`.
 
-The resonance state space:
+The dimensionality and coordinates of:
 
 `X_R`
 
-may contain:
-
-- scalar channels;
-- vector channels;
-- tensor channels;
-- edge-local state;
-- atom-local state;
-- cluster state;
-- global state;
-- multiscale state;
-- retained resonance memory.
+must be explicitly defined by the model.
 
 ---
 
-## 3. Resonance Parameterization
+## 4. Resonance Coordinate
 
-The resonance state is generated through:
+A resonance coordinate may be:
 
-`P_R: X_EQ → X_R`
+- scalar;
+- vector;
+- tensorial;
+- structured;
+- multiscale.
 
-or through a declared state-augmented mapping:
-
-`P_R: X_EQ × X_aux × X_M → X_R`.
-
----
-
-## 4. Learned Resonance Map
-
-A learned resonance mapping may be written:
-
-`r = P_R(x; Theta_R)`.
-
-Here:
-
-`Theta_R`
-
-is the trainable resonance-parameter set.
+Its mathematical type must be explicit.
 
 ---
 
-## 5. Resonance Regularizer
+## 5. Resonance Window
 
-A resonance regularizer is a scalar optimization term:
+A resonance window is:
 
-`R_R`.
+`W_R ⊂ X_R`.
 
-A total objective may contain:
-
-`L_total = L_data + lambda_R R_R`.
+The window defines a model-relative region in resonance space.
 
 ---
 
-## 6. Resonance Semantics Boundary
+## 6. Resonance Boundary
+
+The boundary of the resonance window is:
+
+`∂W_R`.
+
+---
+
+## 7. Resonance Classification
+
+A resonance classifier may assign:
+
+`OUTSIDE`
+
+`BOUNDARY`
+
+or:
+
+`INSIDE`.
+
+These are resonance classes.
+
+---
+
+## 8. Resonance Classes Are Not Ternary States
 
 The framework preserves:
 
-`resonance regularization ≠ resonance definition`.
+`OUTSIDE/BOUNDARY/INSIDE ≠ -1/0/1`.
 
-A penalty modifies optimization pressure.
+Any mapping between resonance classes and ternary states must be explicit.
 
-It does not change the declared meaning of:
+---
+
+## 9. Resonance Window Is Model-Relative
+
+A resonance window is defined relative to:
+
+- model variables;
+- coordinate construction;
+- scale;
+- context;
+- parameterization;
+- history where applicable.
+
+---
+
+## 10. Finite Resonance Window
+
+Where a finite resonance window is defined, its extent must be explicit.
+
+---
+
+## 11. Multidimensional Resonance Window
+
+For:
+
+`dim(X_R) > 1`
+
+the window may be:
+
+- interval-like;
+- ellipsoidal;
+- polyhedral;
+- manifold-defined;
+- level-set defined;
+- topology-defined;
+- another explicitly defined region.
+
+---
+
+## 12. Resonance Regularization Functional
+
+Let:
+
+`R_R`
+
+denote the complete resonance regularization functional.
+
+A general decomposition may be:
+
+`R_R = R_coord + R_window + R_boundary + R_persistence + R_hysteresis + R_multiscale + R_mapping + R_symmetry + R_aux`.
+
+Not every model requires every component.
+
+---
+
+## 13. Coordinate Regularization
+
+`R_coord`
+
+acts on the geometry or numerical behavior of resonance coordinates.
+
+---
+
+## 14. Coordinate Boundedness
+
+If a resonance coordinate is declared bounded, the model must preserve its admissible range.
+
+---
+
+## 15. Coordinate Normalization
+
+A resonance coordinate may use explicit normalization.
+
+The normalization mapping must be defined.
+
+---
+
+## 16. Normalization Is Not Resonance
+
+The framework preserves:
+
+`coordinate normalization ≠ resonance`.
+
+---
+
+## 17. Coordinate Scaling
+
+Scaling applied for optimization or numerical conditioning must remain separate from the semantic definition of the resonance coordinate.
+
+---
+
+## 18. Distance in Resonance Space
+
+A metric:
+
+`d_R(r_a, r_b)`
+
+may be defined on:
 
 `X_R`.
 
 ---
 
-## 7. Resonance Is Not Synchronization
+## 19. Metric Declaration
 
-The canonical distinction remains:
+The metric must define:
 
-`resonance ≠ synchronization`.
-
-A synchronization observable may contribute to resonance state.
-
-It does not define resonance by identity.
+- coordinate weighting;
+- dimensional scaling;
+- topology where relevant;
+- periodic components where relevant.
 
 ---
 
-## 8. Synchronization Is Not Phase Locking
+## 20. Distance to Resonance Window
+
+A distance:
+
+`d_W(r)`
+
+may measure distance from:
+
+`r`
+
+to:
+
+`W_R`.
+
+---
+
+## 21. Distance to Resonance Boundary
+
+A distance:
+
+`d_boundary(r)`
+
+may measure distance to:
+
+`∂W_R`.
+
+---
+
+## 22. Distance Is Not Resonance
+
+The framework preserves:
+
+`distance to W_R ≠ resonance`
+
+and:
+
+`distance to ∂W_R ≠ resonance`.
+
+Distance is a geometric quantity defined on the resonance state space.
+
+---
+
+## 23. Signed Boundary Distance
+
+A signed distance may encode whether:
+
+`r`
+
+lies inside or outside the resonance window.
+
+Its sign convention must be explicitly declared.
+
+---
+
+## 24. Boundary Margin
+
+A margin parameter may define a finite neighborhood around:
+
+`∂W_R`.
+
+---
+
+## 25. Boundary Margin Is Not Boundary Class by Identity
+
+A numerical margin used during optimization does not automatically define the semantic:
+
+`BOUNDARY`
+
+class.
+
+The classification rule must be explicit.
+
+---
+
+## 26. Hard Resonance Classification
+
+A hard classifier maps:
+
+`r`
+
+to:
+
+`OUTSIDE`
+
+`BOUNDARY`
+
+or:
+
+`INSIDE`.
+
+---
+
+## 27. Soft Resonance Membership
+
+Training may use continuous membership variables such as:
+
+`p_out`
+
+`p_boundary`
+
+`p_in`.
+
+---
+
+## 28. Soft Membership Is Not Hard Classification
+
+The framework preserves:
+
+`soft resonance membership ≠ resonance class`.
+
+---
+
+## 29. Probability Is Not Resonance State
+
+The framework preserves:
+
+`resonance-class probability ≠ r`.
+
+---
+
+## 30. Boundary Smoothing
+
+A differentiable surrogate may smooth a hard window boundary during optimization.
+
+---
+
+## 31. Smoothing Boundary
+
+The smoothing width must be explicitly defined.
+
+---
+
+## 32. Smoothing Is an Optimization Representation
+
+Boundary smoothing changes the differentiable training representation.
+
+It does not redefine the semantic resonance window unless the model explicitly defines the smooth region as part of the resonance formalism.
+
+---
+
+## 33. Window Parameterization
+
+A trainable resonance window may be parameterized by variables such as:
+
+- center;
+- width;
+- covariance;
+- principal axes;
+- level-set parameters;
+- topology parameters.
+
+---
+
+## 34. Window Center
+
+For a parameterized window:
+
+`c_R`
+
+may denote its center or reference point where such a concept is defined.
+
+---
+
+## 35. Window Width
+
+A width variable:
+
+`w_R`
+
+may be defined for interval-like or axis-defined windows.
+
+---
+
+## 36. Positive Width Constraint
+
+If:
+
+`w_R`
+
+is required to be positive:
+
+`w_R > 0`.
+
+The optimization parameterization must preserve this constraint.
+
+---
+
+## 37. Minimum Width
+
+A minimum width:
+
+`w_min`
+
+may be defined when required by the model.
+
+---
+
+## 38. Maximum Width
+
+A maximum width:
+
+`w_max`
+
+may be defined when required by the model.
+
+---
+
+## 39. Width Bounds Are Model Parameters
+
+No universal values for:
+
+`w_min`
+
+or:
+
+`w_max`
+
+are imposed by TR-EIF.
+
+---
+
+## 40. Window Collapse
+
+Window collapse occurs when a trainable window becomes degenerate relative to its declared dimensionality.
+
+---
+
+## 41. Window-Collapse Constraint
+
+If collapse is not permitted, it must be prevented through:
+
+- parameterization;
+- projection;
+- explicit hard constraint;
+- another declared mechanism.
+
+---
+
+## 42. Window Expansion Constraint
+
+If unbounded expansion is not permitted, the allowed extent must be explicitly defined.
+
+---
+
+## 43. Window Topology
+
+A resonance window may contain:
+
+- one connected component;
+- several connected components;
+- holes;
+- branches;
+- scale-dependent subregions.
+
+---
+
+## 44. Topology Preservation
+
+If window topology is fixed by the model, optimization must preserve it.
+
+---
+
+## 45. Trainable Topology
+
+If topology itself is trainable, the admissible topology changes and their representation must be defined.
+
+---
+
+## 46. Resonance Occupancy
+
+For a dataset or trajectory, occupancy may be measured for:
+
+`OUTSIDE`
+
+`BOUNDARY`
+
+and:
+
+`INSIDE`.
+
+---
+
+## 47. Occupancy Vector
+
+A resonance occupancy vector may be:
+
+`q_R = (q_out, q_boundary, q_in)`.
+
+---
+
+## 48. Occupancy Regularization
+
+A regularizer may compare predicted occupancy against a declared reference distribution.
+
+---
+
+## 49. Occupancy Is Not Ternary Class Balance
+
+The framework preserves:
+
+`resonance occupancy ≠ ternary class occupancy`.
+
+---
+
+## 50. No Universal Resonance Occupancy
+
+TR-EIF does not impose equal occupancy among:
+
+`OUTSIDE`
+
+`BOUNDARY`
+
+and:
+
+`INSIDE`.
+
+---
+
+## 51. Resonance Collapse
+
+A learned classifier may collapse toward one resonance class.
+
+---
+
+## 52. Collapse Diagnostics
+
+Diagnostics may include:
+
+- class occupancy;
+- class entropy;
+- boundary occupancy;
+- transition counts;
+- scale-dependent occupancy;
+- calibration where probabilities are defined.
+
+---
+
+## 53. High Entropy Is Not Resonance
+
+The framework preserves:
+
+`high classifier entropy ≠ resonance`.
+
+---
+
+## 54. Low Entropy Is Not Resonance
+
+The framework preserves:
+
+`low classifier entropy ≠ resonance`.
+
+---
+
+## 55. Resonance Persistence
+
+Persistence describes retention of a resonance state or resonance class across an ordered sequence.
+
+---
+
+## 56. Ordered Sequence Requirement
+
+Persistence requires an explicitly ordered variable such as:
+
+- physical time;
+- simulation step;
+- execution tact;
+- another declared sequence index.
+
+---
+
+## 57. Persistence Is Not Physical Time
+
+The persistence index is not automatically physical time.
+
+---
+
+## 58. Persistence Regularization
+
+Let:
+
+`R_persistence`
+
+denote a term that constrains short-scale variation of resonance state or classification.
+
+---
+
+## 59. Coordinate Persistence
+
+A coordinate-level term may compare:
+
+`r[n+1]`
+
+with:
+
+`r[n]`.
+
+---
+
+## 60. Classification Persistence
+
+A class-level term may penalize excessive class switching.
+
+---
+
+## 61. Persistence Is Not Permanence
+
+A persistence constraint does not prohibit resonance-state change.
+
+---
+
+## 62. Chattering
+
+Repeated rapid crossing of a resonance decision boundary may be treated as chattering under a declared criterion.
+
+---
+
+## 63. Chattering Metric
+
+A metric may count repeated crossings of:
+
+`∂W_R`
+
+over a defined interval.
+
+---
+
+## 64. Crossing Count
+
+Let:
+
+`N_cross`
+
+denote the number of resonance-window boundary crossings in a declared sequence.
+
+---
+
+## 65. Crossing Rate
+
+A crossing rate may normalize:
+
+`N_cross`
+
+by:
+
+- sequence length;
+- physical time;
+- tact count;
+- another declared measure.
+
+---
+
+## 66. Chattering Penalty
+
+A regularizer may penalize excessive:
+
+`N_cross`
+
+or crossing rate.
+
+---
+
+## 67. Chattering Penalty Is Not Hysteresis
+
+The framework preserves:
+
+`chattering penalty ≠ hysteresis`.
+
+---
+
+## 68. Resonance Hysteresis
+
+A resonance classifier may depend on:
+
+- current resonance coordinate;
+- previous class;
+- previous coordinate;
+- history variable;
+- path-dependent threshold.
+
+---
+
+## 69. Hysteresis State
+
+Let:
+
+`h_R`
+
+denote the declared resonance-history state.
+
+---
+
+## 70. Entry Boundary
+
+A hysteretic resonance model may define a boundary for entering:
+
+`W_R`
+
+or a resonance class.
+
+---
+
+## 71. Exit Boundary
+
+A distinct boundary may define exit.
+
+---
+
+## 72. Entry and Exit Are Distinct
+
+The framework preserves:
+
+`entry condition ≠ exit condition`
+
+where hysteresis is defined.
+
+---
+
+## 73. Hysteresis Width
+
+A hysteresis width may be derived from entry and exit boundaries.
+
+---
+
+## 74. Hysteresis Parameterization
+
+Trainable hysteresis variables must preserve the required ordering between entry and exit conditions.
+
+---
+
+## 75. Hysteresis Loop
+
+A trajectory may produce a loop in a declared control-state or resonance-state projection.
+
+---
+
+## 76. Hysteresis Loop Metric
+
+Metrics may include:
+
+- loop width;
+- loop area;
+- entry coordinate;
+- exit coordinate;
+- residence interval.
+
+---
+
+## 77. Hysteresis Loop Requires Declared Axes
+
+A loop-area metric is defined only after the plotted variables and orientation are specified.
+
+---
+
+## 78. Classifier Hysteresis Is Not Ternary Routing
+
+The framework preserves:
+
+`resonance classifier hysteresis ≠ neutral-mediated ternary execution`.
+
+---
+
+## 79. Resonance History Is Not Optimizer Memory
+
+The framework preserves:
+
+`resonance history ≠ optimizer momentum`
+
+and:
+
+`resonance history ≠ optimizer second-moment state`.
+
+---
+
+## 80. Multiscale Resonance
+
+TR-EIF may define resonance variables at several scales.
+
+Examples include:
+
+- edge;
+- pair;
+- local environment;
+- cluster;
+- supercluster;
+- global.
+
+---
+
+## 81. Scale Index
+
+Let:
+
+`ell`
+
+denote resonance scale.
+
+---
+
+## 82. Scale-Specific Resonance State
+
+At scale:
+
+`ell`
+
+the resonance state is:
+
+`r^(ell) ∈ X_R^(ell)`.
+
+---
+
+## 83. Scale-Specific Resonance Window
+
+A scale may have its own:
+
+`W_R^(ell)`.
+
+---
+
+## 84. Scale-Specific Boundary
+
+The corresponding boundary is:
+
+`∂W_R^(ell)`.
+
+---
+
+## 85. Scale-Specific Classification
+
+Each scale may classify:
+
+`OUTSIDE`
+
+`BOUNDARY`
+
+or:
+
+`INSIDE`
+
+according to its own declared window.
+
+---
+
+## 86. Cross-Scale Mapping
+
+Let:
+
+`P_(ell→m)`
+
+map resonance information from scale:
+
+`ell`
+
+to scale:
+
+`m`.
+
+---
+
+## 87. Cross-Scale Consistency
+
+A regularizer may compare:
+
+`P_(ell→m)(r^(ell))`
+
+with:
+
+`r^(m)`.
+
+---
+
+## 88. Cross-Scale Equality Is Not Required
+
+The framework preserves:
+
+`r^(ell) ≠ r^(m)`
+
+by identity.
+
+Consistency is defined only through the declared mapping.
+
+---
+
+## 89. Multiscale Uniformity Is Not Required
+
+The framework preserves:
+
+`multiscale consistency ≠ uniform resonance state across scales`.
+
+---
+
+## 90. Local Resonance
+
+A local environment may occupy one resonance regime while the global system occupies another.
+
+---
+
+## 91. Global Resonance
+
+A global resonance state is not determined solely by the majority class of local states unless such an aggregation rule is explicitly defined.
+
+---
+
+## 92. Aggregation Operator
+
+A resonance aggregation operator may be:
+
+`A_R({r_i})`.
+
+---
+
+## 93. Aggregation Rule
+
+The operator must define:
+
+- scale;
+- weighting;
+- normalization;
+- symmetry behavior;
+- treatment of variable system size.
+
+---
+
+## 94. Multiscale Regularization Functional
+
+A general form may be:
+
+`R_multiscale = sum_(ell,m) lambda_(ell,m) D_R(P_(ell→m)(r^(ell)), r^(m))`.
+
+---
+
+## 95. Multiscale Disagreement
+
+A diagnostic may measure the discrepancy between mapped and directly predicted resonance states across scales.
+
+---
+
+## 96. Resonance versus Synchronization
+
+The framework preserves:
+
+`resonance ≠ synchronization`.
+
+---
+
+## 97. Synchronization versus Phase Locking
 
 The framework preserves:
 
@@ -122,7 +978,7 @@ The framework preserves:
 
 ---
 
-## 9. Phase Locking Is Not Resonance
+## 98. Phase Locking versus Resonance
 
 The framework preserves:
 
@@ -130,7 +986,7 @@ The framework preserves:
 
 ---
 
-## 10. Coherence Is Not Resonance
+## 99. Coherence versus Resonance
 
 The framework preserves:
 
@@ -138,15 +994,87 @@ The framework preserves:
 
 ---
 
-## 11. Phase Order Is Not Complete Coherence
+## 100. Coherence versus Uniformity
 
 The framework preserves:
+
+`coherence ≠ uniformity`.
+
+---
+
+## 101. Phase Order versus Complete Coherence
+
+The framework preserves:
+
+`phase order ≠ complete coherence`.
+
+---
+
+## 102. Phase Order and Coherence
+
+Where both quantities are defined:
 
 `R(t) ≠ C(t)`.
 
 ---
 
-## 12. Resonance Is Not Energy
+## 103. Phase-Derived Resonance Features
+
+A resonance model may use phase-derived quantities as inputs.
+
+Examples may include:
+
+- phase difference;
+- phase-order metric;
+- locking metric;
+- coherence metric;
+- frequency mismatch.
+
+---
+
+## 104. Phase-Derived Feature Is Not Resonance by Identity
+
+The framework preserves:
+
+`phase metric ≠ resonance`
+
+unless the model explicitly defines the resonance coordinate using that metric.
+
+---
+
+## 105. Frequency Equality Is Not Resonance
+
+The framework preserves:
+
+`frequency equality ≠ resonance`.
+
+---
+
+## 106. Oscillator Phase Is Not Physical Phase of Matter
+
+The framework preserves:
+
+`oscillator phase ≠ physical phase of matter`.
+
+---
+
+## 107. Phase Coupling Is Not Mechanical Force
+
+The framework preserves:
+
+`phase coupling ≠ mechanical force`.
+
+---
+
+## 108. Phase Relation Is Not Chemical Bond
+
+The framework preserves:
+
+`phase relation ≠ chemical bond`.
+
+---
+
+## 109. Resonance Classification Is Not Energy
 
 The framework preserves:
 
@@ -154,1435 +1082,253 @@ The framework preserves:
 
 ---
 
-## 13. Resonance Is Not Ternary State
+## 110. Resonance Coordinate Is Not Energy
 
 The framework preserves:
 
-`resonance state ≠ ternary state`.
+`r ≠ E`
+
+unless a specific coordinate is explicitly defined from an energy quantity.
 
 ---
 
-## 14. Resonance Is Not Mechanical Force
+## 111. Resonance Loss Is Not Physical Energy
 
 The framework preserves:
 
-`resonance state ≠ mechanical force`.
+`R_R ≠ physical energy`.
 
 ---
 
-## 15. Resonance Is Not Structural State
+## 112. Resonance-Conditioned Interactions
+
+An interatomic mapping may depend on resonance state:
+
+`M_int = M_int(X, r)`.
+
+---
+
+## 113. Resonance Conditioning Boundary
+
+Resonance conditioning modifies a declared model input or internal representation.
+
+It does not by itself define a mechanical force law.
+
+---
+
+## 114. Energy Interface
+
+A resonance-conditioned energy model may be:
+
+`E = E(X, r)`.
+
+---
+
+## 115. Force Interface
+
+Where a conservative force branch is defined:
+
+`F_i = -grad_(r_i_atomic) E`.
+
+The coordinate:
+
+`r_i_atomic`
+
+here denotes atomic position and must remain distinct from the resonance coordinate:
+
+`r`.
+
+---
+
+## 116. Symbol Separation
+
+Implementations and documentation must avoid ambiguous reuse of:
+
+`r`
+
+for both:
+
+- resonance coordinate;
+- atomic position.
+
+If atomic position is denoted:
+
+`R_i`
+
+then the conservative force relation may be written:
+
+`F_i = -grad_(R_i) E`.
+
+---
+
+## 117. Mechanical Force Does Not Equal Phase Coupling
 
 The framework preserves:
 
-`resonance state ≠ structural transition by identity`.
+`F_i ≠ phase-coupling term`
+
+by identity.
 
 ---
 
-## 16. Resonance Window
+## 118. Resonance-Conditioned Force
 
-A resonance window is:
+A force may depend indirectly on resonance state through the learned energy or interaction model.
 
-`W_R ⊂ X_R`.
-
-Its boundary is:
-
-`∂W_R`.
+This dependence must be explicitly defined.
 
 ---
 
-## 17. Resonance Classification
+## 119. Stress Interface
 
-A canonical minimal resonance classification may use:
-
-`K_R = {OUTSIDE, BOUNDARY, INSIDE}`.
+Stress may likewise depend on resonance-conditioned energy or interactions under the declared stress convention.
 
 ---
 
-## 18. Resonance Class versus Ternary Class
+## 120. Mechanical Consistency
 
-The relation remains:
-
-`OUTSIDE/BOUNDARY/INSIDE ≠ -1/0/1`.
-
-No automatic one-to-one mapping is assumed.
+Resonance regularization must remain compatible with the declared energy-force-stress training contract.
 
 ---
 
-## 19. Regularization Domains
+## 121. Differentiability
 
-Resonance regularization may act on:
-
-1. resonance coordinates;
-
-2. resonance windows;
-
-3. boundary margins;
-
-4. local/global consistency;
-
-5. temporal persistence;
-
-6. hysteresis;
-
-7. cross-scale mappings;
-
-8. symmetry residuals;
-
-9. resonance-to-ternary consistency;
-
-10. learned resonance parameters.
+If resonance conditioning lies inside a conservative energy path, its differentiability with respect to atomic coordinates must be defined.
 
 ---
 
-## 20. Coordinate Regularization
+## 122. Hard Resonance Classification inside Energy Path
 
-A resonance coordinate may be regularized to satisfy declared:
-
-- bounds;
-- scale;
-- smoothness;
-- sparsity;
-- locality;
-- normalization.
+A hard non-differentiable resonance classifier may interrupt coordinate derivatives.
 
 ---
 
-## 21. Coordinate Bound
+## 123. Differentiable Training Representation
 
-For scalar resonance coordinate:
-
-`r_j`
-
-a model may impose:
-
-`r_min,j ≤ r_j ≤ r_max,j`.
+A model may therefore use a continuous resonance representation inside the differentiable mechanical path.
 
 ---
 
-## 22. Hard Bound
+## 124. Hard Classification Interface
 
-A hard bound restricts the admissible resonance state.
-
----
-
-## 23. Soft Bound
-
-A soft bound may penalize excursions beyond a declared interval.
+Hard resonance classification may be applied outside the derivative path or through an explicitly declared surrogate method.
 
 ---
 
-## 24. Bound Penalty
+## 125. Surrogate Gradient
 
-One possible penalty is:
-
-`R_bound = max(0, r - r_max)^2 + max(0, r_min - r)^2`.
-
-The exact form is specialization-specific.
+A surrogate derivative must be identified as an optimization approximation.
 
 ---
 
-## 25. Resonance Norm
+## 126. Surrogate Gradient Is Not Exact Derivative
 
-For vector resonance state:
+The framework preserves:
 
-`r_v`
-
-an invariant norm may be:
-
-`||r_v||`.
+`surrogate gradient ≠ exact derivative of a hard classifier`.
 
 ---
 
-## 26. Norm Regularization
+## 127. Resonance-to-Ternary Mapping
 
-A model may constrain resonance norm without constraining spatial orientation.
+Let:
 
----
+`P_RT`
 
-## 27. Componentwise Vector Penalty Boundary
+denote the mapping from resonance information to a ternary target.
 
-Independent Cartesian penalties may break rotational symmetry if they distinguish laboratory axes.
+A generic interface is:
 
----
-
-## 28. Invariant Vector Regularization
-
-A rotation-compatible vector regularizer may depend on:
-
-- norm;
-- invariant dot products;
-- invariant contractions.
+`P_RT: X_R × X_context → {-1,0,1}`.
 
 ---
 
-## 29. Tensor Resonance Regularization
+## 128. Explicit Mapping Requirement
 
-Tensor resonance may be regularized through rotationally invariant quantities such as:
+The mapping:
 
-- trace;
-- determinant;
-- norm;
-- eigenvalue-derived invariants where appropriate.
+`P_RT`
 
----
+must define:
 
-## 30. Tensor Component Boundary
-
-A laboratory-component penalty is permitted only when the external frame belongs to the model.
-
----
-
-## 31. Representation-Aware Regularization
-
-Every resonance regularizer must respect the transformation type of the resonance channel on which it acts.
+- input resonance variables;
+- context variables;
+- thresholds or decision surfaces;
+- history dependence;
+- scale dependence;
+- output target.
 
 ---
 
-## 32. Scalar Resonance Regularization
+## 129. No Identity Mapping
 
-Scalar resonance state may use ordinary scalar penalties.
-
----
-
-## 33. Vector Resonance Regularization
-
-Vector state requires equivariance-preserving regularization.
-
----
-
-## 34. Tensor Resonance Regularization
-
-Tensor state requires tensor-compatible regularization.
-
----
-
-## 35. Resonance Center
-
-A resonance window may have a declared center:
-
-`mu_R`.
-
----
-
-## 36. Center Regularization
-
-A trainable center may be constrained relative to a calibrated or reference center.
-
----
-
-## 37. Resonance Width
-
-A scalar resonance interval may have width:
-
-`w_R = r_max - r_min`.
-
----
-
-## 38. Positive Width Constraint
-
-A valid interval requires:
-
-`w_R > 0`.
-
----
-
-## 39. Width Regularization
-
-A trainable width may be penalized if it leaves an admissible range.
-
----
-
-## 40. Window Collapse
-
-A resonance window collapses if its width approaches zero.
-
-Whether this is admissible is model-specific.
-
----
-
-## 41. Window Expansion
-
-A resonance window may become excessively broad.
-
-A regularizer may constrain this behavior when a finite regime is required.
-
----
-
-## 42. Asymmetric Window
-
-A resonance window need not be symmetric around zero or around its center.
-
----
-
-## 43. Multidimensional Window
-
-For:
-
-`r ∈ R^m`
-
-a resonance window may be an arbitrary declared subset:
-
-`W_R ⊂ R^m`.
-
----
-
-## 44. Ellipsoidal Window
-
-A learned or calibrated ellipsoidal region may use:
-
-`(r - mu)^T A (r - mu) ≤ 1`.
-
----
-
-## 45. Positive-Definite Matrix Constraint
-
-For an ellipsoidal window:
-
-`A`
-
-must satisfy the declared definiteness condition.
-
----
-
-## 46. Window-Shape Regularization
-
-A model may regularize:
-
-- axis lengths;
-- anisotropy;
-- condition number;
-- orientation;
-- volume.
-
----
-
-## 47. Window Volume
-
-A multidimensional resonance region may have a finite measure.
-
-A regularizer may constrain that measure.
-
----
-
-## 48. Disconnected Window
-
-A resonance region may have multiple disconnected components.
-
-Regularization must not assume connectedness unless it is an architectural condition.
-
----
-
-## 49. Nested Windows
-
-A model may define:
-
-`W_R^(1) ⊂ W_R^(2)`.
-
----
-
-## 50. Nested-Window Constraint
-
-A regularizer may enforce containment among nested resonance regions.
-
----
-
-## 51. Boundary Function
-
-A resonance boundary may be represented through:
-
-`B_R(r) = 0`.
-
----
-
-## 52. Signed Boundary Function
-
-A declared convention may use:
-
-`B_R(r) < 0`
-
-for inside and:
-
-`B_R(r) > 0`
-
-for outside.
-
----
-
-## 53. Boundary Sign Convention
-
-The sign convention must remain fixed throughout:
-
-- code;
-- loss;
-- validation;
-- traces.
-
----
-
-## 54. Boundary Margin
-
-A margin:
-
-`m_R(r)`
-
-may quantify distance from:
-
-`∂W_R`.
-
----
-
-## 55. Margin Regularization
-
-A model may encourage labeled interior states to remain sufficiently inside and exterior states sufficiently outside.
-
----
-
-## 56. Boundary State
-
-A boundary-labeled state may be regularized toward:
-
-`∂W_R`.
-
----
-
-## 57. Boundary Tolerance
-
-Numerical boundary tolerance is distinct from the exact mathematical boundary.
-
----
-
-## 58. Boundary Band
-
-A numerical boundary band may be used for optimization.
-
-It remains a numerical construct.
-
----
-
-## 59. Boundary Band Is Not Active Neutral
-
-The distinction remains:
-
-`resonance boundary band ≠ ternary 0`.
-
----
-
-## 60. Boundary Loss
-
-A supervised resonance-class loss may combine:
-
-- interior loss;
-- exterior loss;
-- boundary loss.
-
----
-
-## 61. Inside Loss
-
-For an interior reference:
-
-`r_ref ∈ INSIDE`
-
-a penalty may discourage predicted state outside:
-
-`W_R`.
-
----
-
-## 62. Outside Loss
-
-For an exterior reference, a penalty may discourage predicted state inside:
-
-`W_R`.
-
----
-
-## 63. Boundary Loss
-
-For a boundary reference, a penalty may minimize the declared boundary distance.
-
----
-
-## 64. Resonance Classification Loss
-
-A categorical classifier over:
+TR-EIF does not identify:
 
 `OUTSIDE`
 
-`BOUNDARY`
+with:
 
-`INSIDE`
-
-may use logits or probabilities.
-
-These classes remain distinct from ternary classes.
-
----
-
-## 65. Resonance Logits
-
-Continuous resonance-class logits are optimization variables.
-
-They are not resonance state by identity.
-
----
-
-## 66. Resonance Probability
-
-A probability distribution over resonance classes is not the same as the continuous resonance coordinate.
-
----
-
-## 67. Resonance Confidence
-
-A confidence score may accompany resonance classification.
-
-It remains distinct from resonance state.
-
----
-
-## 68. Uncertainty Boundary
-
-Uncertainty in resonance classification is not active-neutral ternary state.
-
----
-
-## 69. Resonance Persistence
-
-A resonance condition may be required to persist over several evaluations before a regime transition is registered.
-
----
-
-## 70. Persistence State
-
-Let:
-
-`n_R,persist`
-
-denote a persistence counter.
-
----
-
-## 71. Persistence Regularization
-
-A regularizer may penalize regime changes that fail the declared persistence condition.
-
----
-
-## 72. Temporal Resonance Sequence
-
-For ordered state:
-
-`r[0], r[1], ..., r[T]`
-
-regularization may operate on transition behavior.
-
----
-
-## 73. Resonance Switch
-
-A resonance-class switch occurs when:
-
-`C_R(r[k]) ≠ C_R(r[k-1])`.
-
----
-
-## 74. Resonance Switch Count
-
-Define:
-
-`N_switch,R`.
-
----
-
-## 75. Switch Regularization
-
-A model may penalize excessive resonance-regime switching.
-
----
-
-## 76. Switch Frequency
-
-A rate may be normalized by:
-
-- number of steps;
-- physical time;
-- number of evaluations.
-
-The denominator must be explicit.
-
----
-
-## 77. Temporal Smoothness
-
-Continuous resonance coordinates may be regularized for smooth evolution.
-
----
-
-## 78. First-Difference Penalty
-
-A possible temporal penalty is:
-
-`R_delta = sum_k ||r[k] - r[k-1]||^2`.
-
----
-
-## 79. Second-Difference Penalty
-
-A curvature-like sequence penalty may use:
-
-`r[k+1] - 2r[k] + r[k-1]`.
-
----
-
-## 80. Temporal Smoothness Is Not Physical Law
-
-A smoothness regularizer does not replace an actual dynamical equation.
-
----
-
-## 81. Temporal Index
-
-The index:
-
-`k`
-
-may represent:
-
-- physical timestep;
-- numerical timestep;
-- sampled trace index;
-- internal recurrence.
-
-Its meaning must be explicit.
-
----
-
-## 82. Training Step Separation
-
-The framework preserves:
-
-`resonance sequence index ≠ optimization step`.
-
----
-
-## 83. Resonance Memory
-
-A stateful resonance model may retain:
-
-`m_R[k]`.
-
----
-
-## 84. Memory Update
-
-The model may use:
-
-`m_R[k+1] = F_M(m_R[k], r[k], x[k])`.
-
----
-
-## 85. Memory Regularization
-
-A regularizer may constrain:
-
-- memory magnitude;
-- decay;
-- persistence;
-- smoothness;
-- reset behavior.
-
----
-
-## 86. Memory versus Delay
-
-The framework preserves:
-
-`retained resonance memory ≠ explicit temporal delay`.
-
----
-
-## 87. Frequency Memory Boundary
-
-The framework preserves:
-
-`resonance memory ≠ retained frequency memory`.
-
-They may interact through explicit mappings.
-
----
-
-## 88. Hysteresis
-
-A resonance classifier may use different entry and exit conditions.
-
----
-
-## 89. Entry Boundary
-
-Define:
-
-`W_R,enter`.
-
----
-
-## 90. Exit Boundary
-
-Define:
-
-`W_R,exit`.
-
----
-
-## 91. Hysteresis Constraint
-
-A hysteretic model must preserve the declared geometric relation between entry and exit conditions.
-
----
-
-## 92. Hysteresis Width
-
-A scalar hysteresis band may have width:
-
-`w_H`.
-
----
-
-## 93. Hysteresis Regularization
-
-A trainable:
-
-`w_H`
-
-may be constrained within an admissible range.
-
----
-
-## 94. Hysteresis Is Not Neutral Routing
-
-The distinction remains:
-
-`resonance hysteresis ≠ ternary neutral routing`.
-
----
-
-## 95. Resonance Transition
-
-A resonance transition changes the declared resonance regime.
-
----
-
-## 96. Resonance Transition Is Not Bifurcation
-
-The framework preserves:
-
-`resonance transition ≠ bifurcation`.
-
----
-
-## 97. Window Crossing Is Not Bifurcation
-
-The framework preserves:
-
-`resonance-window crossing ≠ bifurcation`.
-
----
-
-## 98. Resonance Transition Is Not Ternary Transition
-
-The framework preserves:
-
-`resonance transition ≠ ternary transition`.
-
----
-
-## 99. Resonance Transition Is Not Structural Transition
-
-The framework preserves:
-
-`resonance transition ≠ structural transition`.
-
----
-
-## 100. Structural Transition Is Not Physical Phase Transition
-
-The framework preserves:
-
-`structural transition ≠ physical phase transition`.
-
----
-
-## 101. Local Resonance State
-
-For atom:
-
-`i`:
-
-`r_i ∈ X_R,local`.
-
----
-
-## 102. Edge Resonance State
-
-For edge:
-
-`j → i`:
-
-`r_ij ∈ X_R,edge`.
-
----
-
-## 103. Cluster Resonance State
-
-For cluster:
-
-`a`:
-
-`r_a ∈ X_R,cluster`.
-
----
-
-## 104. Global Resonance State
-
-For the complete system:
-
-`r_G ∈ X_R,global`.
-
----
-
-## 105. Local-to-Global Aggregation
-
-A global resonance state may be generated through:
-
-`A_R({r_i})`.
-
----
-
-## 106. Permutation-Invariant Aggregation
-
-For global scalar resonance state, aggregation must preserve atom-permutation invariance.
-
----
-
-## 107. Local/Global Consistency
-
-A regularizer may constrain:
-
-`r_G`
-
-relative to a declared aggregate of local state.
-
----
-
-## 108. No Universal Equality
-
-The framework does not assume:
-
-`r_i = r_G`.
-
----
-
-## 109. Local Diversity
-
-Different atoms may simultaneously occupy different local resonance states.
-
----
-
-## 110. Cluster Diversity
-
-Different clusters may simultaneously occupy different resonance regimes.
-
----
-
-## 111. Multiscale Resonance
-
-Let:
-
-`r^(ell)`
-
-denote resonance state at scale:
-
-`ell`.
-
----
-
-## 112. Scale Set
-
-A model may use:
-
-`L_R = {edge, atom, cluster, global}`
-
-or another declared scale hierarchy.
-
----
-
-## 113. Cross-Scale Mapping
-
-A map:
-
-`M_R^(a→b)`
-
-transfers resonance information across scales.
-
----
-
-## 114. Cross-Scale Regularization
-
-A regularizer may compare coarse state with a declared aggregation of fine state.
-
----
-
-## 115. Fine-to-Coarse Consistency
-
-For example:
-
-`r_cluster ≈ A_cluster({r_i})`.
-
----
-
-## 116. Coarse-to-Fine Feedback
-
-A model may feed global resonance back to local parameterization.
-
----
-
-## 117. Feedback Consistency
-
-A regularizer may constrain feedback to preserve declared scale relations.
-
----
-
-## 118. Cross-Scale Equality Boundary
-
-No universal rule requires all scales to share identical resonance coordinates.
-
----
-
-## 119. Information Loss
-
-Coarse resonance state is generally not sufficient to reconstruct all fine resonance state.
-
----
-
-## 120. Closure Variable
-
-A multiscale resonance model may introduce closure state for unresolved fine-scale effects.
-
----
-
-## 121. Closure Regularization
-
-Closure state may be regularized against reference coarse-graining behavior.
-
----
-
-## 122. Scale Weighting
-
-A multiscale resonance objective may be:
-
-`R_scale = sum_ell lambda_ell R_ell`.
-
----
-
-## 123. Scale Coefficients
-
-The weights:
-
-`lambda_ell`
-
-determine optimization emphasis by scale.
-
----
-
-## 124. Resonance Symmetry
-
-A resonance parameterization must preserve its declared transformation law:
-
-`P_R(rho_EQ(g)x) = rho_R(g)P_R(x)`.
-
----
-
-## 125. Scalar Resonance Invariance
-
-For scalar invariant resonance:
-
-`r(gX) = r(X)`.
-
----
-
-## 126. Vector Resonance Equivariance
-
-For vector resonance:
-
-`r_v(gX) = Q r_v(X)`.
-
----
-
-## 127. Tensor Resonance Equivariance
-
-For tensor resonance:
-
-`R_T(gX) = Q R_T(X) Q^T`.
-
----
-
-## 128. Symmetry Regularization
-
-A numerical resonance-symmetry loss may compare transformed predictions with expected transformed outputs.
-
----
-
-## 129. Scalar Symmetry Loss
-
-One possible form is:
-
-`R_sym,scalar = |r(gX) - r(X)|`.
-
----
-
-## 130. Vector Symmetry Loss
-
-A vector residual may use:
-
-`||r_v(gX) - Q r_v(X)||`.
-
----
-
-## 131. Tensor Symmetry Loss
-
-A tensor residual may use:
-
-`||R_T(gX) - Q R_T(X) Q^T||`.
-
----
-
-## 132. Architectural versus Penalized Equivariance
-
-The framework preserves:
-
-`architectural equivariance ≠ symmetry regularization`.
-
----
-
-## 133. Permutation Consistency
-
-Per-atom resonance state must permute with atom labels.
-
----
-
-## 134. Global Permutation Invariance
-
-Global scalar resonance state must remain unchanged under admissible atom permutation.
-
----
-
-## 135. Reflection Consistency
-
-If:
-
-`O(3)`
-
-symmetry is declared, parity behavior must remain explicit.
-
----
-
-## 136. Resonance Parity
-
-A resonance channel may carry even or odd parity where non-scalar structures are used.
-
----
-
-## 137. Parity Regularization
-
-A parity-sensitive transformation test may be included in the objective or validation.
-
----
-
-## 138. Resonance and Phase State
-
-A resonance parameterization may consume oscillator phase:
-
-`theta`.
-
----
-
-## 139. Phase Difference
-
-Phase differences may contribute to resonance descriptors.
-
-They remain angular variables.
-
----
-
-## 140. Kuramoto-Sakaguchi Interface
-
-A phase-coupling specialization may contain:
-
-`sin(theta_j - theta_i - gamma_effective_i)`.
-
----
-
-## 141. Phase Coupling Regularization
-
-A model may regularize learned phase-coupling parameters when they participate in:
-
-`P_R`.
-
----
-
-## 142. Phase Lag Parameter
-
-A learned or calibrated phase lag must preserve its angular semantics.
-
----
-
-## 143. Phase Lag Is Not Delay
-
-The framework preserves:
-
-`phase lag ≠ temporal delay`.
-
----
-
-## 144. Phase-Order Input
-
-A phase-order quantity:
-
-`R`
-
-may enter resonance parameterization.
-
----
-
-## 145. Coherence Input
-
-A separately defined coherence quantity:
-
-`C`
-
-may also enter.
-
----
-
-## 146. Phase Order versus Coherence
-
-The distinction remains:
-
-`R(t) ≠ C(t)`.
-
----
-
-## 147. Synchronization Descriptor
-
-A synchronization descriptor may be regularized independently from resonance state.
-
----
-
-## 148. Phase-Locking Descriptor
-
-A phase-locking descriptor may likewise be separately constrained.
-
----
-
-## 149. Resonance Composite State
-
-A resonance coordinate may combine:
-
-- geometry;
-- representation;
-- phase state;
-- frequency memory;
-- coherence;
-- synchronization;
-- retained history.
-
-The exact mapping remains explicit.
-
----
-
-## 150. Input Contribution Regularization
-
-A model may constrain sensitivity of resonance state to selected inputs.
-
----
-
-## 151. Sensitivity
-
-For parameter or input:
-
-`x_j`
-
-a local sensitivity may use:
-
-`d r / d x_j`.
-
----
-
-## 152. Sensitivity Regularization
-
-A regularizer may discourage excessive sensitivity in declared directions.
-
----
-
-## 153. Sensitivity versus Causality
-
-A model derivative does not establish causal physical interpretation by identity.
-
----
-
-## 154. Resonance Sparsity
-
-A high-dimensional resonance state may be regularized for sparse activation.
-
----
-
-## 155. Channel Sparsity
-
-A channel-level sparsity term may constrain selected scalar latent resonance coordinates.
-
----
-
-## 156. Sparse State Is Not Ternary State
-
-The distinction remains:
-
-`sparse resonance vector ≠ ternary feature`.
-
----
-
-## 157. Resonance Channel Collapse
-
-A learned resonance channel may become constant over its effective domain.
-
----
-
-## 158. Collapse Detection
-
-A channel may be monitored for:
-
-- variance;
-- occupancy;
-- gradient magnitude;
-- information content.
-
----
-
-## 159. Collapse Regularization
-
-A regularizer may discourage collapse when the architecture expects variable state.
-
----
-
-## 160. Constant Channel Boundary
-
-A constant learned channel is not automatically invalid.
-
-Its status depends on the declared model role.
-
----
-
-## 161. Resonance Redundancy
-
-Multiple resonance channels may become redundant.
-
----
-
-## 162. Correlation Regularization
-
-A model may penalize excessive correlation among selected scalar resonance channels.
-
----
-
-## 163. Correlation versus Physical Coupling
-
-The framework preserves:
-
-`statistical channel correlation ≠ physical interaction`.
-
----
-
-## 164. Orthogonality Boundary
-
-Numeric orthogonality of resonance channels is not a universal scientific requirement.
-
----
-
-## 165. Resonance Bottleneck
-
-A model may constrain resonance dimension:
-
-`dim(X_R)`.
-
----
-
-## 166. Bottleneck Regularization
-
-A compact resonance bottleneck may be encouraged through:
-
-- dimensional restriction;
-- sparsity;
-- information penalties;
-- channel pruning.
-
----
-
-## 167. Information Bottleneck Boundary
-
-An information-theoretic objective remains an optimization construct.
-
-It does not redefine physical resonance.
-
----
-
-## 168. Resonance-to-Ternary Mapping
-
-The downstream mapping is:
-
-`P_RT: X_R → {-1,0,1}`
-
-or a state-augmented generalization.
-
----
-
-## 169. Resonance-to-Ternary Consistency
-
-A regularizer may constrain resonance state to support stable and declared ternary classification.
-
----
-
-## 170. Ternary Decision Regions
-
-Let:
-
-`D_-`
-
-`D_0`
-
-`D_+`
-
-be ternary decision regions in the relevant decision space.
-
----
-
-## 171. Resonance Mapping into Decision Space
-
-A transformation:
-
-`D_R: X_R → X_dec`
-
-may provide the ternary classifier input.
-
----
-
-## 172. Decision Consistency Loss
-
-A regularizer may penalize resonance state that lies inconsistent with supervised ternary targets.
-
----
-
-## 173. Target Class `-1`
-
-Reference:
-
-`t_target = -1`
-
-may impose a declared resonance-decision constraint.
-
----
-
-## 174. Target Class `0`
-
-Reference:
-
-`t_target = 0`
-
-may impose a declared neutral-decision constraint.
-
----
-
-## 175. Target Class `1`
-
-Reference:
-
-`t_target = 1`
-
-may impose a declared positive-decision constraint.
-
----
-
-## 176. Active Neutral Boundary
-
-A ternary neutral target remains distinct from:
+`-1`;
 
 `BOUNDARY`
 
-in resonance classification.
+with:
 
----
-
-## 177. Explicit Mapping Requirement
-
-Any regularizer connecting resonance class to ternary target must use an explicit mapping.
-
----
-
-## 178. Resonance-to-Target Margin
-
-A classifier margin may quantify distance from a ternary decision boundary after resonance projection.
-
----
-
-## 179. Margin Stabilization
-
-A regularizer may increase target robustness by enlarging the declared decision margin.
-
----
-
-## 180. Margin versus Resonance Margin
-
-The distinction remains:
-
-`ternary decision margin ≠ resonance-window margin`.
-
----
-
-## 181. Target Stability
-
-Resonance regularization may reduce rapid target switching indirectly by stabilizing resonance state.
-
----
-
-## 182. Target Stability versus Resonance Stability
-
-The two are related only through:
-
-`P_RT`.
-
-They remain distinct.
-
----
-
-## 183. Executed State Boundary
-
-Resonance regularization acts upstream of committed ternary execution unless an explicit feedback model is defined.
-
----
-
-## 184. No Execution Bypass
-
-No resonance regularizer may authorize direct committed:
-
-`-1 → 1`
+`0`;
 
 or:
 
-`1 → -1`.
+`INSIDE`
+
+with:
+
+`1`
+
+by default.
 
 ---
 
-## 185. Canonical Opposite Routes
+## 130. Resonance Classification versus Ternary Target
 
-Execution remains:
+The framework preserves:
+
+`resonance class ≠ ternary target`.
+
+---
+
+## 131. Ternary Target versus Executed State
+
+The framework preserves:
+
+`t_target ≠ t_exec`.
+
+---
+
+## 132. Resonance Regularization versus Ternary Execution
+
+Resonance regularization may influence target formation.
+
+It does not replace the ternary execution layer.
+
+---
+
+## 133. Direct Opposite Ternary Invariant
+
+Direct committed:
+
+`-1 → 1`
+
+and:
+
+`1 → -1`
+
+remain forbidden.
+
+---
+
+## 134. Neutral-Mediated Routes
+
+The canonical opposite-polarity routes remain:
 
 `-1 → 0 → 1`
 
@@ -1592,815 +1338,356 @@ and:
 
 ---
 
-## 186. Resonance Feedback from Executed State
-
-A coupled model may use:
-
-`t_exec`
-
-as input to future resonance parameterization.
-
----
-
-## 187. Execution-Conditioned Resonance
-
-One model may define:
-
-`r[k+1] = P_R(x[k+1], t_exec[k])`.
-
----
-
-## 188. Target-Conditioned Resonance
-
-Another may use:
-
-`t_target[k]`.
-
-These are different architectures.
-
----
-
-## 189. Pending-Conditioned Resonance
-
-A route-aware model may use:
-
-`t_pending`.
-
-This dependency must remain explicit.
-
----
-
-## 190. Feedback Regularization
-
-A regularizer may constrain stability or consistency of ternary-to-resonance feedback.
-
----
-
-## 191. Neutral Feedback
-
-Executed:
-
-`t_exec = 0`
-
-may select a distinct resonance parameterization.
-
-It does not imply:
-
-`r = 0`.
-
----
-
-## 192. Ternary Zero versus Resonance Zero
+## 135. Resonance-Window Crossing Is Not Ternary Transition
 
 The framework preserves:
 
-`ternary 0 ≠ resonance coordinate 0`.
+`resonance-window crossing ≠ ternary transition`.
 
 ---
 
-## 193. Resonance-Conditioned Energy
-
-A learned energy may use:
-
-`E = E(X_EQ, X_R)`.
-
----
-
-## 194. Mechanical Coupling
-
-Resonance regularization may therefore influence:
-
-- energy;
-- force;
-- stress
-
-through the learned resonance pathway.
-
----
-
-## 195. Energy Gradient through Resonance
-
-If:
-
-`r = P_R(R)`
-
-remains differentiable and:
-
-`E = E(R,r)`,
-
-then:
-
-`dE/dR`
-
-includes the resonance-mediated derivative path.
-
----
-
-## 196. Detached Resonance Boundary
-
-Detaching:
-
-`r`
-
-from the mechanical derivative graph changes the force model.
-
----
-
-## 197. Mechanical Resonance Regularization
-
-A model may constrain resonance behavior using mechanical residuals.
-
----
-
-## 198. Energy-Resonance Consistency
-
-A regularizer may connect resonance state with declared energy features.
-
----
-
-## 199. Force-Resonance Consistency
-
-A regularizer may constrain resonance-conditioned force behavior.
-
----
-
-## 200. No Universal Energy-Resonance Identity
-
-The framework does not assume:
-
-`resonance coordinate = energy`
-
-or:
-
-`resonance margin = energy difference`.
-
----
-
-## 201. No Universal Force-Resonance Identity
-
-The framework does not assume:
-
-`resonance vector = force`.
-
----
-
-## 202. Resonance Smoothness across Geometry
-
-A regularizer may constrain:
-
-`P_R`
-
-to vary smoothly under small geometric perturbations within a fixed graph/topology regime.
-
----
-
-## 203. Geometric Perturbation
-
-Let:
-
-`R' = R + delta R`.
-
----
-
-## 204. Local Lipschitz-Type Constraint
-
-A regularizer may limit:
-
-`||P_R(R') - P_R(R)||`
-
-relative to:
-
-`||delta R||`.
-
----
-
-## 205. Perturbation Domain
-
-The admissible perturbation must remain inside the declared configuration domain.
-
----
-
-## 206. Graph Boundary Sensitivity
-
-A perturbation near a graph cutoff may change graph topology.
-
-This must be distinguished from resonance-map sensitivity on a fixed graph.
-
----
-
-## 207. Graph Event Boundary
+## 136. Resonance-Window Crossing Is Not Bifurcation
 
 The framework preserves:
 
-`graph edge event ≠ resonance transition by identity`.
+`resonance-window crossing ≠ bifurcation`.
 
 ---
 
-## 208. Resonance Robustness
+## 137. Bifurcation Is Not Ternary Transition
 
-A resonance classifier may be regularized against small numerical or geometric perturbations.
+The framework preserves:
 
----
-
-## 209. Robustness Radius
-
-A declared perturbation radius:
-
-`epsilon_RB`
-
-may define the robustness domain.
+`bifurcation ≠ ternary transition`.
 
 ---
 
-## 210. Robustness versus Hysteresis
+## 138. Ternary Transition Is Not Structural Transition
 
-The distinction remains:
+The framework preserves:
 
-`robustness ≠ hysteresis`.
-
----
-
-## 211. Robustness versus Persistence
-
-The distinction remains:
-
-`robustness ≠ temporal persistence`.
+`ternary transition ≠ structural transition`.
 
 ---
 
-## 212. Noise Regularization
+## 139. Structural Transition Is Not Physical Phase Transition
 
-Noise may be introduced into resonance inputs during training.
+The framework preserves:
 
----
-
-## 213. Noise Distribution
-
-The noise distribution must be explicit.
+`structural transition ≠ physical phase transition`.
 
 ---
 
-## 214. Isotropic Noise
+## 140. Resonance Boundary Is Not Domain Boundary
 
-For vector geometric inputs, isotropic perturbations preserve no preferred spatial axis statistically.
+The framework preserves:
 
----
-
-## 215. Noise Consistency Loss
-
-A model may penalize unnecessary resonance variation under selected noise.
+`∂W_R ≠ model-domain boundary`.
 
 ---
 
-## 216. Physical Noise Boundary
+## 141. Resonance Outside Is Not Out-of-Domain
 
-Synthetic training noise is not automatically a model of physical thermal fluctuations.
+The framework preserves:
+
+`OUTSIDE resonance window ≠ OUT_OF_DOMAIN`.
 
 ---
 
-## 217. Resonance Uncertainty
+## 142. Resonance Inside Is Not In-Domain
 
-A model may predict uncertainty:
+The framework preserves:
+
+`INSIDE resonance window ≠ IN_DOMAIN`.
+
+---
+
+## 143. Resonance Boundary Is Not Uncertainty
+
+The framework preserves:
+
+`BOUNDARY resonance class ≠ uncertainty`.
+
+---
+
+## 144. Boundary Proximity Is Not Uncertainty
+
+The framework preserves:
+
+`distance to ∂W_R ≠ predictive uncertainty`.
+
+---
+
+## 145. Uncertainty in Resonance State
+
+A model may separately estimate:
 
 `u_R`.
 
 ---
 
-## 218. Uncertainty Regularization
+## 146. Resonance Uncertainty
 
-A probabilistic resonance model may include likelihood or calibration terms.
+`u_R`
+
+may quantify uncertainty in:
+
+- resonance coordinate;
+- resonance class;
+- window parameters;
+- history variables.
 
 ---
 
-## 219. Resonance Uncertainty Is Not Resonance
+## 147. Resonance State and Resonance Uncertainty Are Separate
 
 The framework preserves:
 
-`u_R ≠ r`.
+`r ≠ u_R`.
 
 ---
 
-## 220. Resonance Uncertainty Is Not Ternary Neutral
+## 148. Resonance Classification and Domain State Are Separate
 
-The framework preserves:
+A sample may be:
 
-`uncertainty ≠ ternary 0`.
+`INSIDE`
 
----
+the resonance window while also being:
 
-## 221. Out-of-Domain Resonance State
+`OUT_OF_DOMAIN`
 
-A model may identify configurations outside its resonance-training domain.
-
----
-
-## 222. Domain State Separation
-
-The framework preserves:
-
-`OUT_OF_DOMAIN ≠ OUTSIDE resonance window`.
-
-These are different classifications.
+for the learned model.
 
 ---
 
-## 223. Out-of-Domain Is Not Neutral
+## 149. Symmetry of Resonance State
 
-The framework preserves:
-
-`OUT_OF_DOMAIN ≠ ternary 0`.
-
----
-
-## 224. Domain-Aware Resonance Loss
-
-A training setup may mask or reweight resonance loss according to domain state.
-
----
-
-## 225. Domain Mask versus Resonance Class
-
-A domain mask is computational metadata.
-
-It is not:
-
-`OUTSIDE`
-
-in the resonance classifier.
-
----
-
-## 226. Invalid Resonance Input
-
-NaN or non-finite upstream state is invalid.
-
----
-
-## 227. Invalid Resonance Output
-
-A non-finite resonance coordinate is invalid numerical state.
-
----
-
-## 228. Invalid Is Not Boundary
-
-The framework preserves:
-
-`INVALID ≠ BOUNDARY`.
-
----
-
-## 229. Invalid Is Not Neutral
-
-The framework preserves:
-
-`INVALID ≠ ternary 0`.
-
----
-
-## 230. Numerical Stability
-
-Resonance regularization may constrain numerical amplitude or conditioning of learned resonance operators.
-
----
-
-## 231. Parameter Norm
-
-Trainable:
-
-`Theta_R`
-
-may be regularized by norm.
-
----
-
-## 232. Parameter Norm versus Resonance State
-
-The framework preserves:
-
-`parameter norm ≠ resonance magnitude`.
-
----
-
-## 233. Spectral Constraint
-
-Selected linear resonance operators may use spectral constraints.
-
----
-
-## 234. Jacobian Regularization
-
-A model may penalize selected Jacobian norms of:
-
-`P_R`.
-
----
-
-## 235. Jacobian Domain
-
-The derivative space and coordinates must be explicit.
-
----
-
-## 236. Gradient Clipping Boundary
-
-Optimizer gradient clipping acts on:
-
-`grad_Theta L`.
-
-It does not directly clip physical resonance state unless the forward model explicitly defines such clipping.
-
----
-
-## 237. Resonance Output Clipping
-
-Clipping:
+The transformation behavior of:
 
 `r`
 
-changes the forward resonance model.
-
-It must therefore be explicitly declared.
+must be explicitly declared.
 
 ---
 
-## 238. Saturating Parameterization
+## 150. Scalar Resonance Coordinate
 
-A bounded activation may constrain resonance coordinates structurally.
-
----
-
-## 239. Hard Clipping versus Smooth Saturation
-
-These produce different derivative behavior.
+A scalar resonance coordinate may be invariant under the declared spatial symmetry group.
 
 ---
 
-## 240. Differentiability
+## 151. Vector Resonance Coordinate
 
-Loss terms intended for gradient optimization must define differentiability or surrogate-gradient behavior.
-
----
-
-## 241. Nondifferentiable Window Boundary
-
-A hard resonance classifier may be nondifferentiable at:
-
-`∂W_R`.
+A vector resonance coordinate must transform according to its declared representation.
 
 ---
 
-## 242. Soft Boundary Surrogate
+## 152. Tensor Resonance Coordinate
 
-Training may use a smooth surrogate for boundary classification.
-
----
-
-## 243. Hard/Soft Separation
-
-The soft optimization representation remains distinct from the exact resonance-window definition.
+A tensor resonance coordinate must follow its declared tensor transformation law.
 
 ---
 
-## 244. Surrogate Temperature
+## 153. Resonance Classification Symmetry
 
-A soft classifier may use temperature:
-
-`tau_R`.
+If classification depends only on invariant resonance geometry, class labels should remain invariant under the declared spatial symmetry.
 
 ---
 
-## 245. Resonance Temperature versus Physical Temperature
+## 154. Resonance Window Symmetry
 
-The framework preserves:
-
-`classifier temperature ≠ thermodynamic temperature`.
-
----
-
-## 246. Annealing
-
-A training schedule may vary:
-
-`tau_R[n]`.
-
----
-
-## 247. Annealing versus Physical Cooling
-
-The distinction remains:
-
-`optimization annealing ≠ physical cooling`.
-
----
-
-## 248. Resonance Curriculum
-
-Training may introduce resonance regularization in stages.
-
----
-
-## 249. Stage 1
-
-An early stage may learn equivariant representations without strong resonance penalties.
-
----
-
-## 250. Stage 2
-
-A later stage may introduce resonance-coordinate supervision.
-
----
-
-## 251. Stage 3
-
-A later stage may introduce window, persistence, or cross-scale regularization.
-
----
-
-## 252. Joint Stage
-
-A final stage may optimize mechanical, resonance, and ternary objectives jointly.
-
----
-
-## 253. Training Stage versus Resonance Transition
-
-The framework preserves:
-
-`training-stage transition ≠ resonance transition`.
-
----
-
-## 254. Composite Resonance Regularizer
-
-A general form may be:
-
-`R_R = lambda_coord R_coord + lambda_window R_window + lambda_persist R_persist + lambda_scale R_scale + lambda_sym R_sym + lambda_RT R_RT`.
-
----
-
-## 255. Coordinate Term
-
-`R_coord`
-
-regularizes resonance coordinates.
-
----
-
-## 256. Window Term
-
-`R_window`
-
-regularizes resonance-window geometry.
-
----
-
-## 257. Persistence Term
-
-`R_persist`
-
-regularizes temporal regime stability.
-
----
-
-## 258. Scale Term
-
-`R_scale`
-
-regularizes multiscale relations.
-
----
-
-## 259. Symmetry Term
-
-`R_sym`
-
-regularizes transformation consistency.
-
----
-
-## 260. Resonance-to-Ternary Term
-
-`R_RT`
-
-regularizes the declared interface from:
-
-`X_R`
-
-to ternary target.
-
----
-
-## 261. Regularization Coefficients
-
-Each:
-
-`lambda_j`
-
-is a training hyperparameter unless explicitly optimized.
-
----
-
-## 262. Scheduled Coefficients
-
-The coefficients may vary with optimization step.
-
----
-
-## 263. Adaptive Coefficients
-
-A model may adapt coefficients using:
-
-- loss scale;
-- gradient scale;
-- uncertainty;
-- validation state.
-
-The adaptation rule must be explicit.
-
----
-
-## 264. Coefficient Provenance
-
-Calibrated or externally sourced coefficients retain provenance.
-
----
-
-## 265. Resonance Metrics
-
-Training and validation may report:
-
-- coordinate MAE;
-- coordinate RMSE;
-- window-class accuracy;
-- boundary error;
-- switch rate;
-- persistence error;
-- cross-scale residual;
-- symmetry residual;
-- resonance-to-ternary consistency.
-
----
-
-## 266. Coordinate Metric
-
-A coordinate metric must respect resonance representation type.
-
----
-
-## 267. Window Accuracy
-
-A categorical resonance metric may report:
-
-- OUTSIDE accuracy;
-- BOUNDARY accuracy;
-- INSIDE accuracy.
-
----
-
-## 268. Boundary Error
-
-A metric may report distance of predicted boundary states from:
-
-`∂W_R`.
-
----
-
-## 269. Persistence Metric
-
-A metric may report disagreement in resonance residence or persistence duration.
-
----
-
-## 270. Switch Metric
-
-A model may report:
-
-`N_switch,R`.
-
----
-
-## 271. Multiscale Metric
-
-A metric may report coarse/fine resonance consistency.
-
----
-
-## 272. Symmetry Metric
-
-A model may report:
-
-`epsilon_R(g,x)`.
-
----
-
-## 273. Ternary-Consistency Metric
-
-A model may report agreement between:
-
-`P_RT(r_pred)`
-
-and:
-
-`t_target^ref`.
-
----
-
-## 274. Metric Stratification
-
-Resonance metrics may be stratified by:
-
-- species;
-- composition;
-- structure;
-- temperature;
-- pressure;
-- density;
-- ternary state;
-- scale.
-
----
-
-## 275. Resonance Coverage
-
-Metrics should be interpreted relative to training and validation coverage in:
+A resonance window must transform consistently with:
 
 `X_R`.
 
 ---
 
-## 276. Window Coverage
+## 155. Invariant Window
 
-A dataset may contain uneven representation of:
+If:
 
-`OUTSIDE`
+`W_R`
 
-`BOUNDARY`
-
-`INSIDE`.
+is defined entirely in invariant scalar coordinates, spatial rigid transformations leave the window unchanged.
 
 ---
 
-## 277. Boundary-Class Imbalance
+## 156. Equivariant Window
 
-Boundary samples may be rare.
+If:
 
-Class weighting may compensate if the learning protocol requires it.
+`W_R`
 
----
-
-## 278. Boundary Oversampling
-
-A sampler may oversample states near:
-
-`∂W_R`.
+is defined in an equivariant vector or tensor space, its transformation law must be explicit.
 
 ---
 
-## 279. Boundary Data Generation
+## 157. External Direction
 
-Synthetic perturbation may generate states near a resonance decision boundary.
-
-Their provenance must remain explicit.
+If a resonance window depends on an external field or preferred axis, that external quantity is part of the complete transformed system.
 
 ---
 
-## 280. Resonance Active Learning
+## 158. Symmetry Reduction
 
-Uncertainty or boundary sensitivity may guide acquisition of new reference samples.
+An external field may reduce the symmetry group.
 
----
-
-## 281. Window-Boundary Acquisition
-
-A model may prioritize samples near:
-
-`∂W_R`.
+The resonance regularizer must use the reduced declared group.
 
 ---
 
-## 282. Rare-Regime Acquisition
+## 159. Spatial Rotation Is Not Ternary Polarity Reversal
 
-Underrepresented resonance regimes may be targeted for new data.
+The framework preserves:
 
----
-
-## 283. Cross-Scale Acquisition
-
-A multiscale model may target configurations with large coarse/fine disagreement.
+`spatial rotation ≠ -1/1 polarity reversal`.
 
 ---
 
-## 284. Ternary-Transition Acquisition
+## 160. Permutation Symmetry
 
-A coupled learning program may acquire samples near resonance regions that generate unstable or rare ternary targets.
+Per-entity resonance states must permute with the associated entities under admissible permutations.
 
 ---
 
-## 285. Resonance Provenance
+## 161. Global Resonance Invariance
 
-Resonance regularization artifacts use the canonical provenance classes:
+A global scalar resonance metric must remain invariant under admissible entity permutation.
+
+---
+
+## 162. Symmetry Residual
+
+For invariant scalar resonance quantity:
+
+`r_scalar`
+
+a numerical residual may be:
+
+`epsilon_R = |r_scalar(gX) - r_scalar(X)|`.
+
+---
+
+## 163. Equivariant Residual
+
+For equivariant resonance quantity:
+
+`r_vec`
+
+a residual compares:
+
+`r_vec(gX)`
+
+with:
+
+`rho_R(g) r_vec(X)`.
+
+---
+
+## 164. Symmetry Regularization
+
+If symmetry is not exact by architecture, a term:
+
+`R_symmetry`
+
+may penalize the corresponding residual.
+
+---
+
+## 165. Architectural Equivariance
+
+When symmetry is exact by construction, the regularization term may be omitted while numerical symmetry validation remains defined.
+
+---
+
+## 166. Data Augmentation
+
+Symmetry-related data augmentation does not by itself establish architectural equivariance.
+
+---
+
+## 167. Augmentation Is Not Equivariance
+
+The framework preserves:
+
+`data augmentation ≠ exact equivariance`.
+
+---
+
+## 168. Resonance Reference Data
+
+Supervised resonance targets must identify their provenance.
+
+---
+
+## 169. Primary-Source Resonance Definition
+
+A resonance definition taken from an external source uses:
+
+`PRIMARY_SOURCE`.
+
+---
+
+## 170. Derived Resonance Quantity
+
+A resonance coordinate derived from established model variables may use:
+
+`DERIVED`.
+
+---
+
+## 171. Author-Defined Resonance Structure
+
+A resonance coordinate, window, mapping, or regularizer defined as part of TR-EIF may use:
+
+`AUTHOR_DEFINED`.
+
+---
+
+## 172. Calibrated Resonance Parameter
+
+A window parameter or threshold fitted against reference data may use:
+
+`CALIBRATED`.
+
+---
+
+## 173. Benchmark Resonance Result
+
+Measured resonance-classification or regularization metrics under a benchmark protocol use:
+
+`BENCHMARK`.
+
+---
+
+## 174. Test Fixture
+
+Synthetic resonance states or windows used for testing use:
+
+`TEST_FIXTURE`.
+
+---
+
+## 175. Requires Source
+
+A resonance claim requiring external support but lacking a source uses:
+
+`REQUIRES_SOURCE`.
+
+---
+
+## 176. Requires Test
+
+A numerical or empirical resonance claim lacking validation uses:
+
+`REQUIRES_TEST`.
+
+---
+
+## 177. Provenance Classes
+
+The resonance regularization layer uses:
 
 `PRIMARY_SOURCE`
 
@@ -2420,361 +1707,625 @@ Resonance regularization artifacts use the canonical provenance classes:
 
 ---
 
-## 286. Primary-Source Resonance Constraint
+## 178. Regularization Coefficient
 
-A regularization relation adopted from established literature carries:
+Let:
 
-`PRIMARY_SOURCE`.
+`lambda_R ≥ 0`
 
----
-
-## 287. Derived Resonance Constraint
-
-A constraint derived from previously defined model invariants carries:
-
-`DERIVED`.
+denote the global resonance regularization coefficient.
 
 ---
 
-## 288. Author-Defined Resonance Constraint
+## 179. Component Coefficients
 
-A TR-EIF-specific resonance architecture or coupling carries:
+For:
 
-`AUTHOR_DEFINED`.
+`R_R = sum_k lambda_k R_k`
 
----
+each:
 
-## 289. Calibrated Resonance Parameter
+`lambda_k`
 
-A fitted window or regularization coefficient carries:
-
-`CALIBRATED`.
+must be explicitly defined.
 
 ---
 
-## 290. Benchmark Resonance Result
+## 180. Coefficient Units
 
-Measured regularization residuals or performance carry:
-
-`BENCHMARK`.
+If a regularization term carries units, its coefficient must establish compatibility with the complete optimization objective.
 
 ---
 
-## 291. Resonance Test Fixture
+## 181. Fixed Coefficient
 
-Synthetic resonance trajectories or transformed configurations used for deterministic tests carry:
-
-`TEST_FIXTURE`.
+A coefficient may remain fixed during a training stage.
 
 ---
 
-## 292. FRP Executable Reference
+## 182. Scheduled Coefficient
 
-FRP provides executable reference behavior for selected phase, resonance-adjacent, and ternary mechanisms.
+A coefficient may depend on optimization step:
 
-FRP remains distinct from the full TR-EIP resonance-learning layer.
-
----
-
-## 293. FRP Phase Coupling
-
-The applicable FRP phase interaction includes:
-
-`sin(theta_j - theta_i - gamma_effective_i)`.
+`lambda_k = lambda_k[n]`.
 
 ---
 
-## 294. FRP Nominal Phase Lag
+## 183. Learned Coefficient
 
-The FRP specialization uses:
-
-`gamma_nominal = 0.30 pi`.
-
-This remains FRP-specific.
+A coefficient may be trainable only under an explicitly defined parameterization and objective.
 
 ---
 
-## 295. FRP Coupling Baseline
+## 184. Coefficient Provenance
 
-The FRP specialization uses:
-
-`K_0 = 0.28`.
-
-This remains FRP-specific.
+Every nontrivial coefficient must retain provenance.
 
 ---
 
-## 296. FRP Retained Frequency
+## 185. Training Schedule
 
-FRP retains frequency state.
+Resonance regularization may be active:
 
-This retained frequency may participate in resonance-related training traces where explicitly mapped.
-
----
-
-## 297. FRP Phase Order
-
-FRP computes:
-
-`R = sqrt(mean(cos(theta))^2 + mean(sin(theta))^2)`.
-
-The distinction remains:
-
-`R(t) ≠ C(t)`.
+- from initialization;
+- after representation pretraining;
+- after mechanical pretraining;
+- in a dedicated resonance stage;
+- during joint optimization.
 
 ---
 
-## 298. FRP Phase-to-Ternary Target
+## 186. Training Stage Is Not Resonance Regime
 
-FRP uses:
+The framework preserves:
 
-`sin(theta_i)`
-
-with threshold magnitude:
-
-`0.33`
-
-for its executable target specialization.
+`training stage ≠ resonance regime`.
 
 ---
 
-## 299. FRP Threshold Scope
+## 187. Training Stage Is Not Physical Phase
 
-The value:
+The framework preserves:
 
-`0.33`
-
-is not a universal TR-EIF resonance-window parameter.
+`training stage ≠ physical phase of matter`.
 
 ---
 
-## 300. FRP Scheduler Boundary
+## 188. Objective Interaction
 
-FRP scheduler modes:
+Resonance regularization may be optimized jointly with:
 
-`7/1`
-
-and:
-
-`1/7`
-
-belong to downstream execution.
-
-They do not define resonance regularization.
+- energy loss;
+- force loss;
+- stress loss;
+- ternary loss;
+- equivariance constraints;
+- uncertainty objectives.
 
 ---
 
-## 301. FRP Direct-Transition Boundary
+## 189. Objective Interaction Is Not Physical Coupling
 
-FRP qualified execution preserves:
+The framework preserves:
 
-`actual_direct_events = 0`
-
-under the corresponding qualified artifacts.
+`joint loss optimization ≠ physical interaction`.
 
 ---
 
-## 302. Resonance-Regularization Extension Rule
+## 190. Gradient Conflict
 
-Any resonance regularizer must define:
-
-1. resonance state space;
-
-2. target channel;
-
-3. transformation type;
-
-4. scale;
-
-5. loss or constraint;
-
-6. coefficient;
-
-7. units;
-
-8. memory dependency;
-
-9. provenance;
-
-10. validation.
+Gradients from resonance and mechanical objectives may differ in direction in parameter space.
 
 ---
 
-## 303. Coordinate-Regularization Extension Rule
+## 191. Gradient Conflict Is Not Physical Opposition
 
-Any coordinate regularizer must define:
+The framework preserves:
 
-1. coordinate identity;
-
-2. scalar/vector/tensor type;
-
-3. units;
-
-4. admissible range;
-
-5. metric;
-
-6. reduction.
+`optimization gradient conflict ≠ opposing physical force`.
 
 ---
 
-## 304. Window-Regularization Extension Rule
+## 192. Resonance Regularization Diagnostics
 
-Any resonance-window regularizer must define:
+A training or validation trace may include:
 
-1. window geometry;
-
-2. boundary;
-
-3. inclusion convention;
-
-4. trainable parameters;
-
-5. hard constraints;
-
-6. soft penalties;
-
-7. numerical tolerance.
-
----
-
-## 305. Persistence-Regularization Extension Rule
-
-Any persistence regularizer must define:
-
-1. resonance class;
-
-2. temporal coordinate;
-
-3. persistence condition;
-
-4. memory state;
-
-5. loss;
-
-6. reset behavior.
+- resonance-coordinate statistics;
+- window parameters;
+- window occupancy;
+- boundary occupancy;
+- distance to window;
+- distance to boundary;
+- crossing count;
+- crossing rate;
+- persistence metric;
+- hysteresis metric;
+- multiscale disagreement;
+- resonance-to-ternary consistency;
+- symmetry residual;
+- uncertainty where defined.
 
 ---
 
-## 306. Hysteresis-Regularization Extension Rule
+## 193. Window Occupancy Diagnostic
 
-Any hysteresis regularizer must define:
+A trace may report:
 
-1. entry condition;
+`q_out`
 
-2. exit condition;
+`q_boundary`
 
-3. retained regime state;
-
-4. hysteresis width;
-
-5. admissible ordering;
-
-6. validation.
+`q_in`.
 
 ---
 
-## 307. Multiscale-Regularization Extension Rule
+## 194. Boundary Distance Diagnostic
 
-Any multiscale resonance regularizer must define:
+A trace may report:
 
-1. scale set;
-
-2. resonance state per scale;
-
-3. cross-scale mapping;
-
-4. coarse/fine relation;
-
-5. permitted disagreement;
-
-6. weighting.
+`d_boundary(r)`.
 
 ---
 
-## 308. Symmetry-Regularization Extension Rule
+## 195. Crossing Diagnostic
 
-Any resonance symmetry regularizer must define:
+A trace may report:
 
-1. group action;
+`N_cross`.
 
-2. resonance representation;
+---
 
-3. expected transformed output;
+## 196. Persistence Diagnostic
 
-4. metric;
+A trace may report class or coordinate retention statistics over the declared sequence axis.
+
+---
+
+## 197. Hysteresis Diagnostic
+
+A trace may report:
+
+- entry point;
+- exit point;
+- loop width;
+- loop area where defined.
+
+---
+
+## 198. Multiscale Disagreement Diagnostic
+
+A trace may report:
+
+`D_R(P_(ell→m)(r^(ell)), r^(m))`.
+
+---
+
+## 199. Resonance-to-Ternary Consistency Diagnostic
+
+A trace may compare the predicted ternary target against the declared:
+
+`P_RT`
+
+mapping.
+
+---
+
+## 200. Resonance Classification Confusion Matrix
+
+Where reference resonance classes exist, classification may be evaluated using a confusion matrix for:
+
+`OUTSIDE`
+
+`BOUNDARY`
+
+`INSIDE`.
+
+---
+
+## 201. Boundary-Class Metrics
+
+The:
+
+`BOUNDARY`
+
+class may be evaluated separately through:
+
+- precision;
+- recall;
+- calibration;
+- occupancy;
+- crossing behavior.
+
+---
+
+## 202. Calibration
+
+Where resonance probabilities are produced, probability calibration may be evaluated separately from classification accuracy.
+
+---
+
+## 203. Calibration Is Not Accuracy
+
+The framework preserves:
+
+`resonance calibration ≠ resonance classification accuracy`.
+
+---
+
+## 204. Deterministic Replay
+
+A resonance evaluation may be tested for deterministic replay under fixed conditions.
+
+---
+
+## 205. Replay Is Not Resonance Validation
+
+The framework preserves:
+
+`deterministic replay ≠ validation of the resonance model`.
+
+---
+
+## 206. Numerical Precision
+
+Resonance coordinates and boundaries may be affected by:
+
+- floating-point precision;
+- mixed precision;
+- fixed-point arithmetic;
+- quantization.
+
+---
+
+## 207. Numerical Boundary Sensitivity
+
+Samples near:
+
+`∂W_R`
+
+may change classification under numerical perturbation.
+
+---
+
+## 208. Boundary Sensitivity Test
+
+A validation may perturb numerical representation and record changes in:
+
+- resonance coordinate;
+- boundary distance;
+- class label.
+
+---
+
+## 209. Numerical Instability Is Not Boundary Class
+
+The framework preserves:
+
+`numerical instability ≠ BOUNDARY`.
+
+---
+
+## 210. Quantized Resonance Representation
+
+A quantized implementation must define:
+
+- coordinate encoding;
+- window encoding;
+- threshold encoding;
+- comparison semantics;
+- rounding rules.
+
+---
+
+## 211. Quantization Error
+
+Quantization error must remain separate from resonance uncertainty.
+
+---
+
+## 212. Quantization Error Is Not Physical Resonance Width
+
+The framework preserves:
+
+`quantization step ≠ physical resonance-window width`.
+
+---
+
+## 213. Missing Resonance Data
+
+Missing resonance references must be represented by metadata or masks.
+
+---
+
+## 214. Missing Is Not Boundary
+
+The framework preserves:
+
+`MISSING ≠ BOUNDARY`.
+
+---
+
+## 215. Invalid Is Not Outside
+
+The framework preserves:
+
+`INVALID ≠ OUTSIDE resonance window`.
+
+---
+
+## 216. Uncertain Is Not Boundary
+
+The framework preserves:
+
+`UNCERTAIN ≠ BOUNDARY`.
+
+---
+
+## 217. Out-of-Domain Is Not Outside
+
+The framework preserves:
+
+`OUT_OF_DOMAIN ≠ OUTSIDE resonance window`.
+
+---
+
+## 218. Resonance Regularization Extension Rule
+
+Any new resonance regularization term must define:
+
+1. input variable;
+
+2. resonance state space;
+
+3. mathematical form;
+
+4. semantic role;
 
 5. reduction;
 
-6. coefficient.
+6. coefficient;
+
+7. differentiability;
+
+8. symmetry behavior;
+
+9. provenance;
+
+10. validation metric.
 
 ---
 
-## 309. Resonance-to-Ternary Extension Rule
+## 219. Resonance Coordinate Extension Rule
 
-Any resonance-to-ternary consistency term must define:
+Any new resonance coordinate must define:
 
-1. resonance source;
+1. source variables;
 
-2. decision map;
+2. state space;
 
-3. ternary target field;
+3. units or dimensionless status;
 
-4. active-neutral region;
+4. normalization;
 
-5. target/execution distinction;
+5. transformation law;
 
-6. classifier margin;
+6. scale;
+
+7. topology;
+
+8. provenance.
+
+---
+
+## 220. Resonance Window Extension Rule
+
+Any new resonance window must define:
+
+1. ambient resonance space;
+
+2. boundary;
+
+3. dimensionality;
+
+4. finite extent where applicable;
+
+5. topology;
+
+6. parameterization;
+
+7. history dependence;
+
+8. scale dependence;
+
+9. provenance.
+
+---
+
+## 221. Resonance Classification Extension Rule
+
+Any resonance classifier must define:
+
+1. resonance input;
+
+2. classes;
+
+3. decision surfaces;
+
+4. boundary semantics;
+
+5. tie handling;
+
+6. numerical tolerance;
+
+7. history dependence;
+
+8. calibration;
+
+9. validation.
+
+---
+
+## 222. Persistence Extension Rule
+
+Any persistence model must define:
+
+1. ordered sequence axis;
+
+2. state variable;
+
+3. retention criterion;
+
+4. transition criterion;
+
+5. initialization;
+
+6. regularization term;
 
 7. validation.
 
 ---
 
-## 310. Feedback-Regularization Extension Rule
+## 223. Hysteresis Extension Rule
 
-Any ternary-to-resonance feedback regularizer must define:
+Any resonance hysteresis model must define:
 
-1. source ternary state;
+1. history state;
 
-2. target or executed semantics;
+2. entry rule;
 
-3. pending-state usage;
+3. exit rule;
 
-4. resonance destination;
+4. threshold ordering;
 
-5. update ordering;
+5. update equation;
 
-6. memory;
+6. initialization;
 
-7. loss.
+7. loop metric where used;
+
+8. validation.
 
 ---
 
-## 311. Canonical Resonance-Regularization Invariants
+## 224. Multiscale Resonance Extension Rule
 
-Every conforming resonance-regularization layer preserves:
+Any multiscale resonance model must define:
+
+1. scale set;
+
+2. state space at each scale;
+
+3. window at each scale;
+
+4. cross-scale mapping;
+
+5. aggregation;
+
+6. consistency term;
+
+7. symmetry behavior;
+
+8. validation.
+
+---
+
+## 225. Resonance-to-Ternary Extension Rule
+
+Any resonance-to-ternary mapping must define:
+
+1. resonance input;
+
+2. context input;
+
+3. history input where used;
+
+4. scale;
+
+5. decision rule;
+
+6. ternary target;
+
+7. uncertainty handling;
+
+8. calibration;
+
+9. execution interface.
+
+---
+
+## 226. Resonance-Mechanical Extension Rule
+
+Any resonance-conditioned mechanical model must define:
+
+1. resonance variable;
+
+2. conditioning location;
+
+3. energy relation;
+
+4. force relation;
+
+5. stress relation;
+
+6. differentiability;
+
+7. symmetry behavior;
+
+8. validation.
+
+---
+
+## 227. Symmetry Extension Rule
+
+Any resonance quantity affected by a symmetry group must define:
+
+1. group;
+
+2. input action;
+
+3. resonance representation;
+
+4. transformation law;
+
+5. invariant or equivariant classification;
+
+6. numerical residual;
+
+7. tolerance.
+
+---
+
+## 228. Canonical Resonance Regularization Invariants
+
+Every conforming TR-EIF resonance regularization layer preserves:
 
 1. explicit resonance state space;
 
-2. explicit transformation law;
+2. explicit resonance coordinate;
 
-3. explicit window semantics;
+3. explicit resonance window where classification is used;
 
-4. explicit scale;
+4. explicit resonance boundary;
 
-5. explicit temporal semantics;
+5. explicit classification semantics;
 
-6. explicit memory where required;
+6. explicit persistence or hysteresis state where used;
 
-7. explicit resonance-to-ternary mapping;
+7. explicit multiscale mapping where used;
 
-8. explicit provenance.
+8. explicit resonance-to-ternary mapping;
+
+9. explicit symmetry behavior;
+
+10. explicit provenance.
 
 ---
 
-## 312. Canonical State-Separation Invariants
+## 229. Canonical Resonance Distinctions
 
 The framework preserves:
+
+`resonance ≠ frequency equality`
 
 `resonance ≠ synchronization`
 
@@ -2782,31 +2333,41 @@ The framework preserves:
 
 `phase locking ≠ resonance`
 
+`coherence ≠ uniformity`
+
 `coherence ≠ resonance`
 
-`R(t) ≠ C(t)`
+`phase order ≠ complete coherence`
 
-`resonance class ≠ ternary state`
-
-`resonance margin ≠ ternary margin`
-
-`resonance boundary ≠ ternary neutral`
-
-`resonance memory ≠ frequency memory`
-
-`OUT_OF_DOMAIN ≠ OUTSIDE resonance window`.
+`R(t) ≠ C(t)`.
 
 ---
 
-## 313. Canonical Transition Distinctions
+## 230. Canonical Classification Distinctions
+
+The framework preserves:
+
+`OUTSIDE/BOUNDARY/INSIDE ≠ -1/0/1`
+
+`resonance class ≠ ternary state`
+
+`BOUNDARY ≠ uncertainty`
+
+`OUTSIDE ≠ OUT_OF_DOMAIN`
+
+`INSIDE ≠ IN_DOMAIN`.
+
+---
+
+## 231. Canonical Transition Distinctions
 
 The framework preserves:
 
 `resonance-window crossing ≠ bifurcation`
 
-`resonance transition ≠ bifurcation`
+`resonance-window crossing ≠ ternary transition`
 
-`resonance transition ≠ ternary transition`
+`bifurcation ≠ ternary transition`
 
 `ternary transition ≠ structural transition`
 
@@ -2814,43 +2375,63 @@ The framework preserves:
 
 ---
 
-## 314. Canonical Mechanical Distinctions
+## 232. Canonical Physical Distinctions
 
 The framework preserves:
 
-`resonance coordinate ≠ energy`
-
-`resonance vector ≠ force`
-
-`resonance tensor ≠ stress`
+`oscillator phase ≠ physical phase of matter`
 
 `phase coupling ≠ mechanical force`
 
-`phase relation ≠ chemical bond`.
+`phase relation ≠ chemical bond`
+
+`resonance classification ≠ energy`
+
+`ternary state ≠ energy`.
 
 ---
 
-## 315. Canonical Ternary Boundary
+## 233. Canonical Domain Distinctions
 
-Resonance regularization may influence:
+The framework preserves:
 
-`t_target`.
+`resonance boundary ≠ model-domain boundary`
 
-It does not change the exact ternary domain:
+`resonance uncertainty ≠ domain status`
 
-`-1/0/1`.
+`distance to resonance boundary ≠ predictive uncertainty`.
 
-The state:
+---
+
+## 234. Canonical Ternary Interface
+
+The resonance layer may propose or condition:
+
+`t_target ∈ {-1,0,1}`
+
+through an explicit mapping:
+
+`P_RT`.
+
+---
+
+## 235. Active Neutral
+
+The ternary state:
 
 `0`
 
 remains active neutral.
 
+It is not the resonance:
+
+`BOUNDARY`
+
+class by identity.
+
 ---
 
-## 316. Canonical Execution Boundary
-
-Resonance regularization remains upstream of committed execution.
+## 236. Direct Opposite Execution
 
 Direct committed:
 
@@ -2864,9 +2445,9 @@ remain forbidden.
 
 ---
 
-## 317. Canonical Opposite Routes
+## 237. Opposite-Polarity Routes
 
-The only canonical opposite-polarity committed routes remain:
+The canonical routes remain:
 
 `-1 → 0 → 1`
 
@@ -2876,171 +2457,126 @@ and:
 
 ---
 
-## 318. Canonical Regularization Boundary
+## 238. Interface to Chapter 07
 
-A soft resonance penalty may shape:
+Chapter 07 defines equivariance constraints.
 
-- coordinates;
-- windows;
-- persistence;
-- scale relations;
-- symmetry;
-- classifier margins.
+The resonance interface requires:
 
-It cannot replace hard architectural state semantics.
+- explicit transformation type for every resonance quantity;
+- symmetry-compatible resonance windows;
+- invariant classification where applicable;
+- declared handling of external symmetry-breaking variables.
 
 ---
 
-## 319. Canonical Resonance-Regularization Chain
+## 239. Interface to Chapter 08
 
-The canonical chain is:
+Chapter 08 defines uncertainty and domain detection.
 
-`X_EQ`
+The resonance interface requires separation among:
 
-`→ P_R`
-
-`→ X_R`
-
-`→ coordinate/window/persistence regularization`
-
-`→ P_RT`
-
-`→ ternary target`.
-
----
-
-## 320. Canonical Multiscale Chain
-
-A multiscale regularization chain may be:
-
-`edge resonance`
-
-`→ atom resonance`
-
-`→ cluster resonance`
-
-`→ global resonance`
-
-`→ cross-scale consistency objective`.
-
----
-
-## 321. Canonical Feedback Chain
-
-A coupled feedback chain may be:
-
-`t_exec`
-
-`→ resonance feedback parameterization`
-
-`→ r_next`
-
-`→ resonance regularization`
-
-`→ next ternary target`.
-
----
-
-## 322. Interface to Chapter 07
-
-Chapter 07 develops Equivariance Constraints.
-
-It generalizes symmetry constraints across:
-
-- configuration;
-- graph;
-- representation;
-- resonance;
-- ternary state;
-- energy;
-- force;
-- stress.
-
-The present chapter supplies the resonance-specific symmetry relations.
-
----
-
-## 323. Interface to Chapter 08
-
-Chapter 08 develops Uncertainty and Domain Detection.
-
-It defines:
-
+- resonance state;
+- resonance class;
 - resonance uncertainty;
-- domain coverage;
-- out-of-domain detection;
-- confidence;
-- uncertainty-aware weighting.
+- model-domain state;
+- numerical validity.
 
 ---
 
-## 324. Interface to Chapter 09
+## 240. Interface to Chapter 09
 
-Chapter 09 develops Optimization.
+Chapter 09 defines optimization.
 
-It consumes:
+The resonance interface supplies:
 
-`R_R`
-
-together with:
-
-- mechanical loss;
-- ternary regularization;
-- symmetry constraints;
-- uncertainty objectives
-
-to update:
-
-`Theta`.
+- resonance regularization terms;
+- trainable resonance parameters;
+- window constraints;
+- persistence constraints;
+- hysteresis constraints;
+- multiscale constraints;
+- resonance-to-ternary consistency terms.
 
 ---
 
-## 325. Final Formal Structure
+## 241. Final Formal Structure
 
 The resonance regularization layer may be represented as:
 
-`RRG = (X_R, P_R, W_R, C_R, M_R, R_coord, R_window, R_persist, R_hyst, R_scale, R_sym, R_RT, Lambda_R)`.
+`REG_R = (X_R, r, W_R, ∂W_R, C_R, H_R, P_MS, P_RT, R_R, V_R)`.
 
 Here:
 
-- `X_R` is resonance state;
-- `P_R` is resonance parameterization;
-- `W_R` is the resonance-window structure;
-- `C_R` is resonance classification;
-- `M_R` is retained resonance memory;
-- `R_coord` is coordinate regularization;
-- `R_window` is window regularization;
-- `R_persist` is temporal persistence regularization;
-- `R_hyst` is hysteresis regularization;
-- `R_scale` is multiscale regularization;
-- `R_sym` is symmetry regularization;
-- `R_RT` is resonance-to-ternary consistency;
-- `Lambda_R` is the regularization-coefficient state.
+- `X_R` is the resonance state space;
+- `r` is the resonance state;
+- `W_R` is the resonance window;
+- `∂W_R` is its boundary;
+- `C_R` is the resonance classification operator;
+- `H_R` is persistence or hysteresis state where used;
+- `P_MS` is the multiscale mapping system;
+- `P_RT` is the resonance-to-ternary mapping;
+- `R_R` is the resonance regularization functional;
+- `V_R` is the validation contract.
 
-A composite resonance regularizer may be written:
+A generic resonance regularization objective may be written:
 
-`R_R = sum_j lambda_R,j R_R,j`.
+`R_R = sum_k lambda_k R_k`.
+
+Each component:
+
+`R_k`
+
+must define its inputs, mathematical form, coefficient, provenance, and validation metric.
 
 ---
 
-## 326. Final Statement
+## 242. Final Statement
 
-Resonance regularization provides the learning-layer constraints required to maintain a structured and stable resonance representation within TR-EIP.
+Resonance regularization constrains learned resonance representations and their interfaces within TR-EIF.
 
-It may regulate:
+The resonance state is defined in:
+
+`X_R`.
+
+A resonance window is:
+
+`W_R ⊂ X_R`.
+
+Its boundary is:
+
+`∂W_R`.
+
+The resonance classes:
+
+`OUTSIDE`
+
+`BOUNDARY`
+
+and:
+
+`INSIDE`
+
+remain distinct from the balanced ternary states:
+
+`-1/0/1`.
+
+The resonance layer preserves explicit separation among:
 
 - resonance coordinates;
-- resonance-window geometry;
-- boundary margins;
+- resonance windows;
+- resonance classification;
 - persistence;
 - hysteresis;
-- local/global relations;
 - multiscale mappings;
-- symmetry;
-- resonance-to-ternary consistency;
-- feedback behavior.
+- uncertainty;
+- model-domain state;
+- ternary targets;
+- committed ternary execution.
 
-The framework preserves:
+The following distinctions remain invariant:
+
+`resonance ≠ frequency equality`
 
 `resonance ≠ synchronization`
 
@@ -3052,23 +2588,21 @@ The framework preserves:
 
 `R(t) ≠ C(t)`
 
-`resonance class ≠ ternary state`
+`resonance-window crossing ≠ bifurcation`
 
-`resonance boundary ≠ active-neutral 0`
+`resonance-window crossing ≠ ternary transition`
 
-`resonance transition ≠ bifurcation`
+`OUTSIDE/BOUNDARY/INSIDE ≠ -1/0/1`
 
-`resonance transition ≠ ternary transition`
+`resonance classification ≠ energy`
 
-`resonance state ≠ energy`
+`resonance boundary ≠ model-domain boundary`
 
-`resonance state ≠ force`
+`OUT_OF_DOMAIN ≠ OUTSIDE resonance window`.
 
-`phase coupling ≠ mechanical force`.
+Any resonance-to-ternary relation is defined through an explicit mapping.
 
-Resonance regularization may shape the upstream state that generates ternary targets.
-
-It does not redefine the exact balanced ternary kernel:
+The ternary semantic kernel remains:
 
 `-1/0/1`.
 
@@ -3078,7 +2612,7 @@ The state:
 
 remains active neutral.
 
-For execution-bound state, direct committed:
+Direct committed:
 
 `-1 → 1`
 
@@ -3096,4 +2630,4 @@ and:
 
 `1 → 0 → -1`.
 
-These definitions establish the resonance-learning constraints required for Equivariance Constraints developed in Chapter 07.
+These definitions establish the resonance regularization interface used by the equivariance, uncertainty, and optimization layers.
