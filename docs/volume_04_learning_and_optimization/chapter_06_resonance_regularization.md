@@ -2,7 +2,7 @@
 
 ## 1. Purpose
 
-This chapter defines resonance regularization for the TR-EIF learning and optimization layer.
+This chapter defines resonance regularization for the TR-EIP learning and optimization layer within TR-EIF.
 
 Resonance regularization acts on:
 
@@ -2297,7 +2297,7 @@ Any resonance quantity affected by a symmetry group must define:
 
 ## 228. Canonical Resonance Regularization Invariants
 
-Every conforming TR-EIF resonance regularization layer preserves:
+Every conforming TR-EIP resonance regularization layer within TR-EIF preserves:
 
 1. explicit resonance state space;
 
