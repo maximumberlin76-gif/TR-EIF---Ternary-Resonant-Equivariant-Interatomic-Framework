@@ -165,6 +165,7 @@ def evaluate_trajectory_energy(
         )
 
         potential = model.evaluate(
+            configuration=state.configuration,
             features=features,
             execution=execution,
             graph=graph,
