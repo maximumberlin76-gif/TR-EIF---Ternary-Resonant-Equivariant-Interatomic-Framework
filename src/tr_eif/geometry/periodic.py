@@ -3,8 +3,11 @@
 from __future__ import annotations
 
 from math import floor, isfinite
+from typing import TypeAlias
 
 from tr_eif.configuration import Cell3x3, PeriodicAxes, Vector3
+
+ImageIndex: TypeAlias = tuple[int, int, int]
 
 
 def _validate_vector3(value: Vector3, *, field_name: str) -> None:
@@ -32,6 +35,17 @@ def _validate_periodic(periodic: PeriodicAxes) -> None:
 
     if not all(isinstance(flag, bool) for flag in periodic):
         raise TypeError("periodic must contain only boolean flags.")
+
+
+def _validate_image_index(image: ImageIndex) -> None:
+    if len(image) != 3:
+        raise ValueError("image must contain exactly three integer indices.")
+
+    if not all(
+        isinstance(component, int) and not isinstance(component, bool)
+        for component in image
+    ):
+        raise TypeError("image must contain only integer indices.")
 
 
 def _cell_determinant(cell: Cell3x3) -> float:
@@ -136,19 +150,14 @@ def periodic_image_displacement(
     source: Vector3,
     target: Vector3,
     cell: Cell3x3,
-    image: tuple[int, int, int],
+    image: ImageIndex,
 ) -> Vector3:
     """Return source-to-target displacement for an explicit periodic image."""
 
     _validate_vector3(source, field_name="source")
     _validate_vector3(target, field_name="target")
     _validate_cell(cell)
-
-    if len(image) != 3:
-        raise ValueError("image must contain exactly three integer indices.")
-
-    if not all(isinstance(index, int) and not isinstance(index, bool) for index in image):
-        raise TypeError("image must contain only integer indices.")
+    _validate_image_index(image)
 
     image_translation = fractional_to_cartesian(
         (float(image[0]), float(image[1]), float(image[2])),
@@ -162,13 +171,13 @@ def periodic_image_displacement(
     )
 
 
-def minimum_image_displacement(
+def minimum_image(
     source: Vector3,
     target: Vector3,
     cell: Cell3x3,
     periodic: PeriodicAxes,
-) -> Vector3:
-    """Return a fractional-coordinate wrapped source-to-target displacement."""
+) -> tuple[Vector3, ImageIndex]:
+    """Return fractional-wrapped displacement and its periodic image index."""
 
     _validate_vector3(source, field_name="source")
     _validate_vector3(target, field_name="target")
@@ -183,16 +192,50 @@ def minimum_image_displacement(
 
     fractional_delta = cartesian_to_fractional(cartesian_delta, cell)
 
-    wrapped = tuple(
-        component - floor(component + 0.5) if is_periodic else component
-        for component, is_periodic in zip(
-            fractional_delta,
-            periodic,
-            strict=True,
-        )
+    image_components: list[int] = []
+    wrapped_components: list[float] = []
+
+    for component, is_periodic in zip(
+        fractional_delta,
+        periodic,
+        strict=True,
+    ):
+        if is_periodic:
+            image_component = -floor(component + 0.5)
+        else:
+            image_component = 0
+
+        image_components.append(image_component)
+        wrapped_components.append(component + image_component)
+
+    image: ImageIndex = (
+        image_components[0],
+        image_components[1],
+        image_components[2],
     )
 
-    return fractional_to_cartesian(
-        (wrapped[0], wrapped[1], wrapped[2]),
-        cell,
+    wrapped_fractional: Vector3 = (
+        wrapped_components[0],
+        wrapped_components[1],
+        wrapped_components[2],
     )
+
+    return fractional_to_cartesian(wrapped_fractional, cell), image
+
+
+def minimum_image_displacement(
+    source: Vector3,
+    target: Vector3,
+    cell: Cell3x3,
+    periodic: PeriodicAxes,
+) -> Vector3:
+    """Return a fractional-coordinate wrapped source-to-target displacement."""
+
+    wrapped_displacement, _ = minimum_image(
+        source,
+        target,
+        cell,
+        periodic,
+    )
+
+    return wrapped_displacement
