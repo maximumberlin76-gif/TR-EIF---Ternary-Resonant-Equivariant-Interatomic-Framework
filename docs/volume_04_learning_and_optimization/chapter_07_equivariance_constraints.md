@@ -2,7 +2,7 @@
 
 ## 1. Purpose
 
-This chapter defines equivariance constraints for the TR-EIF learning and optimization layer.
+This chapter defines equivariance constraints for the TR-EIP learning and optimization layer within TR-EIF.
 
 The equivariance layer specifies how model inputs, latent representations, resonance variables, ternary outputs, energies, forces, stresses, and uncertainty quantities transform under declared symmetry operations.
 
@@ -2242,7 +2242,7 @@ Any external field must define:
 
 ## 248. Canonical Equivariance Invariants
 
-Every conforming TR-EIF equivariance layer preserves:
+Every conforming TR-EIP equivariance layer within TR-EIF preserves:
 
 1. explicit symmetry group;
 
