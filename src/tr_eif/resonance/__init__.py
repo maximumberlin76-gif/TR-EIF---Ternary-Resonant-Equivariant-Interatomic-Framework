@@ -1,6 +1,7 @@
 """Resonance-state representations and dynamics for TR-EIF."""
 
 from .dynamics import PhaseDerivativeVector, phase_derivatives
+from .integrator import euler_step
 from .parameters import (
     CouplingVector,
     PhaseDynamicsParameters,
@@ -22,6 +23,7 @@ __all__ = [
     "PhaseLagVector",
     "PhaseVector",
     "ResonanceState",
+    "euler_step",
     "phase_derivatives",
     "wrap_phase",
     "wrap_phases",
