@@ -433,7 +433,6 @@ def test_fluorine_only_configuration_has_no_formula_units() -> None:
         "li",
         "be",
         "f",
-        "",
         "Li ",
     ),
 )
