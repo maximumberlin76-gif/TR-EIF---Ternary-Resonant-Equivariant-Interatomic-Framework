@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from math import isfinite
 from typing import TypeAlias
 
 from tr_eif.configuration import Vector3
@@ -58,6 +59,11 @@ def accelerations_from_forces(
             )
 
         normalized = float(mass)
+
+        if not isfinite(normalized):
+            raise ValueError(
+                f"masses[{index}] must be finite."
+            )
 
         if normalized <= 0.0:
             raise ValueError(
