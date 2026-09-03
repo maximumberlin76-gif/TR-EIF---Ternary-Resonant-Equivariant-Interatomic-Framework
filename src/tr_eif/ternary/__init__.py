@@ -30,17 +30,25 @@ from .transition import (
     is_committed_transition_allowed,
     is_direct_opposite_transition,
 )
+from .vector_execution import (
+    TernaryExecutionVector,
+    TernaryVectorExecutionStep,
+    execute_ternary_vector_step,
+)
 
 __all__ = [
     "ResonanceProjection",
     "TernaryExecutionState",
     "TernaryExecutionStep",
+    "TernaryExecutionVector",
     "TernaryRoute",
     "TernaryState",
     "TernaryTargetThresholds",
     "TernaryTransition",
     "TernaryVector",
+    "TernaryVectorExecutionStep",
     "execute_ternary_step",
+    "execute_ternary_vector_step",
     "is_committed_transition_allowed",
     "is_direct_opposite_transition",
     "route_pending_target",
