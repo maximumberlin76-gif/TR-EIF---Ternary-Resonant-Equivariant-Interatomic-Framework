@@ -2,7 +2,7 @@
 
 ## 1. Scope
 
-Volume 04 defines the learning and optimization layer of TR-EIF.
+Volume 04 defines the learning and optimization layer of the TR-EIP model family within TR-EIF.
 
 The volume connects:
 
@@ -1543,7 +1543,7 @@ It provides trainable mappings, objectives, constraints, and validation interfac
 
 ## 114. Volume Closure
 
-Volume 04 establishes the learning and optimization formalism used by subsequent TR-EIF volumes.
+Volume 04 establishes the learning and optimization formalism of the TR-EIP model family within TR-EIF for use by subsequent TR-EIF volumes.
 
 Its interfaces provide:
 
