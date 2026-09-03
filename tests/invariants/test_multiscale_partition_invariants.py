@@ -342,4 +342,31 @@ def test_membership_lookup_rejects_out_of_range_coarse_index(
 
 
 @pytest.mark.parametrize(
-    "
+    "invalid_coarse_index",
+    (
+        1.0,
+        "1",
+        None,
+        True,
+    ),
+)
+def test_membership_lookup_requires_integer_coarse_index(
+    invalid_coarse_index,
+) -> None:
+    """Membership lookup requires a non-Boolean integer."""
+
+    partition = MultiscalePartition(
+        fine_to_coarse=(
+            0,
+            0,
+            1,
+        )
+    )
+
+    with pytest.raises(
+        TypeError,
+        match="coarse_index must be an integer",
+    ):
+        partition.fine_indices_for(
+            invalid_coarse_index
+        )
