@@ -1,6 +1,11 @@
 """E(3)-equivariant feature representations and operations for TR-EIF."""
 
 from .aggregation import aggregate_messages
+from .conditioning import (
+    TernaryConditioning,
+    condition_feature_vector,
+    condition_node_features,
+)
 from .edge import (
     EquivariantEdgeInput,
     edge_input_from_geometry,
@@ -36,8 +41,11 @@ __all__ = [
     "NodeFeatureVector",
     "RadialMessageOperator",
     "ScalarFeatures",
+    "TernaryConditioning",
     "VectorFeatures",
     "aggregate_messages",
+    "condition_feature_vector",
+    "condition_node_features",
     "edge_input_from_geometry",
     "equivariant_layer_step",
     "evaluate_equivariant_edge_input",
