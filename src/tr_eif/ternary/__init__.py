@@ -16,6 +16,10 @@ from .state import (
     validate_ternary_state,
     validate_ternary_vector,
 )
+from .target import (
+    TernaryTargetThresholds,
+    ternary_target_from_scalar,
+)
 from .transition import (
     TernaryTransition,
     is_committed_transition_allowed,
@@ -27,6 +31,7 @@ __all__ = [
     "TernaryExecutionStep",
     "TernaryRoute",
     "TernaryState",
+    "TernaryTargetThresholds",
     "TernaryTransition",
     "TernaryVector",
     "execute_ternary_step",
@@ -34,6 +39,7 @@ __all__ = [
     "is_direct_opposite_transition",
     "route_pending_target",
     "route_ternary_target",
+    "ternary_target_from_scalar",
     "validate_ternary_state",
     "validate_ternary_vector",
 ]
