@@ -155,6 +155,11 @@ def test_vector_commits_never_contain_direct_opposite_transition() -> None:
 
     second = execute_ternary_vector_step(
         state=first.current,
+        requested_targets=(
+            TernaryState.POSITIVE,
+            TernaryState.POSITIVE,
+            TernaryState.NEGATIVE,
+        ),
     )
 
     for vector_step in (first, second):
