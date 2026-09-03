@@ -2,2254 +2,1399 @@
 
 ## 1. Purpose
 
-This chapter defines the message-passing layer of the Equivariant Interatomic Framework within TR-EIF.
+This chapter defines the message-passing layer of the TR-EIF equivariant interatomic framework.
 
-Message passing propagates information over the interaction graph while preserving:
+Message passing provides a structured mapping between local interatomic environments and updated entity representations while preserving the declared geometric, permutation, species, and representation-type constraints.
 
-- spatial equivariance;
-- atom-permutation equivariance;
-- representation-type separation;
-- locality;
-- deterministic update semantics;
-- explicit source/receiver orientation;
-- interfaces to resonance parameterization;
-- interfaces to ternary feature channels;
-- interfaces to energy, force, and stress.
+The layer operates on an interaction graph and defines:
 
-The canonical chain is:
-
-`atomic configuration`
-
-`→ interaction graph`
-
-`→ equivariant representation`
-
-`→ message passing`
-
-`→ resonance parameterization`
-
-`→ ternary feature channels`
-
-`→ conservative energy`
-
-`→ forces and stress`.
-
-Message passing is a computational feature-propagation mechanism.
-
-It is not mechanical force, physical energy transfer, chemical bonding, oscillator phase coupling, or ternary execution by identity.
+- node states;
+- edge states;
+- neighborhood relations;
+- message functions;
+- aggregation operators;
+- update functions;
+- representation types;
+- geometric dependencies;
+- resonance-conditioned channels;
+- multilevel propagation;
+- output interfaces.
 
 ---
 
-## 2. Graph Domain
+## 2. Dependencies
+
+This chapter depends on:
+
+- Volume 01 — Mathematical Foundations;
+- Volume 02 — Ternary Resonance Theory;
+- Volume 03 Chapter 01 — Interatomic State Space;
+- Volume 03 Chapter 02 — Symmetry Groups;
+- Volume 03 Chapter 03 — Invariant Representations;
+- Volume 03 Chapter 04 — Equivariant Representations.
+
+---
+
+## 3. Interaction Graph
+
+An interatomic configuration is represented by a graph:
+
+`G = (V, E)`.
+
+Here:
+
+- `V` is the set of entities or atomic sites;
+- `E` is the set of declared interaction edges.
+
+An entity is indexed by:
+
+`i ∈ V`.
+
+A directed interaction edge is written:
+
+`(i,j) ∈ E`.
+
+---
+
+## 4. Node State
+
+The state associated with entity:
+
+`i`
+
+at message-passing layer:
+
+`k`
+
+is written:
+
+`h_i^[k]`.
+
+The initial state:
+
+`h_i^[0]`
+
+is constructed from declared input features.
+
+---
+
+## 5. Initial Node Features
+
+Initial node features may contain:
+
+- species identity;
+- invariant scalar descriptors;
+- equivariant descriptors;
+- explicitly defined local state variables;
+- externally supplied attributes.
+
+Every component must have a declared semantic and transformation type.
+
+---
+
+## 6. Species Representation
 
 Let:
 
-`G = (V, E)`
+`Z_i`
 
-be the interaction graph.
-
-The node set is:
-
-`V = {1, ..., N}`.
-
-A directed edge:
-
-`j → i`
-
-represents information propagation from source:
-
-`j`
-
-to receiver:
+denote the species or entity type of node:
 
 `i`.
 
----
+A species embedding may be written:
 
-## 3. Receiver Convention
+`e_Z(Z_i)`.
 
-Throughout this chapter:
-
-`j → i`
-
-means:
-
-- source = `j`;
-- receiver = `i`.
-
-The corresponding relative displacement is:
-
-`r_ij = r_j - r_i`
-
-under the applicable periodic-image convention.
-
-This orientation must remain fixed throughout equations, code, tests, and serialized artifacts.
+Species identity is not inferred from spatial coordinates.
 
 ---
 
-## 4. Node Representation
+## 7. Position Variables
 
-At message-passing layer:
+Let:
+
+`R_i ∈ R^3`
+
+denote the Cartesian position of entity:
+
+`i`.
+
+Absolute position is not required to be an invariant local descriptor.
+
+Relative geometry is constructed from pairs of positions.
+
+---
+
+## 8. Relative Displacement
+
+For an edge:
+
+`(i,j)`
+
+define:
+
+`R_ij = R_j - R_i`.
+
+Under global translation:
+
+`R_i → R_i + a`
+
+the relative displacement remains unchanged.
+
+---
+
+## 9. Pair Distance
+
+The pair distance is:
+
+`d_ij = ||R_ij||`.
+
+It is invariant under rigid translation and orthogonal spatial transformations.
+
+---
+
+## 10. Relative Direction
+
+For:
+
+`d_ij > 0`
+
+define:
+
+`u_ij = R_ij / d_ij`.
+
+The relative direction transforms equivariantly under rotation.
+
+Behavior for zero or unresolved separation must be explicitly defined by the implementation.
+
+---
+
+## 11. Neighborhood
+
+The neighborhood of node:
+
+`i`
+
+is:
+
+`N(i) = {j | (i,j) ∈ E}`.
+
+The construction of:
+
+`N(i)`
+
+is part of the interaction-topology definition.
+
+---
+
+## 12. Cutoff Neighborhood
+
+A distance-based neighborhood may be defined by:
+
+`d_ij ≤ r_cut`.
+
+Here:
+
+`r_cut`
+
+is the declared interaction cutoff.
+
+---
+
+## 13. Cutoff Function
+
+A cutoff function may be written:
+
+`c(d_ij)`.
+
+Its support, smoothness, boundary behavior, and parameter values must be explicit.
+
+---
+
+## 14. Edge State
+
+The edge representation at layer:
 
 `k`
 
-let the node state be:
+is written:
 
-`h_i^[k] ∈ X_node^[k]`.
+`e_ij^[k]`.
 
-The index:
+It may depend on:
 
-`k`
-
-denotes message-passing depth.
-
-It is not:
-
-- physical time;
-- numerical timestep;
-- ternary execution tact;
-- irrep degree.
-
----
-
-## 5. Edge Representation
-
-For edge:
-
-`j → i`
-
-let:
-
-`e_ij^[k] ∈ X_edge^[k]`.
-
-The edge representation may include:
-
-- distance;
+- pair distance;
 - relative direction;
-- radial basis features;
-- angular representation;
-- species-pair features;
-- periodic-image shift;
-- learned latent state;
-- resonance-related features at later stages.
+- species pair;
+- invariant radial basis;
+- angular basis;
+- resonance variables;
+- other explicitly defined pair quantities.
 
 ---
 
-## 6. Global Representation
+## 15. Message Function
 
-A message-passing layer may also consume:
+The message from node:
 
-`g^[k] ∈ X_global^[k]`.
+`j`
 
-Global state may include:
-
-- composition;
-- cell information;
-- global invariant descriptors;
-- external control state;
-- global resonance variables.
-
----
-
-## 7. Message Function
-
-For directed edge:
-
-`j → i`
-
-define:
-
-`m_ij^[k] = M^[k](h_i^[k], h_j^[k], e_ij^[k], g^[k])`.
-
-The function:
-
-`M^[k]`
-
-is the message map.
-
----
-
-## 8. Message Space
-
-The message belongs to:
-
-`m_ij^[k] ∈ X_msg^[k]`.
-
-The message space may contain multiple irreducible representation channels.
-
----
-
-## 9. Directed Message
-
-A message is receiver-specific.
-
-In general:
-
-`m_ij ≠ m_ji`.
-
-Even when pair geometry is symmetric, source and receiver node states may differ.
-
----
-
-## 10. Message versus Edge
-
-The distinction is:
-
-`message ≠ graph edge`.
-
-The edge defines a relation.
-
-The message is a computed feature propagated over that relation.
-
----
-
-## 11. Message versus Force
-
-The invariant distinction is:
-
-`message ≠ mechanical force`.
-
-A vector-valued message may transform like a vector without carrying force semantics.
-
----
-
-## 12. Message versus Energy Transfer
-
-The distinction is:
-
-`message ≠ physical energy transfer`.
-
-A learned message carries computational information unless an explicit physical mapping assigns another interpretation.
-
----
-
-## 13. Message versus Chemical Bond
-
-The distinction remains:
-
-`message ≠ chemical bond`.
-
----
-
-## 14. Message versus Oscillator Coupling
-
-The distinction remains:
-
-`message passing ≠ Kuramoto-Sakaguchi phase coupling`.
-
-The two mechanisms may later interact through explicit mappings.
-
----
-
-## 15. Message versus Ternary Transition
-
-A message update does not directly constitute:
-
-`-1 → 0`
-
-`0 → 1`
-
-or any other ternary transition.
-
----
-
-## 16. Incoming Neighborhood
-
-For receiver:
+to node:
 
 `i`
 
-define:
+at layer:
 
-`N_i = {j | j → i ∈ E}`.
+`k`
 
-All incoming messages for node:
+is:
+
+`m_ij^[k] = M_k(h_i^[k], h_j^[k], e_ij^[k])`.
+
+The message function:
+
+`M_k`
+
+must preserve the declared representation structure.
+
+---
+
+## 16. Incoming Message Set
+
+The incoming message set for node:
 
 `i`
 
-are:
+is:
 
-`{m_ij | j ∈ N_i}`.
+`{m_ij^[k] | j ∈ N(i)}`.
+
+Neighbor ordering must not change the physical result when the graph semantics are permutation invariant.
 
 ---
 
 ## 17. Aggregation
 
-Define an aggregation operator:
-
-`A`.
-
 The aggregated message is:
 
-`m_i^[k] = A({m_ij^[k] | j ∈ N_i})`.
+`m_i^[k] = A_k({m_ij^[k] | j ∈ N(i)})`.
+
+The aggregation operator:
+
+`A_k`
+
+must have an explicitly defined permutation behavior.
 
 ---
 
 ## 18. Permutation-Invariant Aggregation
 
-The aggregation must not depend on arbitrary neighbor ordering.
+For ordinary unordered neighborhoods, admissible aggregation operators may include:
 
-For admissible permutation of incoming messages:
+- sum;
+- mean;
+- another explicitly permutation-invariant reduction.
 
-`A({m_ij})`
-
-must produce the same receiver aggregate under the corresponding reindexing.
+The selected operator is part of the model definition.
 
 ---
 
 ## 19. Sum Aggregation
 
-A canonical aggregation is:
+A sum aggregation is:
 
-`m_i = sum_(j ∈ N_i) m_ij`.
+`m_i^[k] = sum_(j ∈ N(i)) m_ij^[k]`.
 
-This is invariant to neighbor ordering.
+The output representation type is determined by the message representation.
 
 ---
 
 ## 20. Mean Aggregation
 
-A mean aggregation may use:
+A mean aggregation is:
 
-`m_i = (1 / |N_i|) sum_(j ∈ N_i) m_ij`
+`m_i^[k] = (1 / |N(i)|) sum_(j ∈ N(i)) m_ij^[k]`
 
-when:
+for:
 
-`|N_i| > 0`.
+`|N(i)| > 0`.
 
----
-
-## 21. Maximum Aggregation
-
-Selected scalar channels may use a maximum operation.
-
-Such an operation requires compatible transformation semantics.
-
-A componentwise maximum over vector coordinates does not generally preserve rotation equivariance.
-
----
-
-## 22. Weighted Aggregation
-
-A weighted aggregation may be:
-
-`m_i = sum_j w_ij m_ij`.
-
-If:
-
-`w_ij`
-
-is an invariant scalar, the representation type of:
-
-`m_ij`
-
-is preserved.
-
----
-
-## 23. Learned Weights
-
-A learned weight may be:
-
-`w_ij = F_w(h_i, h_j, e_ij)`.
-
-If it is used as a scalar multiplier in an equivariant sum, it must transform as an invariant scalar.
-
----
-
-## 24. Attention
-
-An attention-style aggregation may use:
-
-`alpha_ij`.
-
-For scalar attention:
-
-`alpha_ij`
-
-must be permutation-consistent and spatially invariant when multiplying equivariant messages.
-
----
-
-## 25. Attention Normalization
-
-A normalized attention coefficient may use:
-
-`alpha_ij = exp(s_ij) / sum_(q ∈ N_i) exp(s_iq)`.
-
-The score:
-
-`s_ij`
-
-must have the transformation behavior required by the message architecture.
-
----
-
-## 26. Attention Is Not Physical Weight
-
-A learned attention coefficient is not automatically:
-
-- coupling energy;
-- bond strength;
-- force magnitude;
-- resonance amplitude.
-
-Its semantics depend on the model.
-
----
-
-## 27. Empty Neighborhood
-
-If:
-
-`N_i = empty`
-
-the aggregation contract must define the result.
-
-Possible valid designs include:
-
-- zero representation of each channel type;
-- retained node state;
-- self-interaction path;
-- explicit isolated-node branch.
-
----
-
-## 28. Zero Aggregate
-
-A zero aggregate is a representation zero.
-
-It is not ternary active neutral by identity.
-
----
-
-## 29. Node Update
-
-The node update is:
-
-`h_i^[k+1] = U^[k](h_i^[k], m_i^[k], g^[k])`.
-
-The update must preserve the declared representation types.
-
----
-
-## 30. Residual Node Update
-
-A residual update may use:
-
-`h_i^[k+1] = h_i^[k] + Delta h_i^[k]`.
-
-The two terms must carry compatible transformation types.
-
----
-
-## 31. Gated Node Update
-
-An invariant scalar gate may control an equivariant feature:
-
-`h_out^(l) = g h_in^(l)`.
-
-This preserves the transformation type.
-
----
-
-## 32. Edge Update
-
-Edge state may also evolve:
-
-`e_ij^[k+1] = U_E^[k](e_ij^[k], h_i^[k], h_j^[k], m_ij^[k], g^[k])`.
-
----
-
-## 33. Static Edge Representation
-
-A model may keep geometric edge features fixed across message-passing layers.
-
-For example:
-
-`r_ij`
-
-and:
-
-`d_ij`
-
-may remain unchanged while node latent state evolves.
-
----
-
-## 34. Dynamic Edge Representation
-
-A model may update learned edge features across layers.
-
-This does not require graph topology to change.
-
----
-
-## 35. Dynamic Topology
-
-A stronger model may alter:
-
-`E`
-
-between layers.
-
-If topology changes, the graph-update rule must remain explicit and equivariant.
-
----
-
-## 36. Message-Passing Layer
-
-One message-passing layer consists of:
-
-1. edge message construction;
-2. neighbor aggregation;
-3. node update;
-4. optional edge update;
-5. optional global update.
-
----
-
-## 37. Layer Composition
-
-For:
-
-`L`
-
-layers:
-
-`X_EQ^[0]`
-
-`→ X_EQ^[1]`
-
-`→ ...`
-
-`→ X_EQ^[L]`.
-
-The output of one layer becomes input to the next.
-
----
-
-## 38. Layer Depth
-
-The number:
-
-`L`
-
-is an architecture parameter.
-
-It controls computational propagation depth.
-
----
-
-## 39. Graph-Hop Receptive Field
-
-After one local layer, node:
-
-`i`
-
-can depend directly on one-hop neighbors.
-
-After:
-
-`L`
-
-layers, information may propagate across paths of up to:
-
-`L`
-
-graph hops, subject to architecture details.
-
----
-
-## 40. Receptive Field versus Physical Range
-
-The distinction remains:
-
-`graph-hop receptive field ≠ physical interaction range`.
-
----
-
-## 41. Message-Passing Depth versus Physical Time
-
-The distinction remains:
-
-`message-passing depth ≠ physical time`.
-
----
-
-## 42. Message-Passing Depth versus Ternary Tact
-
-The distinction remains:
-
-`message-passing layer ≠ ternary execution tact`.
-
----
-
-## 43. Message-Passing Depth versus Oscillator Phase Step
-
-Likewise:
-
-`message layer ≠ phase integration step`.
-
----
-
-## 44. Spatial Equivariance
-
-For group element:
-
-`g`
-
-a message-passing layer must satisfy:
-
-`MP(rho_in(g)x) = rho_out(g) MP(x)`.
-
----
-
-## 45. Node Equivariance
-
-Per-node features transform according to:
-
-- spatial representation;
-- atom permutation.
-
----
-
-## 46. Message Equivariance
-
-A message:
-
-`m_ij`
-
-must transform as:
-
-`m_ij' = rho_msg(g) m_ij`
-
-when all inputs are transformed consistently.
-
----
-
-## 47. Aggregation Equivariance
-
-Summation of same-type equivariant messages preserves spatial transformation type.
-
----
-
-## 48. Permutation Equivariance
-
-Under atom permutation:
-
-`pi`
-
-the updated node state must satisfy:
-
-`h_i'(pi · X) = h_(pi(i))(X)`
-
-under the selected indexing convention.
-
----
-
-## 49. Combined Equivariance
-
-A complete message-passing layer may satisfy:
-
-`MP((g,pi) · X) = (g,pi) · MP(X)`.
-
----
-
-## 50. Scalar Message Channel
-
-A scalar message is invariant under spatial rotation.
-
-Its value may still depend on geometry through invariant descriptors such as:
-
-- distance;
-- norms;
-- dot products;
-- scalar latent features.
-
----
-
-## 51. Vector Message Channel
-
-A vector message transforms:
-
-`m_ij' = Q m_ij`.
-
----
-
-## 52. Tensor Message Channel
-
-A tensor message transforms according to its declared tensor or irreducible representation.
-
----
-
-## 53. Irreducible Message Channel
-
-An irrep message may be indexed by:
-
-`(l,p)`.
-
-The message function must preserve the corresponding representation law.
-
----
-
-## 54. Tensor-Product Message
-
-A message may be formed through tensor product between:
-
-- source representation;
-- edge angular representation;
-- receiver representation;
-- invariant gates.
-
----
-
-## 55. Example Tensor-Product Structure
-
-A generic structure may be:
-
-`m_ij = TP(h_j, B_ang(r_ij), w_ij)`.
-
-Here:
-
-- `TP` is an equivariant tensor-product operator;
-- `B_ang` is an angular representation;
-- `w_ij` contains invariant radial or learned scalar weights.
-
----
-
-## 56. Receiver-State-Conditioned Message
-
-The message may additionally depend on receiver state:
-
-`m_ij = M(h_i, h_j, e_ij)`.
-
-This permits directed adaptation without breaking equivariance when the operation is representation-compatible.
-
----
-
-## 57. Source-State-Only Message
-
-A simpler architecture may use:
-
-`m_ij = M(h_j, e_ij)`.
-
-The receiver state then enters only through aggregation or node update.
-
----
-
-## 58. Pair-State Message
-
-A pair representation may combine:
-
-`h_i`
-
-and:
-
-`h_j`
-
-before generating a message.
-
----
-
-## 59. Relative Geometry in Message
-
-Absolute positions should not enter a translation-invariant message arbitrarily.
-
-Relative geometry:
-
-`r_ij`
-
-provides the natural translation-invariant/equivariant geometric input.
-
----
-
-## 60. Distance Message
-
-A distance-only message can remain rotationally invariant.
-
-Such a message cannot encode full directional information by itself.
-
----
-
-## 61. Directional Message
-
-Directional dependence requires an equivariant angular representation.
-
----
-
-## 62. Angular Message
-
-A directional message may use:
-
-`Y_lm(e_hat_ij)`.
-
-The representation must transform under the appropriate:
-
-`D^l(Q)`.
-
----
-
-## 63. Radial-Angular Message
-
-A message may combine:
-
-`R_n(d_ij)`
-
-and:
-
-`Y_lm(e_hat_ij)`.
-
-This separates radial and angular geometry.
-
----
-
-## 64. Pair-Species Conditioning
-
-Messages may depend on ordered species pair:
-
-`(a_i, a_j)`.
-
-This permits chemically differentiated interactions while preserving spatial symmetry.
-
----
-
-## 65. Species-Pair Symmetry
-
-A model may choose either:
-
-- ordered species pairs;
-- unordered species pairs.
-
-The choice affects directed message semantics.
-
----
-
-## 66. Message Parameter Sharing
-
-The same message function may be shared across:
-
-- all nodes;
-- all edges;
-- species classes;
-- relation types.
-
-Parameter sharing must preserve permutation semantics.
-
----
-
-## 67. Species-Specific Parameters
-
-A model may use species-dependent parameters.
-
-The parameter lookup must depend on species identity rather than arbitrary node index.
-
----
-
-## 68. Edge-Type-Specific Parameters
-
-Different relation types may use different message maps:
-
-`M_tau`.
-
-The relation type:
-
-`tau`
-
-must remain explicit.
-
----
-
-## 69. Multi-Relation Message Passing
-
-For edge families:
-
-`E^(1), ..., E^(M)`
-
-the receiver may aggregate relation-specific messages separately before fusion.
-
----
-
-## 70. Relation Fusion
-
-A node update may use:
-
-`m_i = F_rel(m_i^(1), ..., m_i^(M))`.
-
-The fusion must preserve representation compatibility.
-
----
-
-## 71. Scalar Fusion
-
-Invariant scalar channels may be mixed through arbitrary learned scalar maps.
-
----
-
-## 72. Equivariant Fusion
-
-Equivariant channels require transformation-compatible fusion.
-
----
-
-## 73. Message Normalization
-
-Messages may be normalized by:
-
-- degree;
-- cutoff volume;
-- learned invariant scale;
-- representation norm.
-
-The normalization must preserve equivariance.
-
----
-
-## 74. Degree Normalization
-
-A normalized sum may use:
-
-`m_i = 1 / c_i sum_j m_ij`
-
-with invariant scalar:
-
-`c_i`.
-
----
-
-## 75. Symmetric Degree Normalization
-
-Graph-style normalization may use source and receiver degree factors.
-
-These factors are scalar graph quantities.
-
----
-
-## 76. Message Magnitude Control
-
-A scalar gate may constrain message magnitude while preserving direction or representation type.
-
----
-
-## 77. Message Clipping
-
-Componentwise clipping of vector or tensor features may break equivariance.
-
-Any clipping mechanism must be representation-aware.
-
----
-
-## 78. Norm Clipping
-
-A vector may be norm-clipped:
-
-`v' = min(1, c/||v||) v`
-
-for positive threshold:
-
-`c`.
-
-This preserves vector direction and equivariance.
-
----
-
-## 79. Representation-Aware Regularization
-
-Regularization may operate on invariant norms of irrep blocks.
-
----
-
-## 80. Message Dropout
-
-Randomly dropping complete representation channels or whole edge messages may preserve symmetry statistically if the mask is applied consistently across representation components.
-
-The stochastic contract must remain explicit.
-
----
-
-## 81. Componentwise Dropout
-
-Independent dropout of vector Cartesian components can break rotational equivariance.
-
----
-
-## 82. Edge Dropout
-
-An edge may be stochastically removed during training.
-
-The induced graph distribution must remain permutation-consistent.
-
----
-
-## 83. Training versus Inference Graph
-
-A model may use stochastic graph modifications during training and deterministic graph construction during inference.
-
-The two modes must be explicit.
-
----
-
-## 84. Deterministic Message Passing
-
-For deterministic inference, identical:
-
-- graph;
-- node state;
-- edge state;
-- parameters;
-- arithmetic semantics;
-- aggregation order
-
-must produce identical declared outputs.
-
----
-
-## 85. Reduction Order
-
-Floating-point summation depends on reduction order.
-
-Canonical aggregation order may be required for byte-identical replay.
-
----
-
-## 86. Parallel Aggregation
-
-Parallel execution may change floating-point reduction order.
-
-A reproducibility contract must define whether:
-
-- byte-identical;
-- exact categorical;
-- tolerance-based numerical
-
-comparison is required.
-
----
-
-## 87. Message-Passing State Closure
-
-If future results depend only on current node, edge, global state, graph, and parameters, the message-passing layer is Markov-complete with respect to those variables.
-
----
-
-## 88. Hidden Message Memory
-
-If a layer depends on previous hidden states beyond current representation, that memory must be explicit.
-
----
-
-## 89. Recurrent Message Passing
-
-A recurrent architecture may use:
-
-`h_i[k+1] = U(h_i[k], m_i[k])`
-
-over repeated internal iterations.
-
-The recurrent index must remain distinct from physical time unless explicitly coupled.
-
----
-
-## 90. Message Persistence
-
-A retained message state may exist in recurrent architectures.
-
-This is computational memory.
-
-It is not ternary neutral residence.
-
----
-
-## 91. Message-Passing Fixed Point
-
-An iterative message-passing system may converge to:
-
-`h_star`
-
-satisfying:
-
-`h_star = MP(h_star)`.
-
-This is a representation fixed point.
-
-It is not automatically a physical equilibrium.
-
----
-
-## 92. Fixed Point versus Physical Equilibrium
-
-The distinction is:
-
-`message-passing fixed point ≠ atomic equilibrium`.
-
----
-
-## 93. Fixed Point versus Resonance
-
-Likewise:
-
-`message-passing fixed point ≠ resonance`.
-
----
-
-## 94. Locality
-
-For a cutoff graph, one layer is local with respect to the graph neighborhood.
-
-Multiple layers enlarge the computational receptive field.
-
----
-
-## 95. Strict Locality
-
-A strictly local model uses only graph-connected information within a finite depth.
-
----
-
-## 96. Global State Injection
-
-Adding global features to every node creates a nonlocal information path even when the graph is sparse.
-
----
-
-## 97. Long-Range Messages
-
-A model may use explicit long-range edges or separate nonlocal operators.
-
-These must remain distinct from local graph messages.
-
----
-
-## 98. Local and Nonlocal Fusion
-
-A hybrid model may combine:
-
-`m_i = m_i,local + m_i,nonlocal`
-
-when both messages have compatible representation types.
-
----
-
-## 99. Long-Range Electrostatic Boundary
-
-Electrostatic interactions may require a dedicated long-range model.
-
-A generic message-passing edge does not by identity represent electrostatic force or energy.
-
----
-
-## 100. Message Passing and Periodicity
-
-Periodic graphs use image-aware relative vectors.
-
-Messages must therefore use the serialized periodic displacement:
-
-`r_ij = r_j + H n_ij - r_i`.
-
----
-
-## 101. Periodic Translation
-
-Equivalent periodic images must produce equivalent message semantics under the periodic graph contract.
-
----
-
-## 102. Cell Rotation
-
-If positions and cell rotate together, periodic edge vectors rotate accordingly.
-
-Message equivariance must remain preserved.
-
----
-
-## 103. Cell Deformation
-
-Cell deformation changes geometry.
-
-The resulting message state may change physically and numerically.
-
-This is not a rigid E(3) symmetry operation.
-
----
-
-## 104. Message Passing under Atom Permutation
-
-Permuting atomic labels permutes:
-
-- node states;
-- edge endpoints;
-- edge features;
-- incoming neighborhoods.
-
-The resulting per-atom output must permute consistently.
-
----
-
-## 105. Neighbor Ordering Independence
-
-A message aggregation must not depend on arbitrary storage order of:
-
-`N_i`.
-
----
-
-## 106. Edge Ordering and Determinism
-
-Although physical semantics are ordering-independent, deterministic floating-point execution may require canonical edge ordering.
-
----
-
-## 107. Global Message Passing
-
-A global node may be introduced as a computational structure.
-
-If used, its transformation behavior must be explicit.
-
----
-
-## 108. Virtual Node
-
-A virtual node may aggregate system-wide scalar or equivariant information.
-
-It is not an atomic particle unless explicitly modeled as such.
-
----
-
-## 109. Virtual Node versus Physical Atom
-
-The distinction remains:
-
-`virtual node ≠ physical atom`.
-
----
-
-## 110. Virtual Edge versus Physical Interaction
-
-Likewise:
-
-`virtual edge ≠ physical interaction by identity`.
-
----
-
-## 111. Hierarchical Message Passing
-
-Message passing may operate across:
-
-- atom-to-atom;
-- atom-to-cluster;
-- cluster-to-cluster;
-- cluster-to-atom
-
-relations.
-
----
-
-## 112. Atom-to-Cluster Message
-
-A fine-scale representation may be pooled into a cluster representation through an equivariant aggregation.
-
----
-
-## 113. Cluster-to-Atom Message
-
-A coarse representation may provide feedback to fine-scale nodes.
-
-The mapping must preserve spatial and permutation semantics.
-
----
-
-## 114. Cross-Scale Message
-
-A cross-scale message belongs to a declared source and destination representation space.
-
----
-
-## 115. Cross-Scale Message versus Physical Force
-
-A cross-scale feature transfer is not force by identity.
-
----
-
-## 116. Multiscale Message State
-
-A multiscale representation may contain:
-
-`H_atom`
-
-`H_cluster`
-
-`H_global`.
-
-Messages may connect these spaces explicitly.
-
----
-
-## 117. Pooling
-
-Pooling is an aggregation from a finer node set to a coarser representation.
-
----
-
-## 118. Unpooling
-
-Unpooling distributes coarse information to a finer node set.
-
-It is generally not the inverse of pooling.
-
----
-
-## 119. Information Loss
-
-Pooling may be non-injective.
-
-The complete fine-scale state cannot generally be reconstructed from pooled features alone.
-
----
-
-## 120. Closure Variables
-
-A multiscale message architecture may introduce closure features to encode effects not retained explicitly after pooling.
-
----
-
-## 121. Resonance Parameterization Interface
-
-Chapter 06 maps message-passed equivariant representations into resonance state:
-
-`P_R: X_EQ^[L] → X_R`.
-
----
-
-## 122. Local Resonance Input
-
-For node:
-
-`i`
-
-the local resonance state may depend on:
-
-`h_i^[L]`.
-
----
-
-## 123. Edge Resonance Input
-
-Edge representation:
-
-`e_ij^[L]`
-
-may contribute to pair or directional resonance descriptors.
-
----
-
-## 124. Cluster Resonance Input
-
-Cluster representations may produce cluster-level resonance coordinates.
-
----
-
-## 125. Global Resonance Input
-
-A pooled invariant or equivariant global representation may produce global resonance state.
-
----
-
-## 126. Message Passing versus Resonance
-
-The distinction remains:
-
-`message passing ≠ resonance`.
-
-Message passing produces representation state.
-
-Resonance is produced by a separate parameterization.
-
----
-
-## 127. Resonance Feedback into Message Passing
-
-A later model may feed resonance state back into message computation:
-
-`m_ij = M(h_i, h_j, e_ij, r_i, r_j)`.
-
-This creates a coupled representation-resonance loop.
-
----
-
-## 128. Feedback Ordering
-
-If resonance feeds message passing, the update order must be explicit.
-
----
-
-## 129. Same-Step Feedback
-
-A simultaneous or implicit representation-resonance solve requires a separately defined joint update rule.
-
----
-
-## 130. Previous-Step Resonance Feedback
-
-A simpler recurrent model may use retained prior resonance state.
-
-Then the resonance state belongs to message-passing memory.
-
----
-
-## 131. Ternary Feature Interface
-
-Chapter 07 may introduce ternary feature channels associated with:
-
-- nodes;
-- edges;
-- clusters;
-- global state.
-
----
-
-## 132. Ternary-Gated Message
-
-A specialization may use ternary feature:
-
-`t_i ∈ {-1, 0, 1}`
-
-to modulate a message.
-
-The modulation rule must be explicit.
-
----
-
-## 133. Ternary State as Scalar Gate
-
-A scalar ternary value may multiply a compatible representation:
-
-`m'_ij = t_i m_ij`.
-
-This is a mathematical operation.
-
-Its physical meaning depends on the model.
-
----
-
-## 134. Active Neutral Gate
-
-If:
-
-`t_i = 0`
-
-and direct multiplication is used:
-
-`m'_ij = 0`.
-
-This particular mapping produces a zero message.
-
-It does not imply that active-neutral semantics universally mean zero message propagation.
-
----
-
-## 135. Active Neutral Message Policy
-
-A model may define a nonzero active-neutral message operator:
-
-`M_0`.
-
-Therefore:
-
-`ternary 0 ≠ zero message by identity`.
-
----
-
-## 136. Ternary-Conditioned Message Family
-
-A message family may be:
-
-`M_-1`
-
-`M_0`
-
-`M_1`.
-
-The selected function depends on current ternary state.
-
----
-
-## 137. Ternary Routing versus Message Routing
-
-The distinction remains:
-
-`neutral routing ≠ graph message routing`.
-
-Neutral routing governs committed ternary transitions.
-
-Message routing governs computational propagation over graph edges.
-
----
-
-## 138. Pending Ternary State versus Message Queue
-
-The distinction remains:
-
-`pending ternary destination ≠ pending message`.
-
----
-
-## 139. Ternary Target versus Message Output
-
-A message may contribute to target generation through later mappings.
-
-It is not a ternary target by identity.
-
----
-
-## 140. Message-to-Target Chain
-
-The canonical path is:
-
-`message state`
-
-`→ equivariant node state`
-
-`→ resonance state`
-
-`→ decision state`
-
-`→ ternary target`.
-
----
-
-## 141. Direct Message-to-Target Specialization
-
-A specialization may define:
-
-`P_MT: X_msg → {-1,0,1}`.
-
-Such a map must preserve the target/execution boundary.
-
----
-
-## 142. Message-to-Execution Prohibition
+Behavior for an empty neighborhood must be explicitly defined.
 
-No message directly changes:
-
-`t_exec`
-
-without passing through the declared ternary execution contract.
-
----
-
-## 143. Energy Interface
-
-Chapter 08 consumes final node, edge, and global representations to produce an invariant scalar energy.
-
----
-
-## 144. Local Energy Head
-
-A local scalar head may produce:
-
-`E_i = F_E(h_i)`.
-
-The total may be:
-
-`E = sum_i E_i`.
-
----
-
-## 145. Edge Energy Head
-
-An edge-based scalar head may contribute pair terms.
-
-Counting conventions must be explicit.
-
----
-
-## 146. Message State versus Energy
-
-The distinction remains:
-
-`message state ≠ energy`.
-
----
-
-## 147. Force Interface
-
-Force may be obtained from:
-
-`F_i = -grad_(r_i) E`
-
-for a conservative differentiable model.
-
-Message passing affects force indirectly through the energy functional.
-
----
-
-## 148. Direct Force Head
-
-A message-passed equivariant representation may also feed a direct vector force head.
-
-Such a model must separately define conservativity.
-
----
-
-## 149. Message Vector versus Force Vector
-
-Both may transform as vectors.
-
-They remain semantically distinct.
-
----
-
-## 150. Stress Interface
-
-Stress may be derived from energy, cell deformation, virial relations, or another explicitly declared mechanical mapping.
-
-Message state is upstream representation state.
-
----
-
-## 151. Conservation Boundary
-
-Equivariant message passing alone does not guarantee:
-
-- energy conservation;
-- momentum conservation;
-- conservative force;
-- stable molecular dynamics.
-
-These properties require separate model structure.
-
----
-
-## 152. Equivariance versus Conservation
-
-The distinction remains:
-
-`equivariance ≠ conservation`.
-
----
-
-## 153. Permutation Symmetry versus Conservation
-
-Permutation equivariance does not imply energy or momentum conservation.
-
----
-
-## 154. Locality versus Conservation
-
-Local message passing does not itself imply conservative interactions.
-
----
-
-## 155. Message Reciprocity
-
-A model may impose a relation between:
-
-`m_ij`
-
-and:
-
-`m_ji`.
-
-No universal reciprocity rule is imposed.
-
----
-
-## 156. Message Reciprocity versus Newton Pair Force
-
-Even if:
-
-`m_ji = -m_ij`
-
-for a vector message, this does not automatically establish a Newtonian pair force interpretation.
-
----
-
-## 157. Symmetric Pair Message
-
-A scalar pair message may satisfy:
-
-`m_ij = m_ji`.
-
-This is a representation symmetry.
-
----
-
-## 158. Antisymmetric Pair Message
-
-A vector pair message may satisfy:
-
-`m_ji = -m_ij`.
-
-This may be useful for selected constructions but is not universally required.
-
----
-
-## 159. Receiver-State Asymmetry
-
-Directed message passing may intentionally violate pair symmetry at the latent representation level.
-
-Physical outputs may still preserve required invariants.
-
----
-
-## 160. Extensive Output Scaling
-
-If local node energy contributions are summed, energy can scale extensively with system size under appropriate locality assumptions.
-
----
-
-## 161. Intensive Global Representation
-
-A mean-pooled global state scales differently from a sum-pooled state.
-
-The aggregation must match intended output semantics.
-
----
-
-## 162. Message-Passing Stability
-
-The boundedness or convergence of hidden message states is a computational dynamical property.
-
-It is distinct from physical stability of the interatomic system.
-
----
-
-## 163. Hidden-State Boundedness
-
-A message representation may be norm-bounded through architecture or normalization.
-
-This does not establish boundedness of atomic trajectories.
-
----
-
-## 164. Message Amplification
-
-Repeated layers may amplify feature norms.
-
-Normalization, residual design, gating, or spectral constraints may control this behavior.
-
----
-
-## 165. Oversmoothing
-
-Repeated message aggregation may make node representations increasingly similar.
-
-This is a representation phenomenon.
-
----
-
-## 166. Oversmoothing versus Synchronization
-
-The distinction is:
-
-`graph representation oversmoothing ≠ oscillator synchronization`.
-
----
-
-## 167. Oversmoothing versus Coherence
-
-Likewise:
-
-`representation similarity ≠ physical coherence`.
-
----
-
-## 168. Oversquashing
-
-Long-range graph information may be compressed through limited representation capacity.
-
-This is an architecture limitation.
-
----
-
-## 169. Oversquashing versus Information Conservation
-
-Loss of representational information is not a physical conservation-law violation.
-
----
-
-## 170. Message-Passing Expressivity
-
-Expressivity depends on:
-
-- graph structure;
-- feature types;
-- aggregation;
-- tensor products;
-- network depth;
-- channel multiplicities;
-- nonlinearities.
-
----
-
-## 171. Expressivity versus Physical Validity
-
-A more expressive message-passing model is not automatically more physically constrained.
-
-Physical invariants remain separate requirements.
-
----
-
-## 172. Message-Passing Complexity
-
-For edge count:
-
-`|E|`
-
-message computation commonly scales with:
-
-`|E|`
-
-times representation-dependent cost.
-
----
-
-## 173. Sparse Graph Complexity
-
-For bounded average degree:
-
-`d_bar`
-
-the edge count is approximately:
-
-`N d_bar`.
-
-This can yield approximately linear node-count scaling in the graph layer under suitable conditions.
-
----
-
-## 174. Dense Graph Complexity
-
-A fully connected directed graph without self edges has:
-
-`N(N-1)`
-
-edges.
-
-Message cost may therefore scale quadratically with system size.
-
----
-
-## 175. Angular Complexity
-
-Tensor-product message cost increases with:
-
-- angular degree;
-- multiplicity;
-- number of coupling paths.
-
----
-
-## 176. Radial Complexity
-
-Increasing radial basis size increases scalar edge-feature dimension and message cost.
-
----
-
-## 177. Layer Complexity
-
-Total message cost grows with message-passing depth:
-
-`L`.
-
----
-
-## 178. Memory Cost
-
-Memory may include:
-
-- node states;
-- edge states;
-- messages;
-- intermediate tensor products;
-- gradients during training.
-
----
-
-## 179. Streaming Message Computation
-
-Messages may be computed and aggregated without storing every edge message simultaneously.
-
-This is an implementation optimization.
-
----
-
-## 180. Fused Message Aggregation
-
-Message generation and aggregation may be fused.
-
-The fused implementation must preserve the same mathematical semantics.
-
----
-
-## 181. Implementation Fusion versus Semantic Fusion
-
-Combining computational kernels does not remove the formal distinction between:
-
-- message;
-- aggregation;
-- update.
-
----
-
-## 182. Parallel Message Passing
-
-Independent edge messages may be evaluated in parallel when no sequential dependency exists.
-
----
-
-## 183. Atomic Reduction
-
-Parallel aggregation may use atomic operations or segmented reductions.
-
-The arithmetic ordering may influence finite-precision replay.
-
----
-
-## 184. Deterministic Reduction
-
-A deterministic implementation may use canonical segmented reduction order.
-
 ---
 
-## 185. Hardware Representation
+## 21. Node Update
 
-A hardware implementation may encode:
+The node state is updated through:
 
-- graph indices;
-- scalar features;
-- vector features;
-- fixed-point values;
-- ternary channels.
+`h_i^[k+1] = U_k(h_i^[k], m_i^[k])`.
 
-Encoding does not alter the formal transformation semantics.
+The update function:
 
----
-
-## 186. Fixed-Point Message Passing
-
-Fixed-point message passing requires explicit:
-
-- scaling;
-- rounding;
-- overflow;
-- saturation;
-- representation ranges.
-
----
-
-## 187. Fixed-Point Equivariance Residual
-
-Quantization may introduce nonzero numerical equivariance residuals.
-
-These must be measured under the declared numerical contract.
-
----
-
-## 188. Message Quantization
-
-Quantizing a message feature is numerical compression.
-
-It is not balanced ternary semantic mapping unless explicitly mapped into:
-
-`-1/0/1`.
-
----
-
-## 189. Message Serialization
+`U_k`
 
-A message-passing trace may contain:
+must map compatible representation types to the declared output representation.
 
-- layer index;
-- source node;
-- receiver node;
-- edge type;
-- representation type;
-- message norm;
-- selected message components;
-- aggregate state;
-- node update state.
-
 ---
-
-## 190. Trace Scope
 
-A full message trace may be large.
+## 22. Residual Update
 
-Reduced traces may store derived observables rather than all hidden channels.
+A residual update may take the form:
 
----
-
-## 191. Message Trace versus Restart State
+`h_i^[k+1] = h_i^[k] + Delta h_i^[k]`
 
-A diagnostic message trace need not contain enough information for restart.
+when both terms have compatible representation types.
 
-Restart state and observability state remain distinct.
-
 ---
-
-## 192. Deterministic Replay State
 
-A message-passing replay requires:
+## 23. Representation Typing
 
-- graph;
-- node features;
-- edge features;
-- global state;
-- model parameters;
-- canonical ordering;
-- arithmetic semantics.
+Every message-passing feature must be assigned a declared transformation type.
 
----
-
-## 193. Layerwise Replay
+Possible types include:
 
-Each message-passing layer may be replayed and compared independently.
+- invariant scalar;
+- polar vector;
+- axial vector;
+- higher-order tensor;
+- irreducible representation;
+- categorical state;
+- explicitly typed auxiliary variable.
 
 ---
 
-## 194. End-to-End Replay
+## 24. Scalar Channels
 
-The entire:
+Invariant scalar channels remain unchanged under the declared spatial group action.
 
-`graph → message passing → representation`
+Examples include:
 
-chain may be replayed as one deterministic artifact.
+- pair distance;
+- scalar radial features;
+- scalar species embeddings;
+- scalar resonance coordinates where defined as invariant.
 
 ---
 
-## 195. Message Validation
+## 25. Vector Channels
 
-A message validator may check:
+Vector channels transform according to the declared vector representation.
 
-- source/receiver convention;
-- feature dimensions;
-- representation types;
-- finite values;
-- symmetry transformation;
-- permutation behavior;
-- deterministic aggregation.
+A polar vector:
 
----
+`v`
 
-## 196. Source/Receiver Validation
+transforms under rotation:
 
-For every directed edge:
+`Q`
 
-`j → i`
+as:
 
-the message must use the declared source and receiver positions and features consistently.
+`v → Qv`.
 
 ---
-
-## 197. Edge-Reversal Validation
 
-Controlled reverse edges may verify sign and ordered-feature behavior.
+## 26. Tensor Channels
 
----
+Tensor channels transform according to their declared tensor representation.
 
-## 198. Scalar Equivariance Test
+For a second-order tensor:
 
-For scalar message:
+`T`
 
-`m_ij(gX) = m_ij(X)`
+a standard rotational transformation is:
 
-under the relevant mapped edge.
+`T → Q T Q^T`.
 
 ---
-
-## 199. Vector Equivariance Test
 
-For vector message:
-
-`m_ij(gX) = Q m_ij(X)`.
-
----
+## 27. Irreducible Representation Channels
 
-## 200. Higher-Irrep Validation
+For rotation-equivariant architectures, latent features may be decomposed into irreducible representation channels.
 
-For representation:
+A channel may be indexed by:
 
 `l`
 
-the transformed message must match the corresponding:
-
-`D^l(Q)`
-
-action.
+and, where reflections are included, by parity.
 
 ---
 
-## 201. Parity Validation
+## 28. Scalar Irreducible Representation
+
+The:
+
+`l = 0`
+
+representation is rotationally invariant.
+
+---
+
+## 29. Non-Scalar Irreducible Representations
+
+Representations with:
+
+`l > 0`
+
+transform nontrivially under rotation.
+
+Their components must not be treated as independent invariant scalars.
+
+---
+
+## 30. Equivariant Message Mapping
+
+For a group element:
+
+`g`
+
+an equivariant message function satisfies the declared relation:
+
+`M_k(rho(g)x) = rho_M(g) M_k(x)`
+
+for the relevant combined message input:
+
+`x`.
+
+---
+
+## 31. Equivariant Node Update
+
+The update function must satisfy the corresponding representation relation:
+
+`U_k(rho_H(g)h, rho_M(g)m) = rho_H'(g) U_k(h,m)`.
+
+---
+
+## 32. Translation Behavior
+
+Message functions based only on relative geometry and translation-invariant attributes may preserve global translation invariance.
+
+Absolute-coordinate dependence must be explicitly declared if introduced.
+
+---
+
+## 33. Rotation Behavior
+
+Directional inputs must transform consistently with the declared rotation group.
+
+Scalar outputs derived from directional inputs require invariant contractions or another explicitly invariant construction.
+
+---
+
+## 34. Reflection Behavior
+
+If the declared symmetry group includes reflections, parity behavior must be specified.
+
+Polar vectors, axial vectors, scalars, pseudoscalars, and higher-order representations must not be conflated.
+
+---
+
+## 35. Permutation Equivariance
+
+Let:
+
+`pi`
+
+be an admissible species-preserving permutation.
+
+Per-node states satisfy:
+
+`h_i → h_pi(i)`.
+
+A conforming message-passing layer preserves the corresponding node reindexing.
+
+---
+
+## 36. Species-Preserving Permutation
+
+Permutation symmetry applies to relabeling that preserves the association between entity identity, species, position, and all attached state variables.
+
+---
+
+## 37. Edge Permutation
+
+Under node permutation:
+
+`pi`
+
+the edge:
+
+`(i,j)`
+
+maps to:
+
+`(pi(i), pi(j))`.
+
+Edge features must follow the same reindexing.
+
+---
+
+## 38. Graph Topology under Permutation
+
+An admissible permutation changes labels, not the physical interaction topology represented by the graph.
+
+---
+
+## 39. Radial Features
+
+A radial feature may be constructed as:
+
+`phi_n(d_ij)`.
+
+The basis family, index range, cutoff behavior, and normalization must be explicit.
+
+---
+
+## 40. Angular Features
+
+Angular information may be constructed from relative directions or equivariant angular bases.
+
+Its transformation law must be defined under the selected spatial symmetry group.
+
+---
+
+## 41. Radial-Angular Combination
+
+A message may combine radial and angular information through an explicitly typed mapping.
+
+The resulting representation type must be known.
+
+---
+
+## 42. Tensor Products
+
+Equivariant message passing may combine representations using tensor products.
+
+The output must be decomposed into the declared representation channels.
+
+---
+
+## 43. Invariant Contraction
+
+An invariant scalar may be produced by a valid contraction of equivariant quantities.
+
+The contraction rule is part of the model definition.
+
+---
+
+## 44. Scalar Gating
+
+An invariant scalar gate may modulate an equivariant feature.
+
+If:
+
+`a_ij`
+
+is invariant and:
+
+`v_ij`
+
+is equivariant, then:
+
+`a_ij v_ij`
+
+retains the representation type of:
+
+`v_ij`.
+
+---
+
+## 45. Nonlinear Operations
+
+Nonlinear operations must preserve the declared transformation structure.
+
+Ordinary pointwise nonlinearities may act directly on invariant scalar channels.
+
+Non-scalar channels require representation-compatible nonlinear mappings.
+
+---
+
+## 46. Normalization
+
+Normalization must preserve representation type.
+
+A normalization operation that mixes incompatible representation components violates the declared typing contract.
+
+---
+
+## 47. Attention Weight
+
+An attention weight:
+
+`a_ij`
+
+may be used when its transformation behavior is explicit.
+
+An invariant scalar attention weight may multiply an equivariant value without changing the value's spatial representation.
+
+---
+
+## 48. Attention Aggregation
+
+Attention-based aggregation must remain permutation compatible with respect to neighbor ordering.
+
+---
+
+## 49. Local Environment
+
+The local environment of node:
+
+`i`
+
+may be represented as:
+
+`E_i = {Z_j, R_ij, e_ij | j ∈ N(i)}`.
+
+Its exact field set is model-specific.
+
+---
+
+## 50. Locality
+
+A finite-cutoff message-passing layer propagates information through the graph over a finite number of interaction steps.
+
+After:
+
+`K`
+
+layers, information may propagate through graph paths of up to:
+
+`K`
+
+message-passing steps, subject to the architecture.
+
+---
+
+## 51. Message-Passing Depth
+
+Let:
+
+`K_MP`
+
+denote the number of message-passing layers.
+
+This is an architectural parameter.
+
+It is not a physical time variable.
+
+---
+
+## 52. Message-Passing Layer Is Not Time Step
+
+The framework preserves:
+
+`message-passing layer ≠ physical time step`.
+
+---
+
+## 53. Message-Passing Depth Is Not Interaction Range by Identity
+
+The framework preserves:
+
+`network depth ≠ physical interaction range`.
+
+Any relation between them requires an explicit model definition.
+
+---
+
+## 54. Receptive Field
+
+The graph receptive field is determined by:
+
+- graph topology;
+- cutoff rule;
+- message-passing depth;
+- any long-range communication mechanism.
+
+---
+
+## 55. Long-Range Interaction Channel
+
+If long-range interactions are included, they must be represented through an explicit additional mechanism.
+
+A local cutoff graph alone does not define an unbounded interaction channel.
+
+---
+
+## 56. Edge Direction
+
+For a directed graph, messages:
+
+`m_ij`
+
+and:
+
+`m_ji`
+
+are separate quantities unless the model explicitly constrains them.
+
+---
+
+## 57. Pair Symmetry
+
+A pair function may possess exchange symmetry or antisymmetry where explicitly defined.
+
+This property is not inferred solely from the existence of an undirected physical pair.
+
+---
+
+## 58. Self-Edges
+
+If self-edges:
+
+`(i,i)`
+
+are used, their semantics must be explicit.
+
+They are not ordinary interatomic displacement edges because:
+
+`R_ii = 0`.
+
+---
+
+## 59. Empty Neighborhood
 
 For:
 
-`O(3)`
+`N(i) = empty`
 
-models, reflection or inversion tests verify parity behavior.
-
----
-
-## 202. Permutation Validation
-
-After atom permutation:
-
-- edge indices permute;
-- messages permute;
-- receiver aggregates permute;
-- node outputs permute.
+the aggregation and update behavior must be explicitly defined.
 
 ---
 
-## 203. Neighbor-Order Validation
+## 60. Duplicate Edges
 
-Randomizing neighbor-list storage order must not change the mathematical aggregated result beyond the declared finite-precision comparison relation.
-
----
-
-## 204. Translation Validation
-
-For translation-invariant graph geometry, global translation must not alter messages except for channels whose transformation law explicitly includes the translated quantity.
+Duplicate graph edges must either be prohibited or assigned explicit multiplicity semantics.
 
 ---
 
-## 205. Rotation Validation
+## 61. Periodic Systems
 
-Rotate all positions and transform all external geometric states consistently.
+For periodic systems, relative displacement must use the declared periodic-image convention.
 
-Message outputs must satisfy the declared equivariance relation.
-
----
-
-## 206. Combined Symmetry Validation
-
-A strong test may combine:
-
-- atom permutation;
-- translation;
-- rotation;
-- reflection where applicable.
+The graph representation must remain consistent under equivalent periodic representations.
 
 ---
 
-## 207. Empty-Neighborhood Validation
+## 62. Periodic Image Index
 
-A fixture with isolated nodes must verify the declared empty-neighborhood policy.
+An edge may carry a periodic image index:
 
----
+`n_ij`.
 
-## 208. Periodic Validation
+Then a displacement may be written using the cell matrix:
 
-Equivalent periodic images must produce equivalent messages.
+`H`
 
----
+as:
 
-## 209. Graph-Cutoff Validation
-
-Configurations near graph cutoffs must distinguish:
-
-- graph topology differences;
-- message-function differences.
+`R_ij = R_j + H n_ij - R_i`.
 
 ---
 
-## 210. Numerical Validation
+## 63. Periodic Equivalence
 
-Validation should test:
-
-- finite values;
-- overflow behavior;
-- equivariance residuals;
-- deterministic replay;
-- reduction consistency.
+Equivalent periodic-image choices representing the same physical neighbor relation must produce consistent model behavior under the declared convention.
 
 ---
 
-## 211. NaN Handling
+## 64. Cell Transformation
 
-A message containing:
+If the simulation cell transforms under rotation:
 
-`NaN`
+`H → QH`.
 
-is invalid numerical state.
+Periodic geometric features must transform consistently.
 
-It must not silently become ternary:
+---
+
+## 65. Resonance-Conditioned Message Passing
+
+A message function may depend on resonance information:
+
+`m_ij^[k] = M_k(h_i^[k], h_j^[k], e_ij^[k], r_ij^[k])`.
+
+Here:
+
+`r_ij^[k]`
+
+is an explicitly defined resonance variable or representation.
+
+---
+
+## 66. Resonance State Space
+
+A resonance quantity belongs to a declared resonance state space:
+
+`r ∈ X_R`.
+
+Its inclusion in message passing does not change its semantic type.
+
+---
+
+## 67. Scalar Resonance Conditioning
+
+If a resonance variable is an invariant scalar, it may condition scalar coefficients or gates without introducing spatial orientation.
+
+---
+
+## 68. Equivariant Resonance Conditioning
+
+If a resonance variable is vectorial or tensorial, the message function must preserve its declared transformation law.
+
+---
+
+## 69. Resonance Window
+
+A resonance window remains:
+
+`W_R ⊂ X_R`.
+
+Its boundary remains:
+
+`∂W_R`.
+
+---
+
+## 70. Resonance Classification
+
+The classes:
+
+`OUTSIDE`
+
+`BOUNDARY`
+
+`INSIDE`
+
+describe relation to a declared resonance window.
+
+They are not message-passing representation types by identity.
+
+---
+
+## 71. Resonance Class Encoding
+
+If resonance class is supplied to a message function, its encoding must be explicit.
+
+The encoding must not silently identify resonance class with the ternary state space.
+
+---
+
+## 72. Resonance and Ternary Separation
+
+The framework preserves:
+
+`OUTSIDE/BOUNDARY/INSIDE ≠ -1/0/1`.
+
+---
+
+## 73. Ternary Node State
+
+A node may carry a semantic ternary state:
+
+`t_i ∈ {-1,0,1}`.
+
+This state is distinct from continuous latent features.
+
+---
+
+## 74. Active Neutral
+
+The state:
+
+`0`
+
+is active neutral.
+
+It is not:
+
+- missing data;
+- padding;
+- invalid state;
+- unknown value;
+- uncertainty flag.
+
+---
+
+## 75. Ternary State as Message Input
+
+If:
+
+`t_i`
+
+is supplied to a message function, it acts through an explicitly defined semantic encoding.
+
+The numerical values:
+
+`-1`
+
+`0`
+
+`1`
+
+must not be interpreted as spatial vector components.
+
+---
+
+## 76. Ternary State and Rotation
+
+For a scalar semantic ternary variable, spatial rotation does not exchange:
+
+`-1`
+
+and:
+
+`1`.
+
+---
+
+## 77. Ternary State and Reflection
+
+Spatial reflection does not automatically exchange:
+
+`-1`
+
+and:
+
+`1`.
+
+Any polarity-reversal operation must be separately defined.
+
+---
+
+## 78. Ternary Target
+
+A message-passing network may produce or contribute to a target:
+
+`t_target`.
+
+The target is not automatically the executed retained state.
+
+---
+
+## 79. Executed Ternary State
+
+The executed state:
+
+`t_exec`
+
+is determined by the declared ternary execution semantics.
+
+---
+
+## 80. Pending State
+
+Where opposite-polarity routing is used, a pending destination:
+
+`t_pending`
+
+remains distinct from active neutral.
+
+---
+
+## 81. Ternary Role Separation
+
+The framework preserves:
+
+`t_target ≠ t_pending`
+
+`t_pending ≠ t_exec`
+
+`t_target ≠ t_exec`.
+
+---
+
+## 82. Ternary Transition Graph
+
+The committed semantic transition graph remains:
+
+`-1 ↔ 0 ↔ 1`.
+
+---
+
+## 83. Forbidden Direct Opposite Transitions
+
+Direct committed transitions:
+
+`-1 → 1`
+
+and:
+
+`1 → -1`
+
+are forbidden.
+
+---
+
+## 84. Neutral-Mediated Routes
+
+Opposite-polarity execution uses:
+
+`-1 → 0 → 1`
+
+and:
+
+`1 → 0 → -1`.
+
+Each leg is a separate committed event.
+
+---
+
+## 85. Message Prediction Is Not Transition Execution
+
+A message-passing output proposing a new ternary target does not itself constitute a committed ternary transition.
+
+---
+
+## 86. Latent State Is Not Ternary State
+
+The framework preserves:
+
+`latent representation ≠ semantic ternary state`.
+
+---
+
+## 87. Resonance State Is Not Ternary State
+
+The framework preserves:
+
+`resonance state ≠ ternary state`.
+
+A mapping between them must be explicit.
+
+---
+
+## 88. Energy Readout
+
+A global or local energy readout may be constructed from invariant node representations.
+
+For example:
+
+`E = sum_i E_i`.
+
+Each:
+
+`E_i`
+
+must have the declared scalar transformation behavior.
+
+---
+
+## 89. Local Energy Readout
+
+A local scalar energy contribution may be written:
+
+`E_i = U_E,k(h_i^[K_MP])`.
+
+The mapping:
+
+`U_E,k`
+
+must produce an invariant scalar under the declared symmetry group.
+
+---
+
+## 90. Force Interface
+
+If force is obtained from energy:
+
+`F_i = -grad_(R_i) E`.
+
+This relation belongs to the declared energy-force interface.
+
+---
+
+## 91. Direct Force Readout
+
+If force is predicted directly from latent features, the force readout must produce a polar-vector equivariant output.
+
+---
+
+## 92. Energy and Force Distinction
+
+The framework preserves:
+
+`energy ≠ force`.
+
+Message passing may contribute to both outputs without identifying them.
+
+---
+
+## 93. Stress Interface
+
+A stress readout must produce the declared second-order tensor representation.
+
+Its sign, normalization, and cell convention must be explicit.
+
+---
+
+## 94. Message Passing and Mechanical Force
+
+The framework preserves:
+
+`message ≠ mechanical force`.
+
+A learned message is an internal computational quantity unless an explicit physical mapping defines another role.
+
+---
+
+## 95. Message Passing and Chemical Bond
+
+The framework preserves:
+
+`graph edge ≠ chemical bond`.
+
+An interaction edge represents a computational or model interaction relation under the declared graph construction.
+
+---
+
+## 96. Message Passing and Phase Coupling
+
+The framework preserves:
+
+`message ≠ phase coupling`
+
+unless an explicit mapping identifies a message component with a defined phase-coupling quantity.
+
+---
+
+## 97. Phase Relation and Chemical Bond
+
+The framework preserves:
+
+`phase relation ≠ chemical bond`.
+
+---
+
+## 98. Multiscale Message Passing
+
+Message passing may be defined at multiple scales.
+
+Let:
+
+`ell`
+
+index scale.
+
+A scale-specific node state may be:
+
+`h_i^(ell)`.
+
+---
+
+## 99. Cross-Scale Mapping
+
+A mapping between scales may be written:
+
+`P^(ell→m)`.
+
+The mapping must specify:
+
+- source scale;
+- target scale;
+- representation type;
+- aggregation or projection;
+- normalization.
+
+---
+
+## 100. Scale Consistency
+
+Cross-scale message passing must preserve the declared semantic and symmetry types of transferred quantities.
+
+---
+
+## 101. Scale Is Not Time
+
+The framework preserves:
+
+`scale index ≠ physical time`.
+
+---
+
+## 102. Scale Is Not Ternary State
+
+The framework preserves:
+
+`scale index ≠ ternary state`.
+
+---
+
+## 103. Scale Is Not Resonance Class
+
+The framework preserves:
+
+`scale index ≠ resonance class`.
+
+---
+
+## 104. Message-Passing Recurrence
+
+If parameters are shared across layers, the recurrence must be explicit.
+
+Parameter sharing does not make layer index a physical time coordinate.
+
+---
+
+## 105. State Persistence
+
+If a latent state persists across physical simulation steps, the persistence mechanism must be explicitly defined outside ordinary within-evaluation message-passing depth.
+
+---
+
+## 106. Memory Channel
+
+A persistent memory channel requires an explicit state variable and update rule.
+
+It must not be inferred from repeated message-passing layers alone.
+
+---
+
+## 107. Deterministic Message Passing
+
+For fixed:
+
+- graph;
+- input state;
+- parameters;
+- arithmetic;
+- execution order;
+
+a deterministic implementation produces a reproducible output under its declared execution contract.
+
+---
+
+## 108. Determinism and Equivariance
+
+The framework preserves:
+
+`determinism ≠ equivariance`.
+
+---
+
+## 109. Determinism and Accuracy
+
+The framework preserves:
+
+`determinism ≠ predictive accuracy`.
+
+---
+
+## 110. Equivariance and Accuracy
+
+The framework preserves:
+
+`equivariance ≠ predictive accuracy`.
+
+---
+
+## 111. Numerical Precision
+
+Message passing may be implemented using:
+
+- floating-point arithmetic;
+- mixed precision;
+- fixed-point arithmetic;
+- quantized arithmetic.
+
+The arithmetic contract must be explicit.
+
+---
+
+## 112. Reduction Order
+
+Floating-point aggregation may depend numerically on reduction order.
+
+Permutation-equivariance validation must account for the declared arithmetic tolerance.
+
+---
+
+## 113. Exact Mathematical Symmetry and Numerical Residual
+
+Finite numerical residual does not redefine the exact mathematical symmetry relation.
+
+---
+
+## 114. Quantization
+
+Quantized message-passing implementations must define:
+
+- scale;
+- zero point where applicable;
+- rounding;
+- saturation;
+- accumulator width;
+- output conversion.
+
+---
+
+## 115. Reserved Numerical Codes
+
+Storage-level reserved values must remain separate from semantic ternary states.
+
+---
+
+## 116. Missing Node Data
+
+Missing node data require an explicit validity or mask channel.
+
+They must not be encoded as ternary:
 
 `0`.
 
 ---
 
-## 212. Infinity Handling
+## 117. Missing Edge Data
 
-Non-finite message values require explicit handling.
+Missing edge data require an explicit validity representation.
 
----
-
-## 213. Masked Message
-
-A masked message may be excluded from aggregation.
-
-A binary mask value:
-
-`0`
-
-does not mean active-neutral ternary state.
+An absent edge and an edge with a zero-valued feature are not identical by default.
 
 ---
 
-## 214. Padding
+## 118. Padding
 
-Batching may use padded nodes or edges.
-
-Padding must be excluded through explicit masks.
+Padding nodes or edges used for batching must be excluded through explicit masks or equivalent structural handling.
 
 ---
 
-## 215. Padding versus Physical Node
+## 119. Empty Graph
 
-A padded graph entry is not a physical atom.
-
----
-
-## 216. Padding versus Neutral State
-
-The distinction remains:
-
-`padding zero ≠ ternary neutral 0`.
+Behavior for an empty graph must be explicitly defined if the implementation permits one.
 
 ---
 
-## 217. Batched Graph
+## 120. Isolated Node
 
-Several independent graphs may be represented in one batch.
-
-No message may cross graph boundaries unless explicitly defined.
+Behavior for an isolated node must be defined through the empty-neighborhood aggregation contract.
 
 ---
 
-## 218. Batch Index
+## 121. Duplicate Entity Identity
 
-A batch identifier is computational metadata.
-
-It is not a physical state.
+Each graph entity must have an unambiguous identity within the represented configuration.
 
 ---
 
-## 219. Batch Permutation
+## 122. Graph Construction Provenance
 
-Reordering independent graphs within a batch must not change per-graph outputs.
+Graph-construction parameters must carry explicit provenance.
+
+These may include:
+
+- cutoff;
+- neighbor count;
+- periodic-image convention;
+- species filters;
+- long-range edge rules.
 
 ---
 
-## 220. Global Aggregation by Graph
+## 123. Canonical Provenance Classes
 
-Global pooling must respect graph membership within batched representations.
-
----
-
-## 221. Message Provenance
-
-Message-passing structures may carry:
+The message-passing layer uses:
 
 `PRIMARY_SOURCE`
 
@@ -2269,248 +1414,279 @@ Message-passing structures may carry:
 
 ---
 
-## 222. Primary-Source Message Architecture
+## 124. Primary-Source Construction
 
-Established equivariant message-passing constructions retain applicable:
+An externally defined message-passing or representation method uses:
 
 `PRIMARY_SOURCE`
 
-provenance.
+for the sourced definition.
 
 ---
 
-## 223. Author-Defined TR-EIF Message Integration
+## 125. Derived Quantity
 
-TR-EIF-specific integration of:
+A feature derived from previously defined TR-EIF variables may use:
 
-- equivariant messages;
-- resonance parameterization;
-- ternary channels;
-- active-neutral execution interfaces
-
-carries:
-
-`AUTHOR_DEFINED`
-
-provenance where applicable.
+`DERIVED`.
 
 ---
 
-## 224. Derived Message Feature
+## 126. Author-Defined Mapping
 
-A message analytically derived from geometric features may carry:
+A TR-EIF-specific message, update, aggregation, or resonance-conditioning rule may use:
 
-`DERIVED`
-
-provenance.
+`AUTHOR_DEFINED`.
 
 ---
 
-## 225. Calibrated Message Parameter
+## 127. Calibrated Parameter
 
-Cutoff scales, radial parameters, normalization factors, or other fitted values carry:
+A cutoff, width, threshold, or other parameter selected through an explicit calibration procedure uses:
 
-`CALIBRATED`
-
-provenance where applicable.
+`CALIBRATED`.
 
 ---
 
-## 226. Benchmark Message Result
+## 128. Benchmark Result
 
-Measured:
+Measured message-passing performance or numerical residual under a benchmark protocol uses:
 
-- throughput;
-- memory;
-- scaling;
-- equivariance residual;
-- replay behavior
-
-may carry:
-
-`BENCHMARK`
-
-provenance.
+`BENCHMARK`.
 
 ---
 
-## 227. Message Test Fixture
+## 129. Test Fixture
 
-Synthetic graphs and transformed configurations used for message tests carry:
+Synthetic graph structures used for verification use:
 
-`TEST_FIXTURE`
-
-provenance.
+`TEST_FIXTURE`.
 
 ---
 
-## 228. Message-Passing Extension Rule
+## 130. Requires Source
 
-Any new message-passing layer must define:
+An external architectural or physical claim without established support uses:
 
-1. source state;
-2. receiver state;
-3. edge state;
-4. message output type;
+`REQUIRES_SOURCE`.
+
+---
+
+## 131. Requires Test
+
+An implementation-level property without validation uses:
+
+`REQUIRES_TEST`.
+
+---
+
+## 132. Message Function Extension Rule
+
+Any new message function must define:
+
+1. input node representations;
+
+2. input edge representations;
+
+3. geometric inputs;
+
+4. resonance inputs where used;
+
+5. ternary inputs where used;
+
+6. output representation;
+
+7. symmetry behavior;
+
+8. units where applicable;
+
+9. provenance;
+
+10. validation.
+
+---
+
+## 133. Aggregation Extension Rule
+
+Any new aggregation operator must define:
+
+1. input set;
+
+2. permutation behavior;
+
+3. normalization;
+
+4. empty-neighborhood behavior;
+
+5. output representation;
+
+6. numerical reduction rule;
+
+7. validation.
+
+---
+
+## 134. Update Function Extension Rule
+
+Any new node update must define:
+
+1. previous node representation;
+
+2. aggregated message representation;
+
+3. output representation;
+
+4. residual structure where used;
+
+5. nonlinear operations;
+
+6. normalization;
+
+7. symmetry behavior;
+
+8. validation.
+
+---
+
+## 135. Edge Feature Extension Rule
+
+Any new edge feature must define:
+
+1. source variables;
+
+2. geometric meaning;
+
+3. transformation type;
+
+4. exchange behavior;
+
+5. units;
+
+6. cutoff behavior where applicable;
+
+7. provenance;
+
+8. validation.
+
+---
+
+## 136. Resonance Message Extension Rule
+
+Any resonance-conditioned message must define:
+
+1. resonance variable;
+
+2. resonance state space;
+
+3. transformation behavior;
+
+4. scale;
+
+5. window relation where used;
+
+6. conditioning mechanism;
+
+7. provenance;
+
+8. validation.
+
+---
+
+## 137. Ternary Message Extension Rule
+
+Any ternary-conditioned message must define:
+
+1. ternary semantic role;
+
+2. target, pending, or executed source;
+
+3. encoding;
+
+4. permutation behavior;
+
+5. spatial transformation behavior;
+
+6. active-neutral semantics;
+
+7. validation.
+
+---
+
+## 138. Mechanical Readout Extension Rule
+
+Any mechanical readout must define:
+
+1. source representation;
+
+2. output physical quantity;
+
+3. units;
+
+4. transformation law;
+
 5. aggregation;
-6. node update;
-7. edge update where present;
-8. global-state handling;
-9. spatial transformation law;
-10. permutation behavior;
-11. numerical semantics;
-12. validation.
+
+6. derivative relation where used;
+
+7. validation.
 
 ---
 
-## 229. Attention Extension Rule
-
-Any attention mechanism must define:
-
-1. score space;
-2. score transformation law;
-3. normalization domain;
-4. source/receiver convention;
-5. masking;
-6. symmetry behavior;
-7. deterministic tie or ordering behavior where applicable.
-
----
-
-## 230. Dynamic-Edge Extension Rule
-
-Any layer that changes edge features or topology must define:
-
-1. update rule;
-2. graph-state dependency;
-3. geometry dependency;
-4. symmetry behavior;
-5. event ordering;
-6. restart state.
-
----
-
-## 231. Recurrent Message-Passing Extension Rule
-
-Any recurrent message architecture must define:
-
-1. recurrent state;
-2. iteration coordinate;
-3. initialization;
-4. termination;
-5. convergence criterion where used;
-6. restart semantics.
-
----
-
-## 232. Multiscale Message Extension Rule
-
-Any cross-scale message system must define:
-
-1. source scale;
-2. destination scale;
-3. pooling or mapping;
-4. representation transformation law;
-5. permutation handling;
-6. information loss;
-7. feedback semantics.
-
----
-
-## 233. Ternary-Conditioned Message Extension Rule
-
-Any ternary-conditioned message mechanism must define:
-
-1. source ternary variable;
-2. whether target or executed state is used;
-3. `-1` message semantics;
-4. `0` message semantics;
-5. `1` message semantics;
-6. update ordering;
-7. feedback path;
-8. separation from ternary commit.
-
----
-
-## 234. Canonical Message-Passing Invariants
+## 139. Canonical Message-Passing Invariants
 
 Every conforming message-passing layer preserves:
 
-1. explicit source/receiver orientation;
+1. explicit graph topology;
 
-2. explicit graph neighborhood;
+2. explicit node-state typing;
 
-3. explicit message function;
+3. explicit edge-state typing;
 
-4. permutation-safe aggregation;
+4. explicit message function;
 
-5. explicit representation type;
+5. explicit aggregation;
 
-6. spatial equivariance;
+6. explicit update function;
 
-7. explicit node update;
+7. explicit permutation behavior;
 
-8. deterministic ordering where required.
+8. explicit spatial transformation behavior;
 
----
+9. explicit resonance interface where used;
 
-## 235. Canonical Equivariance Invariants
+10. explicit ternary interface where used;
 
-For a declared group action:
+11. explicit provenance;
 
-`message transformed input`
-
-must equal:
-
-`transformed message output`
-
-under the applicable representation.
-
-Aggregation of compatible channels preserves their representation type.
+12. explicit validation.
 
 ---
 
-## 236. Canonical Permutation Invariants
-
-Atom relabeling produces corresponding relabeling of:
-
-- node state;
-- edge state;
-- messages;
-- aggregates;
-- updated node state.
-
-Global scalar outputs remain invariant.
-
----
-
-## 237. Canonical Type-Separation Invariants
+## 140. Canonical Semantic Distinctions
 
 The framework preserves:
 
-`message ≠ edge`
+`graph edge ≠ chemical bond`
 
-`message ≠ force`
+`message ≠ mechanical force`
 
-`message ≠ energy`
+`message-passing layer ≠ physical time step`
 
-`message ≠ chemical bond`
+`latent state ≠ ternary state`
 
-`message ≠ resonance`
+`resonance state ≠ ternary state`
 
-`message ≠ ternary target`
+`OUTSIDE/BOUNDARY/INSIDE ≠ -1/0/1`
 
-`message ≠ executed ternary state`
+`missing data ≠ ternary 0`
 
-`message queue ≠ pending ternary route`
-
-`message layer ≠ physical time`.
+`pending state ≠ active neutral`.
 
 ---
 
-## 238. Canonical Ternary Invariants
+## 141. Canonical Ternary Invariants
 
-Any ternary-conditioned message layer preserves the exact balanced ternary set:
+The semantic kernel remains:
 
 `-1/0/1`.
 
@@ -2520,19 +1696,17 @@ The state:
 
 remains active neutral.
 
-A representation zero, edge mask zero, padding zero, or zero-valued message is not automatically ternary neutral.
+Direct committed:
 
----
+`-1 → 1`
 
-## 239. Canonical TR Execution Boundary
+and:
 
-Message passing may influence:
+`1 → -1`
 
-`t_target`
+remain forbidden.
 
-only through an explicit downstream mapping.
-
-Committed execution remains governed by:
+The opposite-polarity routes remain:
 
 `-1 → 0 → 1`
 
@@ -2540,301 +1714,144 @@ and:
 
 `1 → 0 → -1`.
 
-No graph message may bypass the neutral-mediated execution layer.
+---
+
+## 142. Interface to Interaction Topology
+
+The message-passing layer receives the graph topology from the declared interaction-topology construction.
+
+The topology interface defines:
+
+- nodes;
+- edges;
+- neighborhoods;
+- periodic images;
+- cutoff relations;
+- long-range channels where present.
 
 ---
 
-## 240. Canonical Scientific Distinctions
+## 143. Interface to Energy Functionals
 
-The message-passing layer preserves:
+Invariant node or graph representations may be supplied to the energy-functional layer.
 
-`message passing ≠ phase coupling`
-
-`message passing ≠ mechanical force`
-
-`message passing ≠ physical energy transfer`
-
-`interaction edge ≠ chemical bond`
-
-`message fixed point ≠ physical equilibrium`
-
-`oversmoothing ≠ synchronization`
-
-`representation similarity ≠ coherence`
-
-`equivariance ≠ conservation`
-
-`message vector ≠ force vector`
-
-`zero message ≠ active-neutral state`
-
-`graph routing ≠ neutral routing`.
+The energy interface requires an invariant scalar output under the declared spatial symmetry group.
 
 ---
 
-## 241. Canonical Message Chain
+## 144. Interface to Force Derivation
 
-The local message chain is:
+Force may be derived from a differentiable scalar energy or predicted through an explicitly equivariant force branch.
 
-`source node state`
-
-`+ receiver node state`
-
-`+ edge geometry`
-
-`→ equivariant message`
-
-`→ permutation-safe aggregation`
-
-`→ equivariant receiver update`.
+The selected relation must be explicit.
 
 ---
 
-## 242. Canonical Representation Chain
+## 145. Interface to Stress
 
-Across layers:
-
-`X_EQ^[0]`
-
-`→ MP^[0]`
-
-`→ X_EQ^[1]`
-
-`→ ...`
-
-`→ MP^[L-1]`
-
-`→ X_EQ^[L]`.
+Stress prediction receives appropriately typed latent, geometric, or energy-derived quantities and returns the declared tensor representation.
 
 ---
 
-## 243. Canonical Resonance Interface
+## 146. Interface to Resonance-Conditioned Interactions
 
-The final message-passed representation becomes input to:
+Resonance variables may condition:
 
-`P_R`.
+- edge messages;
+- node updates;
+- interaction weights;
+- gates;
+- readout functions.
 
-The chain is:
-
-`message-passed equivariant representation`
-
-`→ resonance parameterization`
-
-`→ resonance state`.
+The resonance variables retain their own state-space and classification semantics.
 
 ---
 
-## 244. Canonical Ternary Interface
+## 147. Final Formal Structure
 
-The broader chain is:
+A message-passing layer may be represented as:
 
-`X_EQ`
-
-`→ X_R`
-
-`→ T_target`
-
-`→ neutral-mediated execution`.
-
----
-
-## 245. Canonical Energy Interface
-
-The energy chain is:
-
-`message-passed representation`
-
-`→ invariant scalar energy head`
-
-`→ energy`.
-
----
-
-## 246. Canonical Force Interface
-
-For a conservative model:
-
-`message-passed representation`
-
-`→ invariant energy`
-
-`→ coordinate derivative`
-
-`→ equivariant force`.
-
----
-
-## 247. Canonical Stress Interface
-
-Stress is produced through the explicitly defined energy/cell or mechanical output mapping.
-
-Message state remains upstream computational representation.
-
----
-
-## 248. Interface to Chapter 06
-
-Chapter 06 develops Resonance Parameterization.
-
-It defines how message-passed equivariant features become:
-
-- local resonance coordinates;
-- edge resonance coordinates;
-- cluster resonance coordinates;
-- global resonance coordinates;
-- resonance windows;
-- resonance-control parameters.
-
-The distinction remains:
-
-`equivariant representation ≠ resonance state`.
-
----
-
-## 249. Interface to Chapter 07
-
-Chapter 07 develops Ternary Feature Channels.
-
-It defines mappings from selected invariant or transformation-compatible message/resonance features into exact:
-
-`-1/0/1`
-
-channels.
-
----
-
-## 250. Interface to Chapter 08
-
-Chapter 08 develops the Conservative Energy Functional.
-
-The energy model consumes the final message-passed representation together with explicitly declared resonance and ternary features where included.
-
----
-
-## 251. Interface to Chapter 09
-
-Chapter 09 develops Forces and Stress.
-
-It uses invariant energy or direct equivariant output mappings while preserving the geometric transformation contract.
-
----
-
-## 252. Interface to Chapter 10
-
-Chapter 10 defines the TR-EIP Model Family.
-
-Each model-family member must declare:
-
-- graph type;
-- message depth;
-- message representations;
-- aggregation;
-- radial/angular basis;
-- tensor-product paths;
-- recurrence where used;
-- global-state coupling;
-- resonance interface;
-- ternary-conditioning interface.
-
----
-
-## 253. Final Formal Structure
-
-The message-passing layer may be represented as:
-
-`MP = (X_node, X_edge, X_global, X_msg, M, A, U_N, U_E, U_G, rho_MP)`.
+`MP_k = (G, H_k, E_k, M_k, A_k, U_k)`.
 
 Here:
 
-- `X_node` is node-representation state;
-- `X_edge` is edge-representation state;
-- `X_global` is optional global state;
-- `X_msg` is message state;
-- `M` is the directed message function;
-- `A` is neighbor aggregation;
-- `U_N` is node update;
-- `U_E` is optional edge update;
-- `U_G` is optional global update;
-- `rho_MP` is the declared spatial and permutation transformation action.
+- `G` is the interaction graph;
+- `H_k` is the node representation space at layer `k`;
+- `E_k` is the edge representation space;
+- `M_k` is the message function;
+- `A_k` is the aggregation operator;
+- `U_k` is the node update.
 
-For edge:
+For node:
 
-`j → i`:
+`i`
 
-`m_ij = M(h_i, h_j, e_ij, g)`.
+the canonical computation is:
 
-For receiver:
+`m_ij^[k] = M_k(h_i^[k], h_j^[k], e_ij^[k])`
 
-`i`:
+`m_i^[k] = A_k({m_ij^[k] | j ∈ N(i)})`
 
-`m_i = A({m_ij | j ∈ N_i})`.
+`h_i^[k+1] = U_k(h_i^[k], m_i^[k])`.
 
-Then:
+A stack of:
 
-`h_i' = U_N(h_i, m_i, g)`.
+`K_MP`
+
+layers defines:
+
+`h^[0] → h^[1] → ... → h^[K_MP]`.
+
+The layer index is a computational index.
+
+It is not physical time.
 
 ---
 
-## 254. Final Statement
+## 148. Final Statement
 
-Message passing propagates equivariant information across the interaction graph without collapsing the distinction between computational representation and physical state.
+The TR-EIF message-passing layer maps typed local interatomic information through graph-structured message, aggregation, and update operations.
 
-Each directed edge:
+Node and edge representations retain explicit transformation types.
 
-`j → i`
+Permutation behavior follows entity reindexing.
 
-produces a receiver-oriented message from explicitly typed source, receiver, and edge representations.
+Relative geometry supplies translation-invariant and rotation-compatible spatial information.
 
-Incoming messages are aggregated through permutation-safe operations.
+Invariant, vector, tensor, and irreducible representation channels remain separately typed.
 
-Node, edge, and global updates preserve the declared E(3), O(3), SO(3), SE(3), parity, and permutation structure of their channels.
+Resonance variables may condition message passing through explicitly defined mappings.
 
-Message passing may be:
+Resonance classes remain separate from ternary states.
 
-- local;
-- nonlocal;
-- multirelational;
-- recurrent;
-- multiscale;
-- resonance-conditioned;
-- ternary-conditioned.
+The semantic ternary kernel remains:
 
-The framework preserves:
+`-1/0/1`.
 
-`message ≠ edge`
+The state:
 
-`message ≠ force`
+`0`
 
-`message ≠ energy`
+remains active neutral.
 
-`message ≠ chemical bond`
+Target, pending, and executed ternary roles remain distinct.
 
-`message passing ≠ phase coupling`
+Direct committed:
 
-`message ≠ resonance`
+`-1 → 1`
 
-`message ≠ ternary state`
+and:
 
-`zero message ≠ active-neutral 0`
+`1 → -1`
 
-`graph routing ≠ neutral routing`.
+remain forbidden.
 
-The canonical integration path remains:
+The canonical opposite-polarity routes remain:
 
-`atomic configuration`
+`-1 → 0 → 1`
 
-`→ interaction graph`
+and:
 
-`→ equivariant representation`
+`1 → 0 → -1`.
 
-`→ message passing`
-
-`→ resonance parameterization`
-
-`→ ternary feature channels`
-
-`→ conservative energy`
-
-`→ forces and stress`.
-
-These definitions establish the propagation layer required for the Resonance Parameterization developed in Chapter 06.
+Message-passing outputs remain computational representations until mapped through explicitly defined physical, resonance, ternary, or mechanical interfaces.
