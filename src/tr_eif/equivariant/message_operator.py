@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from math import isfinite
 
-from tr_eif.geometry import Vector3
+from tr_eif.configuration import Vector3
 
 from .edge import EquivariantEdgeInput
 from .features import NodeFeatures
