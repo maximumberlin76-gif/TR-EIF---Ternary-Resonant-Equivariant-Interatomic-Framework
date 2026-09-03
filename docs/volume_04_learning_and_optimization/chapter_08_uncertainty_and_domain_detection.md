@@ -2,7 +2,7 @@
 
 ## 1. Purpose
 
-This chapter defines uncertainty representation, uncertainty calibration, model-domain detection, selective prediction, and acquisition interfaces for the TR-EIF learning and optimization layer.
+This chapter defines uncertainty representation, uncertainty calibration, model-domain detection, selective prediction, and acquisition interfaces for the TR-EIP learning and optimization layer within TR-EIF.
 
 The chapter preserves explicit separation among:
 
@@ -1916,7 +1916,7 @@ Any mechanical uncertainty model must define:
 
 ## 172. Canonical Uncertainty Invariants
 
-Every conforming TR-EIF uncertainty layer preserves:
+Every conforming TR-EIP uncertainty layer within TR-EIF preserves:
 
 1. uncertainty is distinct from prediction;
 
