@@ -5,6 +5,7 @@ from .execution import (
     TernaryExecutionStep,
     execute_ternary_step,
 )
+from .guard import TernaryExecutionGuard
 from .projection import (
     ResonanceProjection,
     ternary_target_from_descriptor,
@@ -38,6 +39,7 @@ from .vector_execution import (
 
 __all__ = [
     "ResonanceProjection",
+    "TernaryExecutionGuard",
     "TernaryExecutionState",
     "TernaryExecutionStep",
     "TernaryExecutionVector",
