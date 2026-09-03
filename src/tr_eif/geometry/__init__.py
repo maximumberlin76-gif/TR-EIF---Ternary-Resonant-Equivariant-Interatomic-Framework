@@ -3,6 +3,7 @@
 from .periodic import (
     cartesian_to_fractional,
     fractional_to_cartesian,
+    minimum_image,
     minimum_image_displacement,
     periodic_image_displacement,
 )
@@ -13,9 +14,9 @@ __all__ = [
     "displacement",
     "distance",
     "fractional_to_cartesian",
+    "minimum_image",
     "minimum_image_displacement",
     "periodic_image_displacement",
     "squared_distance",
     "unit_direction",
 ]
-
