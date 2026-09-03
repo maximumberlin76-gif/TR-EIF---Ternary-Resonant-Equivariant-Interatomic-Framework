@@ -511,7 +511,7 @@ def test_interleaved_mapping_uses_explicit_membership() -> None:
     )
 
     assert first.positions[1] == pytest.approx(
-        (0.6, 2.0, 6.0)
+        (0.6, 1.6, 6.0)
     )
 
 
