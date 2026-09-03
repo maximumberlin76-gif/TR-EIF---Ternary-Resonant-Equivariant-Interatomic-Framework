@@ -123,7 +123,7 @@ Equivariance allows the output to transform according to its declared representa
 
 ## 8. Declared Symmetry Scope
 
-Every TR-EIF model must specify which symmetry group or subgroup applies to each relevant module.
+Every TR-EIP model within TR-EIF must specify which symmetry group or subgroup applies to each relevant module.
 
 Possible groups include:
 
