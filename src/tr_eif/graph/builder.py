@@ -7,7 +7,7 @@ from math import isfinite
 from tr_eif.configuration import AtomicConfiguration
 from tr_eif.geometry import (
     displacement,
-    minimum_image_displacement,
+    minimum_image,
     squared_distance,
 )
 
@@ -53,31 +53,30 @@ def build_cutoff_graph(
                         "Periodic configuration requires a simulation cell."
                     )
 
-                delta = minimum_image_displacement(
+                delta, image = minimum_image(
                     source_position,
                     receiver_position,
                     configuration.cell,
                     configuration.periodic,
-                )
-                distance_squared = squared_distance(
-                    (0.0, 0.0, 0.0),
-                    delta,
                 )
             else:
                 delta = displacement(
                     source_position,
                     receiver_position,
                 )
-                distance_squared = squared_distance(
-                    (0.0, 0.0, 0.0),
-                    delta,
-                )
+                image = (0, 0, 0)
+
+            distance_squared = squared_distance(
+                (0.0, 0.0, 0.0),
+                delta,
+            )
 
             if distance_squared <= cutoff_squared:
                 edges.append(
                     InteractionEdge(
                         source=source,
                         receiver=receiver,
+                        image=image,
                     )
                 )
 
