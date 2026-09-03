@@ -265,7 +265,7 @@ is active.
 
 The notation:
 
-`-1/0/+1`
+`-1/0/1`
 
 is not used.
 
