@@ -6,6 +6,7 @@ from .force_evaluator import ConservativeForceEvaluator
 from .functional import LinearInvariantEnergyFunctional
 from .model import EnergyModelResult, ReferenceEnergyModel
 from .state import AtomicEnergies, EnergyState
+from .stress import StressState, StressTensor
 
 __all__ = [
     "AtomicEnergies",
@@ -17,4 +18,6 @@ __all__ = [
     "ForceState",
     "LinearInvariantEnergyFunctional",
     "ReferenceEnergyModel",
+    "StressState",
+    "StressTensor",
 ]
