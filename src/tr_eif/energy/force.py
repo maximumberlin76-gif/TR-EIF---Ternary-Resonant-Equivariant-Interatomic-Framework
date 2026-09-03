@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from math import isfinite
 from typing import TypeAlias
 
-from tr_eif.geometry import Vector3
+from tr_eif.configuration import Vector3
 
 AtomicForces: TypeAlias = tuple[Vector3, ...]
 
