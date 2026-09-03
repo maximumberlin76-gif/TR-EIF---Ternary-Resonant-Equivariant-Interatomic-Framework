@@ -2,6 +2,7 @@
 
 from .differentiation import CoordinateDifferentiation
 from .force import AtomicForces, ForceState
+from .force_evaluator import ConservativeForceEvaluator
 from .functional import LinearInvariantEnergyFunctional
 from .model import EnergyModelResult, ReferenceEnergyModel
 from .state import AtomicEnergies, EnergyState
@@ -9,6 +10,7 @@ from .state import AtomicEnergies, EnergyState
 __all__ = [
     "AtomicEnergies",
     "AtomicForces",
+    "ConservativeForceEvaluator",
     "CoordinateDifferentiation",
     "EnergyModelResult",
     "EnergyState",
