@@ -2,7 +2,7 @@
 
 ## 1. Purpose
 
-This chapter defines the optimization layer of TR-EIF.
+This chapter defines the optimization layer of the TR-EIP model family within TR-EIF.
 
 Optimization acts on the trainable parameter set while preserving the mathematical, ternary, resonance, equivariance, mechanical, uncertainty, and domain constraints established in the preceding volumes and chapters.
 
@@ -692,7 +692,7 @@ Every nontrivial fixed or scheduled coefficient retains provenance.
 
 ## 73. Multiobjective Optimization
 
-The TR-EIF training problem is generally multiobjective.
+The TR-EIP training problem within TR-EIF is generally multiobjective.
 
 The objectives may include:
 
@@ -2772,7 +2772,7 @@ Any uncertainty optimization procedure must define:
 
 ## 323. Canonical Optimization Invariants
 
-Every conforming TR-EIF optimization procedure preserves:
+Every conforming TR-EIP optimization procedure within TR-EIF preserves:
 
 1. explicit trainable parameter set;
 
@@ -3143,7 +3143,7 @@ This update is admissible only when all hard architectural and semantic constrai
 
 ## 344. Final Statement
 
-Optimization provides the parameter-learning procedure connecting TR-EIF training data to a validated model state.
+Optimization provides the parameter-learning procedure connecting TR-EIP training data within TR-EIF to a validated model state.
 
 It integrates:
 
