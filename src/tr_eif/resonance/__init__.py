@@ -2,6 +2,7 @@
 
 from .dynamics import PhaseDerivativeVector, phase_derivatives
 from .integrator import euler_step
+from .order import phase_order_parameter, state_phase_order
 from .parameters import (
     CouplingVector,
     PhaseDynamicsParameters,
@@ -25,6 +26,8 @@ __all__ = [
     "ResonanceState",
     "euler_step",
     "phase_derivatives",
+    "phase_order_parameter",
+    "state_phase_order",
     "wrap_phase",
     "wrap_phases",
 ]
