@@ -5,6 +5,11 @@ from .execution import (
     TernaryExecutionStep,
     execute_ternary_step,
 )
+from .projection import (
+    ResonanceProjection,
+    ternary_target_from_descriptor,
+    ternary_target_from_resonance_state,
+)
 from .routing import (
     TernaryRoute,
     route_pending_target,
@@ -27,6 +32,7 @@ from .transition import (
 )
 
 __all__ = [
+    "ResonanceProjection",
     "TernaryExecutionState",
     "TernaryExecutionStep",
     "TernaryRoute",
@@ -39,6 +45,8 @@ __all__ = [
     "is_direct_opposite_transition",
     "route_pending_target",
     "route_ternary_target",
+    "ternary_target_from_descriptor",
+    "ternary_target_from_resonance_state",
     "ternary_target_from_scalar",
     "validate_ternary_state",
     "validate_ternary_vector",
