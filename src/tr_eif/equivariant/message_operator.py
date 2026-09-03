@@ -1,11 +1,11 @@
-"""Reference equivariant edge-message operator for TR-EIF."""
+"""Reference E(3)-equivariant message operator for TR-EIF."""
 
 from __future__ import annotations
 
 from dataclasses import dataclass
 from math import isfinite
 
-from tr_eif.configuration import Vector3
+from tr_eif.geometry import Vector3
 
 from .edge import EquivariantEdgeInput
 from .features import NodeFeatures
@@ -14,26 +14,26 @@ from .message import EquivariantMessage
 
 def _scale_vector(
     vector: Vector3,
-    scalar: float,
+    scale: float,
 ) -> Vector3:
     return (
-        scalar * vector[0],
-        scalar * vector[1],
-        scalar * vector[2],
+        scale * vector[0],
+        scale * vector[1],
+        scale * vector[2],
     )
 
 
 @dataclass(frozen=True, slots=True)
 class RadialMessageOperator:
-    """Reference radial operator for directed equivariant messages."""
+    """Reference radial operator preserving feature-channel dimensions."""
 
     distance_scale: float = 1.0
 
     def __post_init__(self) -> None:
-        if not isinstance(self.distance_scale, (int, float)) or isinstance(
+        if not isinstance(
             self.distance_scale,
-            bool,
-        ):
+            (int, float),
+        ) or isinstance(self.distance_scale, bool):
             raise TypeError(
                 "distance_scale must be a real number."
             )
@@ -64,16 +64,21 @@ class RadialMessageOperator:
             distance,
             bool,
         ):
-            raise TypeError("distance must be a real number.")
+            raise TypeError(
+                "distance must be a real number."
+            )
 
         if not isfinite(distance):
-            raise ValueError("distance must be finite.")
+            raise ValueError(
+                "distance must be finite."
+            )
 
         if distance <= 0.0:
-            raise ValueError("distance must be positive.")
+            raise ValueError(
+                "distance must be positive."
+            )
 
         ratio = distance / self.distance_scale
-
         return 1.0 / (1.0 + ratio * ratio)
 
     def message(
@@ -81,7 +86,7 @@ class RadialMessageOperator:
         source_features: NodeFeatures,
         edge_input: EquivariantEdgeInput,
     ) -> EquivariantMessage:
-        """Construct one directed invariant/equivariant edge message."""
+        """Construct one deterministic radial equivariant message."""
 
         if not isinstance(source_features, NodeFeatures):
             raise TypeError(
@@ -94,7 +99,7 @@ class RadialMessageOperator:
             )
 
         weight = self.radial_weight(
-            edge_input.distance,
+            edge_input.distance
         )
 
         scalar_messages = tuple(
@@ -106,16 +111,6 @@ class RadialMessageOperator:
             _scale_vector(vector, weight)
             for vector in source_features.vectors
         )
-
-        if source_features.scalars:
-            directional_vectors = tuple(
-                _scale_vector(
-                    edge_input.direction,
-                    weight * scalar,
-                )
-                for scalar in source_features.scalars
-            )
-            vector_messages = vector_messages + directional_vectors
 
         return EquivariantMessage(
             source=edge_input.source,
