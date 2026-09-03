@@ -1,6 +1,10 @@
 """E(3)-equivariant feature representations and operations for TR-EIF."""
 
 from .aggregation import aggregate_messages
+from .conditioned_layer import (
+    ConditionedEquivariantLayerResult,
+    conditioned_equivariant_layer_step,
+)
 from .conditioning import (
     TernaryConditioning,
     condition_feature_vector,
@@ -31,6 +35,7 @@ from .update import (
 )
 
 __all__ = [
+    "ConditionedEquivariantLayerResult",
     "E3Transformation",
     "EquivariantEdgeInput",
     "EquivariantLayerResult",
@@ -46,6 +51,7 @@ __all__ = [
     "aggregate_messages",
     "condition_feature_vector",
     "condition_node_features",
+    "conditioned_equivariant_layer_step",
     "edge_input_from_geometry",
     "equivariant_layer_step",
     "evaluate_equivariant_edge_input",
