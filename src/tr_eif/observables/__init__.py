@@ -6,6 +6,11 @@ from .json_export import (
     trace_sequence_to_json_bytes,
 )
 from .replay import ReplayComparison, compare_trace_replay
+from .replay_runner import (
+    ReplayRun,
+    TraceProducer,
+    run_deterministic_replay,
+)
 from .sequence import TraceSequence
 from .serialization import (
     trace_record_to_mapping,
@@ -16,9 +21,12 @@ from .trace import TraceRecord
 __all__ = [
     "PathInput",
     "ReplayComparison",
+    "ReplayRun",
+    "TraceProducer",
     "TraceRecord",
     "TraceSequence",
     "compare_trace_replay",
+    "run_deterministic_replay",
     "trace_record_to_mapping",
     "trace_sequence_to_json",
     "trace_sequence_to_json_bytes",
