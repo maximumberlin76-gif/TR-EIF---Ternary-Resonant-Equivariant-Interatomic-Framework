@@ -2,66 +2,47 @@
 
 ## 1. Purpose
 
-This chapter defines ternary regularization within the TR-EIP learning and optimization layer of TR-EIF.
+This chapter defines ternary regularization for the TR-EIF learning and optimization layer.
 
-Ternary regularization constrains learned ternary feature channels and their upstream continuous decision variables while preserving the exact semantic kernel:
+Ternary regularization acts on differentiable training representations associated with ternary prediction while preserving the exact semantic ternary state space:
 
-`-1/0/1`.
+`T = {-1,0,1}`.
 
-The state:
+The regularization layer does not redefine ternary semantics.
 
-`0`
+Its purpose is to constrain learned representations and decision mappings so that they remain compatible with:
 
-remains active neutral.
-
-Regularization may shape:
-
-- class occupancy;
-- decision margins;
-- target persistence;
-- neutral-state usage;
-- transition frequency;
-- target stability;
-- target/execution consistency;
-- route completion;
-- multiscale ternary consistency.
-
-Regularization does not redefine the ternary domain or execution topology.
+- exact balanced ternary states;
+- active-neutral semantics;
+- explicit target formation;
+- neutral-mediated opposite-polarity execution;
+- persistence and hysteresis where defined;
+- separation between prediction, routing, and committed execution.
 
 ---
 
-## 2. Ternary Feature State
+## 2. Dependencies
 
-Let:
+This chapter depends on the definitions established in:
 
-`t ∈ {-1,0,1}`.
+- Volume 02 — Ternary Resonance Theory;
+- Volume 03 — Equivariant Interatomic Framework;
+- Volume 04 Chapter 01 — Model Architecture;
+- Volume 04 Chapter 02 — Training Data;
+- Volume 04 Chapter 03 — Loss Functionals;
+- Volume 04 Chapter 04 — Energy-Force-Stress Training.
 
-For multiple channels:
-
-`t ∈ {-1,0,1}^M`.
-
-The ternary state may exist at:
-
-- edge scale;
-- atom scale;
-- cluster scale;
-- global scale.
+Ternary regularization operates only after the relevant state spaces, mappings, targets, and losses have been explicitly defined.
 
 ---
 
-## 3. Exact Semantic Domain
+## 3. Exact Ternary State Space
 
-The forward semantic state is exactly:
+The semantic ternary state space is:
 
-`-1`
+`T = {-1,0,1}`.
 
-`0`
-
-or:
-
-`1`.
-
-Continuous logits, probabilities, margins, and surrogate variables remain separate computational states.
+No fourth semantic state is introduced by the regularization layer.
 
 ---
 
@@ -71,72 +52,2321 @@ The state:
 
 `0`
 
-is active neutral.
+is an active neutral state.
 
-It may participate in:
+It may represent, according to the declared model:
 
 - mediation;
 - balancing;
-- retention;
 - routing;
+- damping;
 - transition staging;
+- retention;
 - controlled neutralization.
 
-It must not be used as a generic encoding for:
+The state:
 
-- missing;
-- invalid;
-- masked;
-- padded;
-- unknown;
-- out-of-domain.
+`0`
+
+must not be interpreted as absence of state.
 
 ---
 
-## 5. Ternary Regularizer
+## 5. Neutral Is Not Missing Data
 
-A ternary regularizer is a scalar optimization term:
+The framework preserves:
 
-`R_T`.
+`0 ≠ MISSING`
 
-It may depend on:
+`0 ≠ MASK`
 
-- hard ternary states;
-- continuous pre-classification variables;
-- transition sequences;
-- target/execution traces;
-- channel statistics;
-- retained state.
+`0 ≠ PADDING`
 
-A generic objective is:
+`0 ≠ UNKNOWN`
 
-`L_total = L_data + lambda_T R_T`.
+`0 ≠ INVALID`
 
----
+`0 ≠ NaN`
 
-## 6. Regularization Is Not Ternary Semantics
+`0 ≠ UNCERTAIN`
 
-The distinction remains:
+`0 ≠ ABSTAIN`.
 
-`ternary regularization ≠ ternary definition`.
-
-The semantic state set remains fixed independently of the regularizer.
+All such conditions require separate metadata or state channels.
 
 ---
 
-## 7. Hard Constraint Boundary
+## 6. Target State
 
-A regularization penalty is soft unless the architecture makes violation impossible.
+Let:
 
-The following remain hard execution invariants:
+`t_target ∈ {-1,0,1}`
 
-`-1 → 1` forbidden
+denote a predicted or reference ternary target.
 
-`1 → -1` forbidden.
+The target is a semantic request.
+
+It is not necessarily the immediately committed state.
 
 ---
 
-## 8. Canonical Execution Graph
+## 7. Executed State
+
+Let:
+
+`t_exec ∈ {-1,0,1}`
+
+denote the committed executed ternary state.
+
+The framework preserves:
+
+`t_target ≠ t_exec`
+
+as a semantic distinction.
+
+They may have equal values in a particular event without becoming the same variable.
+
+---
+
+## 8. Pending Destination
+
+Let:
+
+`t_pending`
+
+denote a pending destination where the execution architecture supports routed opposite-polarity transitions.
+
+Pending state is separate from both:
+
+`t_target`
+
+and:
+
+`t_exec`.
+
+---
+
+## 9. Pending Is Not Neutral
+
+The framework preserves:
+
+`t_pending ≠ 0`
+
+by identity.
+
+A pending destination may equal `0` only if a specific architecture explicitly defines such a value semantically.
+
+Pending routing itself is not active-neutral state.
+
+---
+
+## 10. Committed Transition Graph
+
+The canonical committed ternary topology is:
+
+`-1 ↔ 0 ↔ 1`.
+
+---
+
+## 11. Forbidden Direct Opposite Transitions
+
+Direct committed transitions:
+
+`-1 → 1`
+
+and:
+
+`1 → -1`
+
+are forbidden.
+
+---
+
+## 12. Required Opposite-Polarity Routes
+
+Opposite-polarity committed execution must use:
+
+`-1 → 0 → 1`
+
+or:
+
+`1 → 0 → -1`.
+
+Each arrow represents a separate committed transition event.
+
+---
+
+## 13. No Automatic Second Leg
+
+Execution of:
+
+`-1 → 0`
+
+does not automatically imply immediate execution of:
+
+`0 → 1`.
+
+Likewise:
+
+`1 → 0`
+
+does not automatically imply immediate execution of:
+
+`0 → -1`.
+
+The neutral state may persist.
+
+---
+
+## 14. Regularization Boundary
+
+Ternary regularization may influence:
+
+- representation geometry;
+- logits;
+- probabilities;
+- margins;
+- decision stability;
+- transition proposals;
+- switching frequency;
+- persistence;
+- class balance.
+
+It must not alter the exact committed transition topology.
+
+---
+
+## 15. Soft Training Representation
+
+A differentiable model may use a continuous internal representation:
+
+`z_T ∈ X_T_soft`.
+
+This representation is not itself the semantic ternary state.
+
+---
+
+## 16. Logit Representation
+
+A classifier may produce logits:
+
+`l_-`
+
+`l_0`
+
+`l_1`.
+
+---
+
+## 17. Probability Representation
+
+A normalized classifier may produce:
+
+`p_T = (p_-, p_0, p_1)`
+
+with:
+
+`p_- + p_0 + p_1 = 1`.
+
+---
+
+## 18. Probability Is Not State
+
+The framework preserves:
+
+`p_T ≠ t_target`.
+
+Probabilities parameterize a decision rule.
+
+They are not committed semantic states.
+
+---
+
+## 19. Hard Decision Mapping
+
+A decision operator:
+
+`D_T`
+
+maps a soft representation to:
+
+`t_target`.
+
+A generic form is:
+
+`D_T: X_T_soft → {-1,0,1}`.
+
+---
+
+## 20. Decision Rule Declaration
+
+Every ternary prediction model must explicitly define:
+
+- soft representation;
+- decision boundaries;
+- tie handling;
+- threshold behavior;
+- uncertainty handling;
+- target output.
+
+---
+
+## 21. Ternary Regularization Functional
+
+Let:
+
+`R_T`
+
+denote the complete ternary regularization term.
+
+A general decomposition may be:
+
+`R_T = R_state + R_neutral + R_transition + R_persistence + R_hysteresis + R_balance + R_margin + R_aux`.
+
+Not every implementation must use every term.
+
+---
+
+## 22. State-Concentration Regularization
+
+A state-concentration term may encourage soft predictions toward declared ternary decision regions.
+
+---
+
+## 23. Concentration Is Not Quantization
+
+A regularization term that encourages concentration near ternary states does not itself perform semantic commitment.
+
+---
+
+## 24. Semantic Commitment
+
+Semantic commitment occurs only through the declared decision and execution interfaces.
+
+---
+
+## 25. Distance-to-State Regularization
+
+For a scalar soft variable:
+
+`z`
+
+a model may penalize distance from:
+
+`{-1,0,1}`.
+
+A generic state-distance term is:
+
+`R_state(z) = min((z+1)^2, z^2, (z-1)^2)`.
+
+---
+
+## 26. State-Distance Limitation
+
+The minimum-distance form is non-smooth at equal-distance boundaries.
+
+A smooth surrogate may therefore be used during optimization.
+
+---
+
+## 27. Smooth Surrogate
+
+Any smooth surrogate must preserve the interpretation that the semantic states remain exactly:
+
+`-1/0/1`.
+
+---
+
+## 28. Regularization Does Not Create Intermediate Semantic States
+
+A continuous training value such as:
+
+`0.4`
+
+is not a fourth ternary state.
+
+It is an optimization variable or prediction score.
+
+---
+
+## 29. Neutral Occupancy
+
+A model may regularize the frequency with which predictions enter the active-neutral class.
+
+---
+
+## 30. Neutral Occupancy Target
+
+Let:
+
+`q_0`
+
+denote a declared neutral occupancy target or reference statistic where such a target is justified.
+
+---
+
+## 31. Occupancy Penalty
+
+A simple batch-level term may compare predicted neutral occupancy:
+
+`q_hat_0`
+
+with:
+
+`q_0`.
+
+---
+
+## 32. Neutral Occupancy Is Model-Dependent
+
+No universal neutral occupancy fraction is imposed.
+
+It depends on:
+
+- task;
+- data distribution;
+- resonance mapping;
+- execution semantics;
+- temporal sampling.
+
+---
+
+## 33. Neutral Collapse
+
+A degenerate model may predict:
+
+`0`
+
+for an excessive fraction of inputs.
+
+---
+
+## 34. Polar Collapse
+
+A degenerate model may also collapse toward:
+
+`-1`
+
+or:
+
+`1`.
+
+---
+
+## 35. Collapse Detection
+
+Collapse diagnostics may track:
+
+- class occupancy;
+- class entropy;
+- class-conditional error;
+- transition frequency;
+- confusion matrix.
+
+---
+
+## 36. High Entropy Is Not Active Neutral
+
+The framework preserves:
+
+`high categorical entropy ≠ ternary 0`.
+
+---
+
+## 37. Low Confidence Is Not Active Neutral
+
+The framework preserves:
+
+`low classifier confidence ≠ ternary 0`.
+
+---
+
+## 38. Uncertainty Is Not Active Neutral
+
+The framework preserves:
+
+`uncertainty ≠ ternary 0`.
+
+---
+
+## 39. Abstention Is Not Active Neutral
+
+If abstention is supported:
+
+`ABSTAIN`
+
+must use a separate output channel.
+
+---
+
+## 40. Class-Balance Regularization
+
+A model may regularize class imbalance when justified by the training protocol.
+
+---
+
+## 41. Class-Balance Boundary
+
+Class balancing must not force artificial equality of:
+
+`-1`
+
+`0`
+
+and:
+
+`1`
+
+when the physical or reference distribution is not balanced.
+
+---
+
+## 42. Reference Distribution
+
+Class-frequency targets should be sourced from:
+
+- training data;
+- calibration data;
+- an author-defined protocol;
+- a benchmark fixture.
+
+Their provenance must be explicit.
+
+---
+
+## 43. Transition Regularization
+
+Let:
+
+`R_transition`
+
+denote a term acting on sequential ternary predictions or transition proposals.
+
+---
+
+## 44. Direct-Opposite Proposal
+
+A model may be trained to suppress proposals inconsistent with neutral-mediated opposite routing.
+
+---
+
+## 45. Proposal Is Not Committed Transition
+
+The framework preserves:
+
+`predicted direct-opposite proposal ≠ committed direct-opposite event`.
+
+The committed execution layer must still enforce the topology exactly.
+
+---
+
+## 46. Transition Penalty
+
+A training penalty may assign cost to proposals equivalent to:
+
+`-1 → 1`
+
+or:
+
+`1 → -1`
+
+without intermediate neutral routing.
+
+---
+
+## 47. Hard Execution Invariant
+
+The direct-opposite prohibition must not rely only on a finite penalty coefficient.
+
+Committed execution requires structural enforcement.
+
+---
+
+## 48. First-Leg Consistency
+
+For current executed state:
+
+`-1`
+
+and opposite target:
+
+`1`
+
+the admissible first committed leg is:
+
+`-1 → 0`.
+
+---
+
+## 49. Second-Leg Consistency
+
+A later admissible completion is:
+
+`0 → 1`.
+
+---
+
+## 50. Reverse Route
+
+For current executed state:
+
+`1`
+
+and opposite target:
+
+`-1`
+
+the corresponding route is:
+
+`1 → 0 → -1`.
+
+---
+
+## 51. Transition Event Separation
+
+The first and second legs must remain separate in:
+
+- labels;
+- traces;
+- losses;
+- validation;
+- execution.
+
+---
+
+## 52. Neutral Residence
+
+The intermediate neutral state may persist for one or more execution intervals.
+
+---
+
+## 53. Neutral Residence Regularization
+
+Where sequential reference data define neutral residence behavior, a model may include:
+
+`R_neutral_residence`.
+
+---
+
+## 54. Residence Is Not Delay by Identity
+
+Neutral residence and an explicit physical time-delay model are distinct mechanisms.
+
+---
+
+## 55. Switching Regularization
+
+A model may penalize excessive ternary switching.
+
+---
+
+## 56. Switching Count
+
+For sequential states:
+
+`t[0], ..., t[N]`
+
+a switch count may be defined as:
+
+`N_switch = sum_n I(t[n+1] ≠ t[n])`.
+
+---
+
+## 57. Chattering
+
+Rapid repeated changes near decision boundaries may be classified as chattering under a declared temporal or tact-based criterion.
+
+---
+
+## 58. Chattering Penalty
+
+A regularizer may penalize excessive switching frequency or repeated reversals.
+
+---
+
+## 59. Chattering Penalty Is Not Hysteresis
+
+The framework preserves:
+
+`switch penalty ≠ hysteresis`.
+
+---
+
+## 60. Persistence
+
+Persistence describes retention of a state or regime under a declared update rule.
+
+---
+
+## 61. Persistence Regularization
+
+A term:
+
+`R_persistence`
+
+may encourage consistency across adjacent steps where supported by the model and data.
+
+---
+
+## 62. Persistence Is Not Permanence
+
+Persistence does not mean the state cannot change.
+
+---
+
+## 63. Hysteresis
+
+Hysteresis requires path-dependent state or threshold behavior.
+
+---
+
+## 64. Hysteresis Regularization
+
+A term:
+
+`R_hysteresis`
+
+may enforce consistency with declared entry and exit thresholds or history-dependent decision rules.
+
+---
+
+## 65. Hysteresis Requires Memory
+
+A hysteretic classifier must depend on an explicit previous state, previous regime, or another declared memory variable.
+
+---
+
+## 66. Classifier Hysteresis Is Not Neutral Routing
+
+The framework preserves:
+
+`classifier hysteresis ≠ neutral-mediated execution`.
+
+They may interact but remain separate mechanisms.
+
+---
+
+## 67. Entry Threshold
+
+A hysteretic ternary classifier may define an entry threshold for a state.
+
+---
+
+## 68. Exit Threshold
+
+A distinct exit threshold may define when the current state is released.
+
+---
+
+## 69. Threshold Ordering
+
+Trainable hysteresis parameters must preserve the declared ordering between entry and exit thresholds.
+
+---
+
+## 70. Threshold Parameterization
+
+If threshold ordering is required, optimization should use a parameterization or projection that preserves it structurally.
+
+---
+
+## 71. Margin Regularization
+
+A classifier may use margins around ternary decision boundaries.
+
+---
+
+## 72. Decision Margin
+
+A decision margin is a property of the classifier.
+
+It is not an additional ternary state.
+
+---
+
+## 73. Neutral Decision Region
+
+A classifier may assign a finite region of its decision variable to:
+
+`0`.
+
+---
+
+## 74. Neutral Region Is Not Resonance Window
+
+The framework preserves:
+
+`ternary neutral decision region ≠ resonance window`.
+
+---
+
+## 75. Resonance Window
+
+A resonance model operates in resonance state space:
+
+`X_R`.
+
+Let:
+
+`r ∈ X_R`.
+
+A resonance window is:
+
+`W_R ⊂ X_R`.
+
+---
+
+## 76. Resonance Classes
+
+A resonance classifier may define:
+
+`OUTSIDE`
+
+`BOUNDARY`
+
+`INSIDE`.
+
+---
+
+## 77. Resonance Classes Are Not Ternary States
+
+The framework preserves:
+
+`OUTSIDE/BOUNDARY/INSIDE ≠ -1/0/1`.
+
+Any mapping between these spaces must be explicitly defined.
+
+---
+
+## 78. Resonance-to-Ternary Mapping
+
+Let:
+
+`P_RT`
+
+denote an explicit mapping from resonance information to ternary target information.
+
+A generic interface is:
+
+`P_RT: X_R × X_context → {-1,0,1}`.
+
+---
+
+## 79. Context Dependence
+
+The mapping may depend on:
+
+- resonance coordinate;
+- local environment;
+- history;
+- scale;
+- model mode;
+- additional declared variables.
+
+---
+
+## 80. Resonance Classification Is Not Ternary Classification
+
+The framework preserves:
+
+`resonance classification ≠ ternary classification`.
+
+---
+
+## 81. Resonance-Conditioned Ternary Regularization
+
+A term may regularize consistency between:
+
+- resonance state;
+- resonance class;
+- ternary target.
+
+---
+
+## 82. Mapping Consistency
+
+If an explicit reference mapping exists, a consistency term may compare:
+
+`t_target`
+
+with:
+
+`P_RT(r, context)`.
+
+---
+
+## 83. No Implicit Identity Mapping
+
+Ternary regularization must not silently assume:
+
+`OUTSIDE → -1`
+
+`BOUNDARY → 0`
+
+`INSIDE → 1`.
+
+Such a mapping is valid only if explicitly defined by the model.
+
+---
+
+## 84. Resonance-Window Crossing
+
+Crossing:
+
+`∂W_R`
+
+is a resonance-classification event.
+
+---
+
+## 85. Resonance-Window Crossing Is Not Ternary Transition
+
+The framework preserves:
+
+`resonance-window crossing ≠ ternary transition`.
+
+---
+
+## 86. Resonance-Window Crossing Is Not Bifurcation
+
+The framework preserves:
+
+`resonance-window crossing ≠ bifurcation`.
+
+---
+
+## 87. Ternary Transition Is Not Bifurcation
+
+The framework preserves:
+
+`ternary transition ≠ bifurcation`.
+
+---
+
+## 88. Ternary Transition Is Not Structural Transition
+
+The framework preserves:
+
+`ternary transition ≠ structural transition`.
+
+---
+
+## 89. Structural Transition Is Not Physical Phase Transition
+
+The framework preserves:
+
+`structural transition ≠ physical phase transition`.
+
+---
+
+## 90. Ternary State Is Not Energy
+
+The framework preserves:
+
+`ternary state ≠ energy`.
+
+---
+
+## 91. Ternary State Is Not Force
+
+The framework preserves:
+
+`ternary state ≠ force`.
+
+---
+
+## 92. Ternary State Is Not Stress
+
+The framework preserves:
+
+`ternary state ≠ stress`.
+
+---
+
+## 93. Ternary Polarity Is Not Spatial Direction
+
+The values:
+
+`-1`
+
+and:
+
+`1`
+
+are semantic ternary polarities.
+
+They are not spatial vectors.
+
+---
+
+## 94. Spatial Rotation Is Not Ternary Polarity Reversal
+
+The framework preserves:
+
+`spatial rotation ≠ -1/1 polarity reversal`.
+
+---
+
+## 95. Spatial Reflection Is Not Automatic Ternary Polarity Reversal
+
+A spatial reflection must not exchange:
+
+`-1`
+
+and:
+
+`1`
+
+unless a separate explicitly defined semantic action requires it.
+
+---
+
+## 96. Permutation Behavior
+
+Per-entity ternary outputs must permute with their associated entities.
+
+---
+
+## 97. Scalar Ternary Invariance
+
+For a scalar per-entity ternary semantic state and an admissible rigid spatial transformation:
+
+`t_target(gX) = t_target(X)`
+
+up to entity permutation where applicable.
+
+---
+
+## 98. Equivariance Constraint
+
+Ternary regularization must not introduce a loss or feature that breaks the declared symmetry group of the model.
+
+---
+
+## 99. Invariant Inputs
+
+A ternary scalar classifier should be driven by symmetry-compatible quantities under the declared model architecture.
+
+---
+
+## 100. Equivariant Latent Inputs
+
+If equivariant latent features are used, they must be converted to the ternary semantic target through a symmetry-compatible operation.
+
+---
+
+## 101. Laboratory-Frame Leakage
+
+A classifier must not acquire spurious dependence on arbitrary coordinate orientation when the physical problem is rotation invariant.
+
+---
+
+## 102. Ternary Symmetry Residual
+
+A validation metric may compare:
+
+`t_target(gX)`
+
+with the appropriately permuted:
+
+`t_target(X)`.
+
+---
+
+## 103. Soft Symmetry Residual
+
+For probability outputs:
+
+`p_T(gX)`
+
+may be compared with the transformed or permuted reference probability distribution.
+
+---
+
+## 104. Energy Coupling Boundary
+
+Ternary regularization may be jointly optimized with energy objectives.
+
+This does not make ternary state an energy variable.
+
+---
+
+## 105. Force Coupling Boundary
+
+Ternary regularization may influence a learned representation used for force prediction.
+
+This does not make ternary state a force.
+
+---
+
+## 106. Stress Coupling Boundary
+
+The same distinction applies to stress prediction.
+
+---
+
+## 107. Mechanical Consistency
+
+If ternary state conditions an interatomic mapping, the resulting energy-force-stress outputs must still satisfy their own declared physical and mathematical constraints.
+
+---
+
+## 108. Conservative Force Boundary
+
+Where force is defined by:
+
+`F_i = -grad_(r_i) E`
+
+ternary conditioning must not break differentiability required for the declared conservative branch.
+
+---
+
+## 109. Hard Ternary Decisions inside Energy Path
+
+A non-differentiable hard ternary decision inside an energy path may obstruct gradient-based force derivation.
+
+---
+
+## 110. Differentiable Conditioning
+
+Training may therefore use a differentiable conditioning representation upstream of hard semantic commitment.
+
+---
+
+## 111. Training Representation versus Inference State
+
+The framework preserves:
+
+`differentiable ternary conditioning ≠ committed ternary state`.
+
+---
+
+## 112. Straight-Through Surrogate
+
+A straight-through estimator may be used only as an explicitly declared optimization approximation.
+
+---
+
+## 113. Surrogate Gradient Is Not Exact Derivative
+
+The framework preserves:
+
+`surrogate gradient ≠ exact derivative of hard ternary decision`.
+
+---
+
+## 114. Temperature Parameter
+
+A soft categorical distribution may use a classifier temperature:
+
+`tau_T`.
+
+---
+
+## 115. Classifier Temperature Is Not Physical Temperature
+
+The framework preserves:
+
+`classifier temperature ≠ thermodynamic temperature`.
+
+---
+
+## 116. Temperature Schedule
+
+A classifier temperature may vary during training.
+
+---
+
+## 117. Temperature Annealing
+
+Annealing a classifier temperature is an optimization procedure.
+
+---
+
+## 118. Optimization Annealing Is Not Thermodynamic Annealing
+
+The framework preserves:
+
+`classifier-temperature annealing ≠ thermodynamic annealing`.
+
+---
+
+## 119. Entropy Regularization
+
+A categorical entropy term may encourage either:
+
+- sharper decisions;
+- broader distributions.
+
+The sign and coefficient must be explicit.
+
+---
+
+## 120. Entropy Is Not Neutrality
+
+The framework preserves:
+
+`categorical entropy ≠ active neutral`.
+
+---
+
+## 121. Neutral Probability
+
+`p_0`
+
+is the probability or score assigned to the active-neutral class.
+
+---
+
+## 122. Neutral Probability Is Not Neutral State
+
+The framework preserves:
+
+`p_0 ≠ t_target = 0`
+
+until the declared decision operator selects the neutral class.
+
+---
+
+## 123. Class-Conditional Regularization
+
+Different regularization strengths may be applied to:
+
+`-1`
+
+`0`
+
+and:
+
+`1`.
+
+---
+
+## 124. Class-Conditional Coefficient Provenance
+
+Any asymmetric coefficients must have explicit provenance.
+
+---
+
+## 125. Sequence-Level Regularization
+
+For sequential data, ternary regularization may act on:
+
+`t_target[n]`
+
+`t_exec[n]`
+
+`t_pending[n]`
+
+and their temporal relations.
+
+---
+
+## 126. Sequence Boundary
+
+Sequence-level regularization requires a declared ordering variable.
+
+It must not infer physical time from arbitrary dataset order.
+
+---
+
+## 127. Ordered Tact Data
+
+If samples correspond to execution tacts, the tact index must be explicitly stored or reconstructable.
+
+---
+
+## 128. Physical Time Data
+
+If samples correspond to physical time, the time coordinate must be explicitly defined.
+
+---
+
+## 129. Tact Is Not Physical Time
+
+The framework preserves:
+
+`ternary tact ≠ physical time`
+
+unless a separate model explicitly maps them.
+
+---
+
+## 130. Transition Matrix
+
+A diagnostic transition matrix may record counts between consecutive executed ternary states.
+
+---
+
+## 131. Allowed Matrix Entries
+
+Possible committed entries include:
+
+`-1 → -1`
+
+`-1 → 0`
+
+`0 → -1`
+
+`0 → 0`
+
+`0 → 1`
+
+`1 → 0`
+
+`1 → 1`.
+
+---
+
+## 132. Forbidden Matrix Entries
+
+Committed entries:
+
+`-1 → 1`
+
+and:
+
+`1 → -1`
+
+must remain zero.
+
+---
+
+## 133. Direct-Event Counter
+
+A validation trace may include:
+
+`N_direct`.
+
+For a conforming committed execution trace:
+
+`N_direct = 0`.
+
+---
+
+## 134. Direct Proposal Counter
+
+A separate counter may record proposed direct-opposite targets.
+
+This diagnostic is distinct from committed direct events.
+
+---
+
+## 135. Pending-Route Counter
+
+A trace may count creation and completion of pending opposite routes.
+
+---
+
+## 136. Neutral-Residence Counter
+
+A trace may measure consecutive residence intervals in:
+
+`0`.
+
+---
+
+## 137. Switching Load
+
+A trace may record the number or rate of state changes.
+
+---
+
+## 138. Switching Load Is Not Energy
+
+The framework preserves:
+
+`switching load ≠ physical energy`.
+
+---
+
+## 139. Switching Load Is Not Heat
+
+The framework preserves:
+
+`switching load ≠ temperature`
+
+and:
+
+`switching load ≠ heat`
+
+unless a separate calibrated mapping is explicitly introduced.
+
+---
+
+## 140. Multiscale Ternary State
+
+A model may define ternary variables at several scales.
+
+Examples include:
+
+- local;
+- pair;
+- cluster;
+- global.
+
+---
+
+## 141. Scale-Specific State Spaces
+
+Each scale uses the same semantic state set only if explicitly declared.
+
+Shared labels do not imply identical physical meaning across scales.
+
+---
+
+## 142. Cross-Scale Mapping
+
+Let:
+
+`P_(ell→m)`
+
+map state information from scale:
+
+`ell`
+
+to scale:
+
+`m`.
+
+---
+
+## 143. Cross-Scale Consistency
+
+A regularizer may compare:
+
+`P_(ell→m)(t^(ell))`
+
+with:
+
+`t^(m)`.
+
+---
+
+## 144. Cross-Scale Equality Is Not Required
+
+The framework preserves:
+
+`local ternary state ≠ global ternary state`
+
+by identity.
+
+Only declared mappings define consistency.
+
+---
+
+## 145. Multiscale Regularization
+
+A generic term may be:
+
+`R_MS = sum_(ell,m) lambda_(ell,m) D(P_(ell→m)(z^(ell)), z^(m))`.
+
+---
+
+## 146. Multiscale Coherence Is Not Uniformity
+
+The framework preserves:
+
+`cross-scale coherence ≠ identical state at every scale`.
+
+---
+
+## 147. Ternary State versus Coherence
+
+The framework preserves:
+
+`ternary state ≠ coherence metric`.
+
+---
+
+## 148. Phase Order versus Ternary State
+
+The framework preserves:
+
+`phase-order parameter ≠ ternary state`.
+
+---
+
+## 149. Phase Order versus Coherence
+
+The framework preserves:
+
+`R(t) ≠ C(t)`.
+
+---
+
+## 150. Synchronization Distinctions
+
+The ternary layer preserves:
+
+`resonance ≠ synchronization`
+
+`synchronization ≠ phase locking`
+
+`phase locking ≠ resonance`
+
+`coherence ≠ resonance`.
+
+---
+
+## 151. Oscillator Phase Boundary
+
+Oscillator phase may participate in an upstream resonance or target model.
+
+It is not itself a ternary state.
+
+---
+
+## 152. Oscillator Phase Is Not Physical Phase of Matter
+
+The framework preserves:
+
+`oscillator phase ≠ physical phase of matter`.
+
+---
+
+## 153. Phase Coupling Is Not Mechanical Force
+
+The framework preserves:
+
+`phase coupling ≠ mechanical force`.
+
+---
+
+## 154. Phase Relation Is Not Chemical Bond
+
+The framework preserves:
+
+`phase relation ≠ chemical bond`.
+
+---
+
+## 155. Data Class Labels
+
+Reference ternary labels must explicitly identify whether they represent:
+
+- target state;
+- executed state;
+- pending destination;
+- another declared ternary quantity.
+
+---
+
+## 156. Label Ambiguity
+
+A dataset field named only:
+
+`state`
+
+is insufficient when multiple ternary state roles exist.
+
+---
+
+## 157. Required State Typing
+
+Preferred explicit fields include:
+
+`t_target`
+
+`t_exec`
+
+`t_pending`.
+
+---
+
+## 158. Synthetic Ternary Labels
+
+Synthetic labels must be marked with:
+
+`TEST_FIXTURE`
+
+or another appropriate provenance class.
+
+---
+
+## 159. Author-Defined Ternary Mapping
+
+A mapping introduced as part of TR-EIF theory uses:
+
+`AUTHOR_DEFINED`
+
+unless another provenance class applies.
+
+---
+
+## 160. Derived Ternary Relation
+
+A relation mathematically derived from established definitions may use:
+
+`DERIVED`.
+
+---
+
+## 161. Calibrated Threshold
+
+A ternary decision threshold fitted against reference data uses:
+
+`CALIBRATED`.
+
+---
+
+## 162. Benchmark Ternary Result
+
+Measured ternary classification or execution metrics under a benchmark protocol use:
+
+`BENCHMARK`.
+
+---
+
+## 163. Unvalidated Ternary Claim
+
+A numerical or empirical claim not yet supported by evidence must use:
+
+`REQUIRES_TEST`
+
+or:
+
+`REQUIRES_SOURCE`
+
+as appropriate.
+
+---
+
+## 164. Provenance Classes
+
+Ternary regularization uses the canonical provenance classes:
+
+`PRIMARY_SOURCE`
+
+`DERIVED`
+
+`CALIBRATED`
+
+`AUTHOR_DEFINED`
+
+`BENCHMARK`
+
+`TEST_FIXTURE`
+
+`REQUIRES_SOURCE`
+
+`REQUIRES_TEST`.
+
+---
+
+## 165. Regularization Coefficient
+
+Let:
+
+`lambda_T ≥ 0`
+
+denote a ternary regularization coefficient.
+
+---
+
+## 166. Component Coefficients
+
+For:
+
+`R_T = sum_k lambda_k R_k`
+
+each coefficient:
+
+`lambda_k`
+
+must be explicitly defined.
+
+---
+
+## 167. Coefficient Units
+
+If a regularization component carries units, its coefficient must make the total objective dimensionally compatible with the training convention.
+
+---
+
+## 168. Fixed Coefficient
+
+A coefficient may remain fixed during a training stage.
+
+---
+
+## 169. Scheduled Coefficient
+
+A coefficient may vary with optimization step:
+
+`lambda_k = lambda_k[n]`.
+
+---
+
+## 170. Learned Coefficient
+
+A coefficient may be trainable only when the objective defines a stable and non-degenerate parameterization.
+
+---
+
+## 171. Coefficient Provenance
+
+Each nontrivial coefficient must be traceable to:
+
+- source;
+- derivation;
+- calibration;
+- author definition;
+- benchmark.
+
+---
+
+## 172. Regularization Schedule
+
+The strength of ternary regularization may change across training stages.
+
+---
+
+## 173. Warm Introduction
+
+A model may initially train mechanical or representation objectives before increasing ternary regularization.
+
+---
+
+## 174. Joint Training
+
+A model may alternatively optimize ternary and other objectives from initialization.
+
+---
+
+## 175. No Universal Schedule
+
+TR-EIF does not impose a universal ternary regularization schedule.
+
+---
+
+## 176. Training-Stage Transition Is Not Ternary Transition
+
+The framework preserves:
+
+`training-stage transition ≠ ternary-state transition`.
+
+---
+
+## 177. Objective Conflict
+
+Ternary regularization may compete with:
+
+- energy accuracy;
+- force accuracy;
+- stress accuracy;
+- resonance objectives;
+- uncertainty objectives.
+
+---
+
+## 178. Conflict Diagnostics
+
+Training may monitor per-objective:
+
+- loss magnitude;
+- gradient norm;
+- gradient alignment;
+- validation effect.
+
+---
+
+## 179. Optimization Conflict Is Not Physical Conflict
+
+The framework preserves:
+
+`gradient conflict ≠ physical opposition`.
+
+---
+
+## 180. Differentiability Boundary
+
+A ternary regularizer used in gradient optimization must specify its differentiability properties.
+
+---
+
+## 181. Non-Differentiable Diagnostic
+
+A non-differentiable exact invariant may still be used as a validation metric rather than a training loss.
+
+---
+
+## 182. Exact Execution Validation
+
+The following must be validated on committed state traces:
+
+- state values belong to `{-1,0,1}`;
+- direct opposite committed events are absent;
+- neutral-mediated routes are respected;
+- pending state is semantically separate;
+- invalid values are not encoded as neutral.
+
+---
+
+## 183. Soft Prediction Validation
+
+Soft prediction diagnostics may include:
+
+- probability normalization;
+- margin distribution;
+- class confidence;
+- entropy;
+- calibration.
+
+---
+
+## 184. Neutral-Class Validation
+
+The active-neutral class should be evaluated separately through:
+
+- precision;
+- recall;
+- confusion counts;
+- occupancy;
+- residence;
+- transition statistics.
+
+---
+
+## 185. Opposite-Route Validation
+
+For each opposite-polarity request, validation should identify:
+
+- source state;
+- requested target;
+- first committed leg;
+- pending destination;
+- neutral residence if any;
+- second committed leg if completed.
+
+---
+
+## 186. Route Completion Is Not Guaranteed
+
+A pending opposite route may be canceled, superseded, or retained according to the declared execution architecture.
+
+The training layer must not assume completion unless specified.
+
+---
+
+## 187. Deterministic Replay
+
+A ternary evaluation pipeline may be tested for deterministic replay under fixed inputs and fixed execution conditions.
+
+---
+
+## 188. Replay Is Not Correctness
+
+The framework preserves:
+
+`deterministic replay ≠ semantic correctness`.
+
+---
+
+## 189. Replay Is Not Physical Validation
+
+The framework preserves:
+
+`deterministic replay ≠ physical validation`.
+
+---
+
+## 190. Numerical Precision
+
+Soft ternary computations may depend on:
+
+- floating-point precision;
+- mixed precision;
+- fixed-point representation;
+- quantization.
+
+---
+
+## 191. Threshold Sensitivity
+
+Predictions close to decision boundaries may change under numerical perturbation.
+
+---
+
+## 192. Boundary Sensitivity Diagnostic
+
+A validation may perturb numerical representation and record decision stability near thresholds.
+
+---
+
+## 193. Numerical Instability Is Not Active Neutral
+
+The framework preserves:
+
+`numerical instability ≠ ternary 0`.
+
+---
+
+## 194. Quantized Ternary Inference
+
+A quantized implementation must preserve:
+
+- exact ternary codes;
+- decision ordering;
+- transition invariants.
+
+---
+
+## 195. Reserved Code
+
+If a digital representation contains unused code values, they must remain distinct from:
+
+`-1`
+
+`0`
+
+and:
+
+`1`.
+
+---
+
+## 196. Reserved Code Is Not Neutral
+
+The framework preserves:
+
+`reserved code ≠ ternary 0`.
+
+---
+
+## 197. Serialization
+
+Serialized ternary traces must define their encoding unambiguously.
+
+---
+
+## 198. Signed Integer Encoding
+
+One valid representation is direct signed values:
+
+`-1`
+
+`0`
+
+`1`.
+
+---
+
+## 199. Encoded Integer Representation
+
+If alternative bit patterns are used, the mapping must be explicit.
+
+---
+
+## 200. Semantic Canonical Form
+
+Regardless of storage encoding, public semantic notation remains:
+
+`-1/0/1`.
+
+---
+
+## 201. Diagnostic Set
+
+A ternary regularization evaluation may report:
+
+- total ternary loss;
+- state-concentration loss;
+- neutral occupancy;
+- class distribution;
+- class-conditional accuracy;
+- transition penalty;
+- direct-opposite proposal count;
+- committed direct-opposite event count;
+- neutral residence;
+- switching rate;
+- hysteresis consistency;
+- resonance-to-ternary consistency;
+- symmetry residual;
+- calibration.
+
+---
+
+## 202. Direct Committed Event Invariant
+
+For a conforming execution trace:
+
+`N_direct_committed = 0`.
+
+---
+
+## 203. Reserved-State Invariant
+
+For a semantic ternary trace:
+
+`N_reserved_as_ternary = 0`.
+
+---
+
+## 204. Invalid-State Invariant
+
+For valid semantic ternary fields:
+
+`N_invalid_ternary = 0`.
+
+---
+
+## 205. Neutral Misuse Invariant
+
+Missing or control metadata must not be serialized into semantic ternary fields as:
+
+`0`.
+
+---
+
+## 206. Regularization Extension Rule
+
+Any new ternary regularization term must define:
+
+1. input variables;
+
+2. target variables;
+
+3. semantic role;
+
+4. mathematical form;
+
+5. reduction;
+
+6. coefficient;
+
+7. differentiability;
+
+8. symmetry behavior;
+
+9. provenance;
+
+10. validation metric.
+
+---
+
+## 207. Decision-Mapping Extension Rule
+
+Any new ternary decision mapping must define:
+
+1. input state space;
+
+2. decision variable;
+
+3. decision boundaries;
+
+4. neutral region;
+
+5. tie handling;
+
+6. uncertainty handling;
+
+7. output target;
+
+8. calibration;
+
+9. symmetry behavior.
+
+---
+
+## 208. Transition-Regularization Extension Rule
+
+Any sequential transition regularizer must define:
+
+1. current executed state;
+
+2. proposed target;
+
+3. pending representation;
+
+4. first-leg semantics;
+
+5. neutral residence behavior;
+
+6. second-leg semantics;
+
+7. cancellation behavior;
+
+8. exact execution validation.
+
+---
+
+## 209. Hysteresis Extension Rule
+
+Any ternary hysteresis model must define:
+
+1. memory state;
+
+2. entry thresholds;
+
+3. exit thresholds;
+
+4. threshold ordering;
+
+5. update rule;
+
+6. initialization;
+
+7. persistence;
+
+8. validation.
+
+---
+
+## 210. Multiscale Extension Rule
+
+Any multiscale ternary regularization must define:
+
+1. scale set;
+
+2. state at each scale;
+
+3. cross-scale mapping;
+
+4. aggregation;
+
+5. consistency objective;
+
+6. symmetry behavior;
+
+7. validation.
+
+---
+
+## 211. Resonance-Interface Extension Rule
+
+Any resonance-to-ternary regularization must define:
+
+1. resonance state;
+
+2. resonance classification where used;
+
+3. resonance window;
+
+4. ternary target;
+
+5. mapping operator;
+
+6. history dependence;
+
+7. scale dependence;
+
+8. calibration;
+
+9. validation.
+
+---
+
+## 212. Mechanical-Interface Extension Rule
+
+Any ternary-conditioned mechanical model must define:
+
+1. ternary conditioning variable;
+
+2. conditioning location in the architecture;
+
+3. energy relation;
+
+4. force relation;
+
+5. stress relation;
+
+6. differentiability;
+
+7. symmetry behavior;
+
+8. validation.
+
+---
+
+## 213. Canonical Ternary Regularization Invariants
+
+Every conforming TR-EIF ternary regularization layer preserves:
+
+1. exact semantic state space `{-1,0,1}`;
+
+2. active-neutral semantics of `0`;
+
+3. separation of soft prediction from semantic commitment;
+
+4. separation of target, pending, and executed state;
+
+5. prohibition of direct opposite committed transitions;
+
+6. neutral-mediated opposite-polarity routes;
+
+7. separation of invalid metadata from neutral;
+
+8. explicit resonance-to-ternary mapping;
+
+9. explicit symmetry behavior;
+
+10. explicit provenance.
+
+---
+
+## 214. Canonical State Distinctions
+
+The framework preserves:
+
+`t_target ≠ t_exec`
+
+`t_pending ≠ t_exec`
+
+`soft representation ≠ semantic state`
+
+`uncertainty ≠ ternary state`
+
+`validation status ≠ ternary state`
+
+`missing data ≠ ternary state`.
+
+---
+
+## 215. Canonical Transition Distinctions
+
+The framework preserves:
+
+`classifier threshold crossing ≠ committed state transition`
+
+`resonance-window crossing ≠ ternary transition`
+
+`ternary transition ≠ structural transition`
+
+`structural transition ≠ physical phase transition`.
+
+---
+
+## 216. Canonical Resonance Distinctions
+
+The framework preserves:
+
+`resonance ≠ synchronization`
+
+`synchronization ≠ phase locking`
+
+`phase locking ≠ resonance`
+
+`coherence ≠ uniformity`
+
+`coherence ≠ resonance`
+
+`phase order ≠ complete coherence`
+
+`R(t) ≠ C(t)`.
+
+---
+
+## 217. Canonical Physical Distinctions
+
+The framework preserves:
+
+`oscillator phase ≠ physical phase of matter`
+
+`phase coupling ≠ mechanical force`
+
+`phase relation ≠ chemical bond`
+
+`ternary state ≠ energy`
+
+`ternary state ≠ force`
+
+`resonance classification ≠ energy`.
+
+---
+
+## 218. Canonical Optimization Distinctions
+
+The framework preserves:
+
+`ternary regularization loss ≠ ternary state`
+
+`class weight ≠ state value`
+
+`classifier temperature ≠ thermodynamic temperature`
+
+`training-stage transition ≠ ternary-state transition`.
+
+---
+
+## 219. Interface to Chapter 06
+
+Chapter 06 develops resonance regularization.
+
+The interface from ternary regularization includes:
+
+- explicit resonance-to-ternary mapping;
+- separation between resonance classes and ternary states;
+- persistence;
+- hysteresis;
+- multiscale consistency;
+- target formation.
+
+---
+
+## 220. Interface to Chapter 07
+
+Chapter 07 develops equivariance constraints.
+
+The ternary interface requires:
+
+- spatially invariant scalar ternary semantics;
+- entity-permutation consistency;
+- no artificial spatial interpretation of `-1/0/1`;
+- symmetry-compatible soft decision variables.
+
+---
+
+## 221. Interface to Chapter 08
+
+Chapter 08 develops uncertainty and domain detection.
+
+The ternary interface requires strict separation among:
+
+- ternary neutral;
+- uncertainty;
+- abstention;
+- missing data;
+- invalid data;
+- out-of-domain state.
+
+---
+
+## 222. Interface to Chapter 09
+
+Chapter 09 develops optimization.
+
+It integrates ternary regularization with:
+
+- mechanical objectives;
+- resonance regularization;
+- equivariance constraints;
+- uncertainty objectives;
+- parameter optimization;
+- validation.
+
+---
+
+## 223. Final Formal Structure
+
+The ternary regularization layer may be represented as:
+
+`TR_T = (T, X_T_soft, D_T, R_T, P_RT, H_T, E_T, V_T)`.
+
+Here:
+
+- `T = {-1,0,1}` is the exact semantic state space;
+- `X_T_soft` is the differentiable training representation;
+- `D_T` is the decision mapping;
+- `R_T` is the regularization functional;
+- `P_RT` is the resonance-to-ternary mapping where used;
+- `H_T` is the hysteresis or persistence structure where used;
+- `E_T` is the committed execution contract;
+- `V_T` is the validation contract.
+
+The optimization representation may be continuous.
+
+The semantic output remains discrete.
 
 The committed execution graph remains:
 
@@ -144,2456 +2374,11 @@ The committed execution graph remains:
 
 ---
 
-## 9. Opposite-Polarity Routes
+## 224. Final Statement
 
-The only canonical opposite-polarity committed routes remain:
+Ternary regularization provides the learning constraint layer connecting differentiable model representations to the exact balanced ternary semantics of TR-EIF.
 
-`-1 → 0 → 1`
-
-and:
-
-`1 → 0 → -1`.
-
----
-
-## 10. Target State
-
-Let:
-
-`t_target[k] ∈ {-1,0,1}`.
-
-This is the requested ternary state.
-
----
-
-## 11. Executed State
-
-Let:
-
-`t_exec[k] ∈ {-1,0,1}`.
-
-This is the retained committed state.
-
----
-
-## 12. Pending State
-
-Let:
-
-`t_pending[k] ∈ {-1,1}`
-
-or:
-
-`NONE`.
-
----
-
-## 13. Target/Execution Separation
-
-The invariant remains:
-
-`target ≠ executed state`.
-
-A regularizer may couple them but cannot collapse them into one state variable.
-
----
-
-## 14. Pending/Neutral Separation
-
-The invariant remains:
-
-`pending ≠ neutral`.
-
-`t_pending`
-
-stores a destination.
-
-`t_exec = 0`
-
-stores active-neutral executed state.
-
----
-
-## 15. Ternary Regularization Domains
-
-Ternary regularization may act on:
-
-1. decision variables;
-
-2. class probabilities;
-
-3. hard targets;
-
-4. executed states;
-
-5. transition traces;
-
-6. occupancy statistics;
-
-7. multiscale state;
-
-8. temporal persistence.
-
----
-
-## 16. Pre-Classification Variable
-
-Let:
-
-`z`
-
-denote a continuous decision variable.
-
-A hard classifier maps:
-
-`z`
-
-to:
-
-`-1/0/1`.
-
-Regularization may shape:
-
-`z`
-
-without changing the exact output domain.
-
----
-
-## 17. Logit State
-
-For three-class classification:
-
-`z = (z_-, z_0, z_+)`.
-
-These are continuous logits.
-
-They are not ternary states.
-
----
-
-## 18. Probability State
-
-Let:
-
-`p = (p_-, p_0, p_+)`.
-
-The probabilities satisfy:
-
-`p_- + p_0 + p_+ = 1`.
-
-They remain distinct from hard ternary state.
-
----
-
-## 19. Decision Margin
-
-A decision margin quantifies separation from a ternary decision boundary.
-
-It is not ternary state by identity.
-
----
-
-## 20. Margin Regularization
-
-A margin regularizer may encourage continuous classifier state to remain away from unstable decision boundaries.
-
----
-
-## 21. Neutral Margin
-
-A model may define a neutral region between negative and positive decision regions.
-
-The width of this region may be fixed, calibrated, or learned.
-
----
-
-## 22. Neutral Margin Is Not Resonance Window
-
-The distinction remains:
-
-`ternary neutral region ≠ resonance window`.
-
-They belong to different mappings and state spaces.
-
----
-
-## 23. Symmetric Thresholds
-
-A classifier may use:
-
-`-eta`
-
-and:
-
-`eta`.
-
----
-
-## 24. Asymmetric Thresholds
-
-A classifier may instead use:
-
-`eta_-`
-
-and:
-
-`eta_+`.
-
-No symmetry around zero is required.
-
----
-
-## 25. Threshold Regularization
-
-A trainable threshold may be regularized to remain within an admissible parameter domain.
-
----
-
-## 26. Threshold Ordering Constraint
-
-For an asymmetric ternary classifier:
-
-`eta_- < eta_+`
-
-must remain satisfied.
-
-This may be enforced structurally or through constrained parameterization.
-
----
-
-## 27. Neutral Width
-
-Define:
-
-`w_0 = eta_+ - eta_-`.
-
-A model may regularize:
-
-`w_0`
-
-without altering the active-neutral semantics.
-
----
-
-## 28. Neutral Collapse Boundary
-
-A learned classifier should not collapse:
-
-`w_0`
-
-to an inadmissible value if the architecture requires a nonzero active-neutral interval.
-
----
-
-## 29. Neutral Expansion Boundary
-
-Likewise, an excessively broad neutral interval may be penalized if it violates the declared model objective.
-
----
-
-## 30. Occupancy
-
-For a batch or dataset subset, define class occupancy fractions:
-
-`pi_-`
-
-`pi_0`
-
-`pi_+`.
-
-They satisfy:
-
-`pi_- + pi_0 + pi_+ = 1`.
-
----
-
-## 31. Neutral Occupancy
-
-`pi_0`
-
-is the frequency of active-neutral state.
-
-It is not missing-data frequency.
-
----
-
-## 32. Occupancy Regularization
-
-A regularizer may constrain empirical occupancy toward a declared reference distribution:
-
-`pi_ref`.
-
----
-
-## 33. Occupancy Divergence
-
-One possible occupancy objective compares:
-
-`pi_pred`
-
-and:
-
-`pi_ref`
-
-using a declared divergence or distance.
-
----
-
-## 34. Balanced Occupancy
-
-A model may choose a balanced target distribution.
-
-This is a training choice.
-
-Balanced occupancy is not a universal ternary invariant.
-
----
-
-## 35. Sparse Occupancy
-
-A model may instead prefer sparse activation of selected ternary classes.
-
-This must be explicitly defined.
-
----
-
-## 36. Neutral Preference
-
-A model may intentionally prefer:
-
-`0`
-
-in uncertain or low-drive regions through a declared classifier design.
-
-This does not make uncertainty identical to neutral.
-
----
-
-## 37. Uncertainty versus Neutral
-
-The distinction remains:
-
-`uncertainty ≠ active neutral`.
-
-A model may map uncertainty to neutral only through an explicit policy.
-
----
-
-## 38. Entropy
-
-The probability vector:
-
-`p`
-
-has classification entropy:
-
-`H(p)`.
-
-This is a continuous uncertainty-related quantity.
-
----
-
-## 39. Entropy Regularization
-
-A model may penalize or encourage entropy depending on its training objective.
-
----
-
-## 40. Low-Entropy Objective
-
-A low-entropy regularizer encourages confident class probabilities.
-
----
-
-## 41. High-Entropy Objective
-
-A high-entropy regularizer may encourage uncertainty in selected domains.
-
-Its scope must remain explicit.
-
----
-
-## 42. Entropy Is Not Neutral
-
-The distinction remains:
-
-`high entropy ≠ ternary 0`.
-
----
-
-## 43. Target Stability
-
-A target sequence may be regularized against excessive switching.
-
----
-
-## 44. Target Switch Event
-
-Define a target switch at step:
-
-`k`
-
-when:
-
-`t_target[k] ≠ t_target[k-1]`.
-
----
-
-## 45. Target Switch Count
-
-A sequence may define:
-
-`N_switch,target`.
-
----
-
-## 46. Target Switch Regularization
-
-A regularizer may penalize excessive:
-
-`N_switch,target`.
-
----
-
-## 47. Target Stability versus Execution Stability
-
-The distinction remains:
-
-`target stability ≠ executed-state stability`.
-
-Executed state is additionally constrained by routing and scheduler semantics.
-
----
-
-## 48. Executed Switch Event
-
-Define:
-
-`N_switch,exec`
-
-from committed state changes.
-
----
-
-## 49. Executed Transition Regularization
-
-A model may regularize the frequency of executed transitions when the execution process participates in training.
-
----
-
-## 50. Direct-Opposite Violation Count
-
-Define:
-
-`N_direct`
-
-as the number of committed:
-
-`-1 → 1`
-
-or:
-
-`1 → -1`
-
-events.
-
-For a conforming execution architecture:
-
-`N_direct = 0`.
-
----
-
-## 51. Direct-Opposite Penalty
-
-A diagnostic penalty may be:
-
-`R_direct = N_direct`.
-
-The architectural target remains exactly:
-
-`0`.
-
----
-
-## 52. Structural Enforcement Preferred
-
-When possible, direct-opposite execution should be made unrepresentable rather than merely penalized.
-
----
-
-## 53. First-Leg Event
-
-An opposite route begins with:
-
-`-1 → 0`
-
-or:
-
-`1 → 0`.
-
----
-
-## 54. Second-Leg Event
-
-The route completes with:
-
-`0 → 1`
-
-or:
-
-`0 → -1`.
-
----
-
-## 55. Route Completion
-
-A route-completion objective may compare pending destinations with later executed states.
-
----
-
-## 56. Pending Consistency
-
-If:
-
-`t_pending = 1`
-
-then the later valid second leg is:
-
-`0 → 1`.
-
-If:
-
-`t_pending = -1`
-
-then the later valid second leg is:
-
-`0 → -1`.
-
----
-
-## 57. Pending Consistency Regularizer
-
-A regularizer may penalize route completions inconsistent with:
-
-`t_pending`.
-
----
-
-## 58. Pending Loss Is Not Neutral Loss
-
-The distinction remains:
-
-`pending-destination error ≠ neutral-state error`.
-
----
-
-## 59. Neutral Residence
-
-Define a neutral residence interval as consecutive executed states:
-
-`t_exec = 0`.
-
----
-
-## 60. Residence Length
-
-Let:
-
-`L_0`
-
-denote the number of consecutive execution opportunities spent in active neutral.
-
----
-
-## 61. Residence-Time Regularization
-
-A model may regulate neutral residence length.
-
-The desired residence distribution is specialization-specific.
-
----
-
-## 62. Zero Residence Boundary
-
-A route that requires active-neutral mediation cannot complete with zero committed neutral residence between opposite polarities.
-
----
-
-## 63. Minimum Residence
-
-A model may impose a minimum neutral residence.
-
----
-
-## 64. Maximum Residence
-
-A model may impose a maximum neutral residence where required.
-
----
-
-## 65. Residence Constraint
-
-Residence bounds may be:
-
-- hard;
-- soft;
-- scheduler-determined.
-
-The mechanism must be explicit.
-
----
-
-## 66. Persistence
-
-A target decision may require a condition to persist before target change.
-
----
-
-## 67. Persistence Counter
-
-Let:
-
-`n_persist`
-
-denote a retained persistence count.
-
----
-
-## 68. Persistence Regularization
-
-A regularizer may penalize unstable target changes before persistence criteria are satisfied.
-
----
-
-## 69. Persistence versus Neutral Residence
-
-The distinction remains:
-
-`target persistence ≠ executed neutral residence`.
-
----
-
-## 70. Hysteresis
-
-A ternary classifier may use state-dependent decision boundaries.
-
----
-
-## 71. Hysteresis Regularization
-
-A model may regularize hysteresis width or transition consistency.
-
----
-
-## 72. Hysteresis Width
-
-A hysteresis gap may be constrained to remain positive and bounded.
-
----
-
-## 73. Hysteresis versus Routing
-
-The distinction remains:
-
-`classifier hysteresis ≠ neutral routing`.
-
----
-
-## 74. Temporal Regularization
-
-For ordered data, ternary behavior may be regularized across:
-
-`k`.
-
----
-
-## 75. Temporal Smoothness Boundary
-
-Ternary state is categorical.
-
-Therefore temporal regularization should operate on:
-
-- switch counts;
-- persistence;
-- probabilities;
-- margins;
-- transition consistency
-
-rather than pretending categorical values form a continuous physical trajectory.
-
----
-
-## 76. Numeric Difference Boundary
-
-The arithmetic quantity:
-
-`|t[k] - t[k-1]|`
-
-may be used computationally.
-
-Its magnitude does not itself encode semantic transition cost universally.
-
----
-
-## 77. Semantic Transition Cost
-
-A transition-cost matrix may explicitly define costs among ternary states.
-
----
-
-## 78. Transition Cost Matrix
-
-Let:
-
-`C_T(a,b)`
-
-define the training cost for transition:
-
-`a → b`.
-
----
-
-## 79. Forbidden-Cost Entries
-
-For committed execution:
-
-`C_T(-1,1)`
-
-and:
-
-`C_T(1,-1)`
-
-may be treated as inadmissible rather than merely large finite costs.
-
----
-
-## 80. Retention Cost
-
-`C_T(a,a)`
-
-may be zero or model-specific.
-
----
-
-## 81. First-Leg Cost
-
-The cost of:
-
-`-1 → 0`
-
-and:
-
-`1 → 0`
-
-may be regularized separately.
-
----
-
-## 82. Second-Leg Cost
-
-The cost of:
-
-`0 → 1`
-
-and:
-
-`0 → -1`
-
-may likewise be separate.
-
----
-
-## 83. Transition Asymmetry
-
-No universal requirement forces:
-
-`C_T(a,b) = C_T(b,a)`.
-
-The cost structure may be directional.
-
----
-
-## 84. Scheduler-Conditioned Regularization
-
-A training setup may condition ternary regularizers on scheduler state.
-
----
-
-## 85. Scheduler State
-
-Scheduler state remains separate from:
-
-- target;
-- executed state;
-- pending destination.
-
----
-
-## 86. FRP Scheduler Modes
-
-Where FRP executable-reference traces are used, modes:
-
-`7/1`
-
-and:
-
-`1/7`
-
-remain explicitly identified.
-
----
-
-## 87. 7/1 Mode
-
-The FRP reference mode:
-
-`7/1`
-
-means:
-
-`seven balance tacts → one commit tact`.
-
----
-
-## 88. 1/7 Mode
-
-The FRP reference mode:
-
-`1/7`
-
-means:
-
-`one excite tact → seven neutralize tacts`.
-
----
-
-## 89. Scheduler Regularization Scope
-
-A regularizer may encourage behavior appropriate to the active scheduler mode.
-
-The scheduler ratio itself remains an execution-control parameter.
-
----
-
-## 90. Scheduler Is Not Ternary State
-
-The distinction remains:
-
-`scheduler mode ≠ ternary state`.
-
----
-
-## 91. FRP Ternary Reference
-
-FRP provides executable reference behavior for selected ternary target and execution mechanisms.
-
-FRP remains distinct from the complete TR-EIP learning architecture.
-
----
-
-## 92. FRP Phase-to-Target Mapping
-
-Where FRP-derived supervision is used, the executable reference mapping uses:
-
-`sin(theta_i)`
-
-with threshold magnitude:
-
-`0.33`.
-
----
-
-## 93. FRP Threshold Scope
-
-The value:
-
-`0.33`
-
-remains FRP-specific.
-
-It is not a universal TR-EIP ternary regularization constant.
-
----
-
-## 94. FRP Direct-Transition Invariant
-
-Applicable qualified FRP artifacts preserve:
-
-`actual_direct_events = 0`.
-
----
-
-## 95. FRP Reserved-State Invariant
-
-Applicable qualified FRP artifacts preserve:
-
-`reserved_state_events = 0`.
-
----
-
-## 96. FRP Queue Invariant
-
-Applicable qualified FRP artifacts preserve:
-
-`queue_overflow_events = 0`
-
-under the corresponding configuration.
-
----
-
-## 97. Ternary Sparsity
-
-A model may regularize the fraction of nonzero ternary features.
-
-Define:
-
-`pi_active = pi_- + pi_+`.
-
----
-
-## 98. Nonzero Sparsity Objective
-
-A regularizer may penalize excessive:
-
-`pi_active`.
-
----
-
-## 99. Neutral Sparsity Objective
-
-Alternatively, a model may penalize excessive neutral occupancy.
-
-No universal preference is imposed.
-
----
-
-## 100. Channel-Wise Occupancy
-
-For channel:
-
-`c`
-
-define:
-
-`pi_c,-`
-
-`pi_c,0`
-
-`pi_c,+`.
-
----
-
-## 101. Channel Collapse
-
-A channel collapses when it predicts essentially one state across its effective domain.
-
----
-
-## 102. Collapse Regularization
-
-A regularizer may discourage collapse when multi-state usage is required.
-
----
-
-## 103. Intentional Collapse
-
-A channel may legitimately become constant if the model definition or learned optimum supports it.
-
-Collapse is not automatically an error.
-
----
-
-## 104. Cross-Channel Redundancy
-
-Multiple ternary channels may become highly correlated.
-
-A regularizer may discourage redundant channels.
-
----
-
-## 105. Channel Correlation
-
-A channel-correlation statistic may be computed from encoded ternary values or categorical joint distributions.
-
----
-
-## 106. Redundancy versus Semantic Equality
-
-Two channels may be numerically correlated while retaining different semantic definitions.
-
----
-
-## 107. Multichannel Orthogonality Boundary
-
-Orthogonality of numeric encodings is not a universal semantic requirement for ternary channels.
-
----
-
-## 108. Multiscale Ternary State
-
-A model may define:
-
-`t^(atom)`
-
-`t^(cluster)`
-
-`t^(global)`.
-
----
-
-## 109. Cross-Scale Consistency
-
-A regularizer may enforce a declared relationship between fine- and coarse-scale ternary states.
-
----
-
-## 110. Aggregated Target
-
-For example, global target may derive from local states through:
-
-`A_T`.
-
----
-
-## 111. Cross-Scale Loss
-
-A regularizer may compare predicted coarse state with:
-
-`A_T({t_i})`.
-
----
-
-## 112. Cross-Scale Identity Boundary
-
-The framework does not assume:
-
-`all local states = global state`.
-
----
-
-## 113. Multiscale Disagreement
-
-Local and global ternary states may legitimately differ.
-
-Regularization must encode only the declared relation.
-
----
-
-## 114. Resonance-to-Ternary Consistency
-
-A ternary regularizer may compare classifier state against resonance-derived target semantics.
-
----
-
-## 115. Resonance Source
-
-Let:
-
-`r ∈ X_R`.
-
-The target map is:
-
-`P_RT(r)`.
-
----
-
-## 116. Resonance Consistency Loss
-
-A regularizer may penalize disagreement between:
-
-`t_pred`
-
-and:
-
-`P_RT(r)`.
-
----
-
-## 117. Resonance Class Boundary
-
-The relation remains:
-
-`OUTSIDE/BOUNDARY/INSIDE ≠ -1/0/1`.
-
-A regularizer must use the explicit mapping.
-
----
-
-## 118. Resonance Margin and Ternary Margin
-
-A resonance margin may influence ternary classifier confidence through a declared transformation.
-
-The two margins remain distinct.
-
----
-
-## 119. Ternary Regularization and Energy
-
-A ternary channel may condition energy:
-
-`E = E(X,t)`.
-
-Regularization may therefore influence the learned energy surface indirectly.
-
----
-
-## 120. Ternary State Is Not Energy
-
-The invariant remains:
-
-`ternary state ≠ energy`.
-
----
-
-## 121. Mechanical Smoothness across Ternary Modes
-
-A regularizer may constrain differences among:
-
-`E_-1`
-
-`E_0`
-
-`E_1`
-
-at selected state boundaries.
-
----
-
-## 122. Energy Matching Loss
-
-One possible boundary objective may compare:
-
-`E_a`
-
-and:
-
-`E_b`
-
-for selected paired states.
-
----
-
-## 123. Force Matching Loss
-
-A stronger objective may compare:
-
-`F_a`
-
-and:
-
-`F_b`.
-
----
-
-## 124. No Universal Mode Matching
-
-TR-EIF does not assume mode surfaces must be equal or smoothly connected everywhere.
-
----
-
-## 125. Neutral Surface Regularization
-
-A model may regularize:
-
-`E_0`
-
-or:
-
-`F_0`
-
-to satisfy a declared mediation role.
-
----
-
-## 126. Neutral Surface Is Not Arithmetic Mean
-
-The invariant remains:
-
-`E_0 ≠ (E_-1 + E_1)/2`
-
-by identity.
-
-Likewise:
-
-`F_0 ≠ (F_-1 + F_1)/2`
-
-by identity.
-
----
-
-## 127. Ternary Regularization and Message Passing
-
-A ternary feature may condition message maps:
-
-`M_-1`
-
-`M_0`
-
-`M_1`.
-
----
-
-## 128. Message-Mode Regularization
-
-A model may regularize separation or consistency among these message families.
-
----
-
-## 129. Neutral Message Operator
-
-`M_0`
-
-need not produce zero message.
-
----
-
-## 130. Zero Message versus Neutral
-
-The distinction remains:
-
-`zero message ≠ ternary 0`.
-
----
-
-## 131. Ternary Regularization and Representation
-
-A regularizer may constrain how strongly latent representations differ across ternary modes.
-
----
-
-## 132. Representation Separation Loss
-
-A mode-separation objective may encourage latent states for different ternary classes to remain distinguishable.
-
----
-
-## 133. Representation Compactness Loss
-
-A class-compactness objective may encourage latent states belonging to the same class to cluster.
-
----
-
-## 134. Representation Geometry Boundary
-
-Latent clustering is not physical phase separation by identity.
-
----
-
-## 135. Contrastive Ternary Objective
-
-A contrastive objective may use ternary labels to define positive and negative pairs.
-
----
-
-## 136. Metric-Learning Boundary
-
-The learned embedding metric remains a representation construct.
-
-It is not physical distance.
-
----
-
-## 137. Class-Conditional Representation
-
-A model may learn class-specific latent distributions.
-
----
-
-## 138. Ternary Calibration
-
-A ternary classifier may be calibrated after training.
-
----
-
-## 139. Probability Calibration
-
-Calibration may align predicted class probabilities with observed frequencies.
-
----
-
-## 140. Hard-State Semantics after Calibration
-
-Calibration does not alter:
-
-`-1/0/1`.
-
-It changes the continuous decision mapping or probability interpretation.
-
----
-
-## 141. Threshold Calibration
-
-Thresholds:
-
-`eta_-`
-
-and:
-
-`eta_+`
-
-may be calibrated from validation or calibration data.
-
----
-
-## 142. Calibration Data Separation
-
-Calibration data should remain distinct from test data under a strict evaluation protocol.
-
----
-
-## 143. Ternary Class Weighting
-
-Class weights may compensate for unequal frequencies.
-
----
-
-## 144. Inverse-Frequency Weighting
-
-One possible strategy uses weights inversely related to class frequency.
-
----
-
-## 145. Effective-Number Weighting
-
-Other weighting rules may account for sample counts differently.
-
-The chosen formula must be explicit.
-
----
-
-## 146. Neutral-Class Weight
-
-The neutral class may have its own dedicated weight.
-
----
-
-## 147. Transition-Class Weighting
-
-First-leg, second-leg, retention, and neutral-residence events may have separate weights.
-
----
-
-## 148. Rare Transition Weighting
-
-Rare but valid transition events may receive higher training weight.
-
----
-
-## 149. Forbidden Event Weighting Boundary
-
-Forbidden committed events are not simply rare classes.
-
-They remain invalid.
-
----
-
-## 150. Ternary Focal-Type Objective
-
-A focal-style classification loss may emphasize hard examples.
-
-The exact formulation must be explicit if used.
-
----
-
-## 151. Margin-Based Classification Loss
-
-A margin-based objective may enforce separation between the correct class score and competing class scores.
-
----
-
-## 152. Neutral-Specific Margin
-
-A model may use distinct margins for neutral versus polar classes.
-
----
-
-## 153. Polar Symmetry Regularization
-
-If a specialization declares symmetric positive/negative treatment, a regularizer may constrain corresponding parameters.
-
----
-
-## 154. No Universal Polar Symmetry
-
-TR-EIF does not require:
-
-`-1`
-
-and:
-
-`1`
-
-to have symmetric parameterization in every model.
-
----
-
-## 155. Polarity Bias
-
-A model may learn or impose asymmetric class priors.
-
-The bias must remain explicit.
-
----
-
-## 156. Active-Neutral Bias
-
-A prior may favor neutral state under declared conditions.
-
----
-
-## 157. Prior versus Hard Rule
-
-A probabilistic or loss prior remains soft.
-
-It does not alter hard execution semantics.
-
----
-
-## 158. Class Prior
-
-Let:
-
-`p_ref(-1)`
-
-`p_ref(0)`
-
-`p_ref(1)`
-
-denote a declared prior distribution.
-
----
-
-## 159. Prior Regularization
-
-A divergence between predicted occupancy and prior occupancy may be added to the objective.
-
----
-
-## 160. Prior Source
-
-A prior may be:
-
-- empirical;
-- calibrated;
-- author-defined;
-- derived.
-
-Its provenance must be explicit.
-
----
-
-## 161. Sequence Likelihood
-
-A stateful ternary model may define a probability over target or execution sequences.
-
----
-
-## 162. Markov-Type Target Model
-
-A target sequence may use:
-
-`P(t_target[k+1] | t_target[k], x[k])`.
-
----
-
-## 163. Execution-State Model
-
-Execution sequences require the constrained transition graph.
-
----
-
-## 164. Invalid Transition Probability
-
-For a hard execution model:
-
-`P(1 | -1) = 0`
-
-and:
-
-`P(-1 | 1) = 0`
-
-for one committed step.
-
----
-
-## 165. Neutral-Mediated Sequence Probability
-
-Opposite-polarity sequence probability is represented through two or more valid steps via:
-
-`0`.
-
----
-
-## 166. Sequence Loss
-
-A sequence negative log-likelihood may supervise valid transition trajectories.
-
----
-
-## 167. Transition Matrix
-
-A learned transition matrix must preserve structural zeros for forbidden committed transitions.
-
----
-
-## 168. Structural Zero
-
-A structural zero is an impossible transition under the model.
-
-It is not a low-probability event.
-
----
-
-## 169. Transition Regularization
-
-A regularizer may constrain allowed transition probabilities.
-
----
-
-## 170. Retention Probability
-
-A model may learn probabilities for:
-
-`-1 → -1`
-
-`0 → 0`
-
-`1 → 1`.
-
----
-
-## 171. First-Leg Probability
-
-A model may learn probabilities for:
-
-`-1 → 0`
-
-and:
-
-`1 → 0`.
-
----
-
-## 172. Second-Leg Probability
-
-A model may learn probabilities for:
-
-`0 → -1`
-
-and:
-
-`0 → 1`.
-
----
-
-## 173. Pending-Aware Transition Model
-
-A route-aware execution model may condition second-leg probability on:
-
-`t_pending`.
-
----
-
-## 174. Scheduler-Aware Transition Model
-
-Transition probability may also depend on scheduler state.
-
----
-
-## 175. Execution Probability versus Commit
-
-A probabilistic proposal does not itself commit a state.
-
-The execution mechanism remains separate.
-
----
-
-## 176. Differentiable Relaxation
-
-A training model may use a continuous relaxation of ternary classes.
-
----
-
-## 177. Relaxed State
-
-Let:
-
-`q ∈ Delta^2`
-
-be a probability-simplex state.
-
-This remains distinct from:
-
-`t ∈ {-1,0,1}`.
-
----
-
-## 178. Temperature Parameter
-
-A softmax-like relaxation may use temperature:
-
-`tau > 0`.
-
----
-
-## 179. Low-Temperature Limit
-
-Reducing:
-
-`tau`
-
-may sharpen class probabilities.
-
-It does not by itself enforce execution routing.
-
----
-
-## 180. Temperature Schedule
-
-A training schedule may vary:
-
-`tau[n]`.
-
----
-
-## 181. Relaxation Schedule versus Physical Temperature
-
-The distinction remains:
-
-`classifier temperature ≠ thermodynamic temperature`.
-
----
-
-## 182. Gumbel-Type Relaxation Boundary
-
-A stochastic categorical relaxation may be used for gradient-based training.
-
-Its random state and hard/soft semantics must be explicit.
-
----
-
-## 183. Straight-Through Ternary Relaxation
-
-A model may use hard forward classes and soft backward gradients.
-
----
-
-## 184. Backward Approximation
-
-The backward derivative is an optimization approximation.
-
-It does not alter the forward semantic state.
-
----
-
-## 185. Gradient Bias
-
-Surrogate-gradient estimators may introduce biased parameter gradients.
-
-This is an optimization property.
-
----
-
-## 186. Surrogate Validation
-
-A trained model should be evaluated using the actual hard forward semantics intended for deployment or reference execution.
-
----
-
-## 187. Hard-Soft Gap
-
-The difference between soft surrogate behavior and hard forward behavior may be measured explicitly.
-
----
-
-## 188. Hard-Soft Consistency Loss
-
-A regularizer may compare soft predictions with hard-state outputs.
-
----
-
-## 189. Ternary Robustness
-
-A classifier may be regularized for robustness to small continuous perturbations.
-
----
-
-## 190. Input Perturbation
-
-A small perturbation:
-
-`delta x`
-
-may be applied to the classifier input.
-
----
-
-## 191. Robust Margin
-
-A robust decision requires sufficient distance from class boundaries under the declared perturbation model.
-
----
-
-## 192. Robustness versus Hysteresis
-
-The distinction remains:
-
-`robustness margin ≠ hysteresis`.
-
----
-
-## 193. Robustness versus Neutral Region
-
-Likewise:
-
-`robustness margin ≠ active-neutral region`.
-
----
-
-## 194. Adversarial Ternary Perturbation
-
-A worst-case perturbation objective may be defined within an admissible norm ball.
-
-The norm and domain must be explicit.
-
----
-
-## 195. Physical Perturbation Boundary
-
-A mathematical adversarial perturbation is not automatically a physically realizable atomic perturbation.
-
----
-
-## 196. Noise Regularization
-
-Classifier inputs may be perturbed with declared stochastic noise.
-
----
-
-## 197. Noise Distribution
-
-The noise distribution must be explicit.
-
----
-
-## 198. Stochastic Consistency
-
-A regularizer may encourage stable hard class under selected perturbations.
-
----
-
-## 199. Symmetry Consistency
-
-Canonical scalar ternary channels should remain unchanged under declared rigid spatial transformations.
-
----
-
-## 200. Ternary Symmetry Loss
-
-A consistency objective may penalize:
-
-`t(gX) ≠ t(X)`
-
-or compare corresponding classifier probabilities.
-
----
-
-## 201. Permutation Consistency
-
-Per-atom ternary channels must permute consistently with atom labels.
-
----
-
-## 202. Global Ternary Invariance
-
-Global scalar ternary state remains invariant under admissible atom permutation.
-
----
-
-## 203. Reflection Consistency
-
-If the channel is scalar invariant under:
-
-`O(3)`,
-
-reflection must leave the hard ternary state unchanged.
-
----
-
-## 204. Spatial Rotation versus Polarity
-
-The invariant remains:
-
-`spatial rotation ≠ ternary polarity reversal`.
-
----
-
-## 205. Ternary Equivariance Boundary
-
-A non-scalar or orientation-dependent ternary channel requires an explicitly defined transformation rule.
-
-The canonical scalar ternary channel remains invariant.
-
----
-
-## 206. Ternary Regularization and Domain Detection
-
-Out-of-domain state must remain separate from:
-
-`-1/0/1`.
-
----
-
-## 207. Domain Mask
-
-A domain mask may determine whether ternary loss is evaluated.
-
-Mask value:
-
-`0`
-
-does not mean neutral.
-
----
-
-## 208. Abstention
-
-If the model supports abstention, abstention must use a separate state outside the ternary kernel.
-
----
-
-## 209. Rejection State
-
-A rejected classifier result must not be encoded as:
-
-`0`.
-
----
-
-## 210. NaN Handling
-
-NaN in classifier input, logits, probabilities, or loss is invalid numerical state.
-
----
-
-## 211. Infinite Value Handling
-
-Infinite classifier values require explicit numerical handling.
-
----
-
-## 212. Reserved Encoding
-
-Machine encodings outside:
-
-`-1/0/1`
-
-remain reserved or invalid.
-
----
-
-## 213. Reserved-State Regularization Boundary
-
-Reserved machine codes are not classes to be regularized.
-
-They must be excluded structurally or rejected.
-
----
-
-## 214. Ternary Metric
-
-Regularization may be accompanied by metrics including:
-
-- class occupancy;
-- exact accuracy;
-- neutral precision;
-- neutral recall;
-- switch rate;
-- first-leg accuracy;
-- second-leg accuracy;
-- route-completion rate;
-- direct-opposite violations.
-
----
-
-## 215. Neutral Precision
-
-Neutral precision measures how often predicted:
-
-`0`
-
-matches neutral reference among predicted-neutral cases.
-
----
-
-## 216. Neutral Recall
-
-Neutral recall measures how often reference:
-
-`0`
-
-is recovered.
-
----
-
-## 217. Polar-Class Metrics
-
-`-1`
-
-and:
-
-`1`
-
-should be reported separately when their roles differ.
-
----
-
-## 218. Transition Confusion Matrix
-
-A transition matrix may report counts among all valid committed source/destination pairs.
-
----
-
-## 219. Route Completion Rate
-
-For opposite requests, a metric may measure successful completion through neutral mediation.
-
----
-
-## 220. Direct-Opposite Violation Metric
-
-The required conforming value remains:
-
-`0`.
-
----
-
-## 221. Neutral Residence Distribution
-
-A model may report the empirical distribution of:
-
-`L_0`.
-
----
-
-## 222. Target Chatter Metric
-
-A target chatter metric may report switches per unit sequence length.
-
----
-
-## 223. Executed Chatter Metric
-
-Executed-state chatter is measured separately.
-
----
-
-## 224. Scheduler-Stratified Metrics
-
-Metrics may be stratified by scheduler mode.
-
----
-
-## 225. Resonance-Stratified Ternary Metrics
-
-Metrics may be stratified by resonance region or coordinate range.
-
----
-
-## 226. Species-Stratified Ternary Metrics
-
-Local ternary performance may be stratified by species.
-
----
-
-## 227. Structural-Stratified Metrics
-
-Metrics may be stratified by local coordination or structure class.
-
----
-
-## 228. Class-Balance Metric
-
-Dataset and prediction occupancy distributions may both be reported.
-
----
-
-## 229. Regularizer Logging
-
-Training logs may record individual ternary regularization terms separately.
-
----
-
-## 230. Total Ternary Regularization
-
-A composite ternary regularizer may be:
-
-`R_T = lambda_occ R_occ + lambda_margin R_margin + lambda_switch R_switch + lambda_route R_route + lambda_scale R_scale`.
-
-The exact component set is specialization-specific.
-
----
-
-## 231. Coefficient State
-
-The coefficients:
-
-`lambda_occ`
-
-`lambda_margin`
-
-`lambda_switch`
-
-`lambda_route`
-
-`lambda_scale`
-
-are training hyperparameters unless explicitly learned.
-
----
-
-## 232. Scheduled Coefficients
-
-Regularization weights may vary during training.
-
----
-
-## 233. Curriculum Ternary Training
-
-A training curriculum may increase or decrease ternary regularization through training stages.
-
----
-
-## 234. Stage Change versus Ternary Transition
-
-The distinction remains:
-
-`training-stage transition ≠ ternary-state transition`.
-
----
-
-## 235. Learned Regularization Weight
-
-A regularization weight may be learned under a constrained objective.
-
-The anti-degeneracy mechanism must be explicit.
-
----
-
-## 236. Ternary Regularization Provenance
-
-Regularization definitions may carry canonical provenance classes.
-
----
-
-## 237. Primary-Source Regularizer
-
-A method adopted from established literature may carry:
-
-`PRIMARY_SOURCE`.
-
----
-
-## 238. Author-Defined Regularizer
-
-A TR-EIF-specific active-neutral or routing regularizer may carry:
-
-`AUTHOR_DEFINED`.
-
----
-
-## 239. Derived Regularizer
-
-A term deterministically constructed from defined state traces may carry:
-
-`DERIVED`.
-
----
-
-## 240. Calibrated Coefficient
-
-A coefficient selected through calibration may carry:
-
-`CALIBRATED`.
-
----
-
-## 241. Benchmark Result
-
-Measured occupancy, switching, route-completion, or violation statistics may carry:
-
-`BENCHMARK`.
-
----
-
-## 242. Test Fixture
-
-Synthetic ternary trajectories with expected regularization values may carry:
-
-`TEST_FIXTURE`.
-
----
-
-## 243. Occupancy-Regularization Extension Rule
-
-Any occupancy regularizer must define:
-
-1. channel scope;
-2. empirical occupancy;
-3. target occupancy;
-4. distance or divergence;
-5. reduction;
-6. coefficient.
-
----
-
-## 244. Margin-Regularization Extension Rule
-
-Any margin regularizer must define:
-
-1. classifier variable;
-2. decision boundaries;
-3. margin definition;
-4. neutral region;
-5. coefficient;
-6. invalid-state handling.
-
----
-
-## 245. Transition-Regularization Extension Rule
-
-Any transition regularizer must define:
-
-1. target or executed state;
-2. source state;
-3. destination state;
-4. allowed transitions;
-5. forbidden transitions;
-6. temporal coordinate;
-7. coefficient.
-
----
-
-## 246. Neutral-Residence Extension Rule
-
-Any neutral-residence regularizer must define:
-
-1. residence start;
-2. residence end;
-3. minimum or maximum duration where used;
-4. scheduler relation;
-5. coefficient.
-
----
-
-## 247. Pending-Route Extension Rule
-
-Any pending-route regularizer must define:
-
-1. pending-state domain;
-2. creation event;
-3. retention;
-4. completion;
-5. cancellation where allowed;
-6. consistency condition.
-
----
-
-## 248. Multiscale-Ternary Extension Rule
-
-Any multiscale ternary regularizer must define:
-
-1. scale set;
-2. state per scale;
-3. cross-scale mapping;
-4. permitted disagreement;
-5. loss function;
-6. coefficient.
-
----
-
-## 249. Symmetry-Ternary Extension Rule
-
-Any ternary symmetry regularizer must define:
-
-1. transformation group;
-2. channel transformation law;
-3. hard-state or probability comparison;
-4. reduction;
-5. coefficient.
-
----
-
-## 250. Surrogate-Ternary Extension Rule
-
-Any continuous relaxation must define:
-
-1. soft state;
-2. hard decision;
-3. forward semantics;
-4. backward semantics;
-5. temperature or equivalent parameters;
-6. inference behavior.
-
----
-
-## 251. Canonical Ternary-Regularization Invariants
-
-Every conforming ternary regularization layer preserves:
-
-1. exact semantic domain `{-1,0,1}`;
-
-2. active-neutral `0`;
-
-3. explicit target/execution separation;
-
-4. explicit pending-state separation;
-
-5. explicit classifier/semantic-state separation;
-
-6. explicit soft/hard distinction;
-
-7. explicit invalid-state handling;
-
-8. explicit provenance.
-
----
-
-## 252. Canonical Active-Neutral Invariants
-
-The regularization layer preserves:
-
-`0 ≠ NONE`
-
-`0 ≠ INVALID`
-
-`0 ≠ MASK`
-
-`0 ≠ PADDING`
-
-`0 ≠ NaN`
-
-`0 ≠ uncertainty`
-
-`0 ≠ zero message`
-
-`0 ≠ zero force`
-
-`0 ≠ zero energy`.
-
----
-
-## 253. Canonical Execution Invariants
-
-Committed execution preserves:
-
-`-1 ↔ 0 ↔ 1`.
-
-Direct committed:
-
-`-1 → 1`
-
-and:
-
-`1 → -1`
-
-remain impossible in conforming execution state.
-
----
-
-## 254. Canonical Route Invariants
-
-Opposite-polarity execution remains:
-
-`-1 → 0 → 1`
-
-and:
-
-`1 → 0 → -1`.
-
-First leg, neutral residence, pending state, and second leg remain separately represented.
-
----
-
-## 255. Canonical Learning Boundary
-
-A regularizer may shape:
-
-- probabilities;
-- thresholds;
-- occupancy;
-- persistence;
-- transitions;
-- route statistics.
-
-It may not redefine the ternary kernel.
-
----
-
-## 256. Canonical State Separation
-
-The framework preserves:
-
-`probability ≠ ternary state`
-
-`entropy ≠ ternary neutral`
-
-`margin ≠ ternary state`
-
-`target ≠ executed state`
-
-`pending ≠ neutral`
-
-`regularizer ≠ execution rule`
-
-`classifier temperature ≠ physical temperature`.
-
----
-
-## 257. Canonical Scientific Distinctions
-
-The ternary regularization layer preserves:
-
-`resonance class ≠ ternary state`
-
-`resonance window ≠ neutral region`
-
-`target persistence ≠ neutral residence`
-
-`classifier hysteresis ≠ neutral routing`
-
-`spatial rotation ≠ ternary polarity reversal`
-
-`ternary transition ≠ structural transition`
-
-`structural transition ≠ physical phase transition`
-
-`phase coupling ≠ mechanical force`
-
-`ternary state ≠ energy`.
-
----
-
-## 258. Canonical Regularization Chain
-
-A canonical classifier-training chain is:
-
-`continuous source state`
-
-`→ logits/probabilities`
-
-`→ ternary decision`
-
-`→ occupancy/transition statistics`
-
-`→ ternary regularization`
-
-`→ optimization`.
-
----
-
-## 259. Canonical Execution-Regularization Chain
-
-For execution-bound data:
-
-`t_target`
-
-`→ request`
-
-`→ first leg`
-
-`→ t_exec = 0`
-
-`+ t_pending`
-
-`→ neutral residence`
-
-`→ second leg`
-
-`→ completed executed state`.
-
-Regularization may evaluate each stage separately.
-
----
-
-## 260. Interface to Chapter 06
-
-Chapter 06 develops Resonance Regularization.
-
-It defines regularization of:
-
-- resonance coordinates;
-- resonance windows;
-- persistence;
-- multiscale resonance;
-- resonance-to-ternary consistency.
-
----
-
-## 261. Interface to Chapter 07
-
-Chapter 07 develops Equivariance Constraints.
-
-It defines symmetry constraints on continuous representations, resonance state, ternary channels, energy, force, and stress.
-
----
-
-## 262. Interface to Chapter 08
-
-Chapter 08 develops Uncertainty and Domain Detection.
-
-It defines uncertainty-aware classification and explicit out-of-domain handling without reusing active neutral.
-
----
-
-## 263. Interface to Chapter 09
-
-Chapter 09 develops Optimization.
-
-It consumes the composite:
-
-`R_T`
-
-together with the other loss terms to update trainable parameters.
-
----
-
-## 264. Final Formal Structure
-
-The ternary regularization layer may be represented as:
-
-`TRG = (X_T, Z_T, P_T, R_occ, R_margin, R_switch, R_route, R_res, R_scale, R_sym, Lambda)`.
-
-Here:
-
-- `X_T` is exact ternary state;
-- `Z_T` is continuous classifier state;
-- `P_T` is the hard ternary mapping;
-- `R_occ` is occupancy regularization;
-- `R_margin` is decision-margin regularization;
-- `R_switch` is switching regularization;
-- `R_route` is route-consistency regularization;
-- `R_res` is neutral-residence regularization;
-- `R_scale` is multiscale consistency regularization;
-- `R_sym` is symmetry consistency regularization;
-- `Lambda` is the regularization-weight state.
-
-A composite form is:
-
-`R_T = sum_j lambda_j R_j`.
-
-The exact semantic state remains:
-
-`X_T ⊂ {-1,0,1}^M`.
-
----
-
-## 265. Final Statement
-
-Ternary regularization shapes learned ternary behavior without changing the exact semantics of the balanced ternary kernel.
-
-The forward state remains:
+The semantic kernel remains:
 
 `-1/0/1`.
 
@@ -2603,40 +2388,17 @@ The state:
 
 remains active neutral.
 
-Regularization may control:
+It is not:
 
-- occupancy;
-- class margins;
-- hysteresis;
-- persistence;
-- target stability;
-- neutral residence;
-- route completion;
-- multiscale consistency;
-- symmetry consistency;
-- surrogate-to-hard agreement.
+- missing data;
+- padding;
+- mask;
+- invalid state;
+- uncertainty;
+- abstention;
+- out-of-domain state.
 
-The framework preserves:
-
-`probability ≠ ternary state`
-
-`entropy ≠ active neutral`
-
-`margin ≠ ternary state`
-
-`target ≠ executed state`
-
-`pending ≠ neutral`
-
-`regularization ≠ hard execution rule`
-
-`classifier hysteresis ≠ neutral routing`
-
-`resonance window ≠ neutral region`.
-
-For execution-bound state, the committed topology remains:
-
-`-1 ↔ 0 ↔ 1`.
+Ternary targets, pending destinations, and committed executed states remain separate variables.
 
 Direct committed:
 
@@ -2648,7 +2410,7 @@ and:
 
 remain forbidden.
 
-Opposite-polarity routes remain:
+The canonical opposite-polarity routes remain:
 
 `-1 → 0 → 1`
 
@@ -2656,6 +2418,10 @@ and:
 
 `1 → 0 → -1`.
 
-No loss coefficient, soft surrogate, occupancy prior, class weight, entropy term, or learned threshold may bypass the active-neutral execution invariant.
+Each leg remains a separate committed transition event.
 
-These definitions establish the ternary regularization layer required for Resonance Regularization developed in Chapter 06.
+Regularization may shape prediction geometry, margins, class occupancy, persistence, hysteresis, switching behavior, and resonance-to-ternary consistency.
+
+It does not redefine ternary semantics and does not replace exact execution constraints with finite optimization penalties.
+
+These definitions establish the ternary regularization layer required by the resonance, equivariance, uncertainty, and optimization chapters that follow.
