@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from .guard import TernaryExecutionGuard
 from .routing import TernaryRoute, route_pending_target, route_ternary_target
 from .state import TernaryState, validate_ternary_state
 
@@ -45,22 +46,38 @@ class TernaryExecutionState:
 
 @dataclass(frozen=True, slots=True)
 class TernaryExecutionStep:
-    """Result of one committed ternary execution step."""
+    """Result of one ternary execution attempt."""
 
     previous: TernaryExecutionState
-    route: TernaryRoute
+    route: TernaryRoute | None
     current: TernaryExecutionState
+
+    @property
+    def committed(self) -> bool:
+        """Return whether this execution attempt committed a transition leg."""
+
+        return self.route is not None
 
 
 def execute_ternary_step(
     state: TernaryExecutionState,
     requested_target: TernaryState | None = None,
+    guard: TernaryExecutionGuard | None = None,
 ) -> TernaryExecutionStep:
-    """Execute exactly one committed balanced ternary transition leg."""
+    """Attempt one guarded balanced ternary execution step."""
 
     if not isinstance(state, TernaryExecutionState):
         raise TypeError(
             "state must be a TernaryExecutionState instance."
+        )
+
+    if guard is None:
+        execution_guard = TernaryExecutionGuard.unrestricted()
+    elif isinstance(guard, TernaryExecutionGuard):
+        execution_guard = guard
+    else:
+        raise TypeError(
+            "guard must be a TernaryExecutionGuard instance or None."
         )
 
     if state.pending_target is not None:
@@ -73,21 +90,59 @@ def execute_ternary_step(
                     "pending target."
                 )
 
+        if not execution_guard.allow_neutral_exit:
+            return TernaryExecutionStep(
+                previous=state,
+                route=None,
+                current=state,
+            )
+
         route = route_pending_target(
             state.retained_state,
             state.pending_target,
         )
-    else:
-        if requested_target is None:
-            raise ValueError(
-                "requested_target is required when no target is pending."
-            )
 
-        requested = validate_ternary_state(requested_target)
+        current = TernaryExecutionState(
+            retained_state=route.executed_state,
+            pending_target=route.pending_target,
+        )
 
-        route = route_ternary_target(
-            state.retained_state,
-            requested,
+        return TernaryExecutionStep(
+            previous=state,
+            route=route,
+            current=current,
+        )
+
+    if requested_target is None:
+        raise ValueError(
+            "requested_target is required when no target is pending."
+        )
+
+    requested = validate_ternary_state(requested_target)
+
+    route = route_ternary_target(
+        state.retained_state,
+        requested,
+    )
+
+    if (
+        route.transition.enters_neutral
+        and not execution_guard.allow_neutral_entry
+    ):
+        return TernaryExecutionStep(
+            previous=state,
+            route=None,
+            current=state,
+        )
+
+    if (
+        route.transition.leaves_neutral
+        and not execution_guard.allow_neutral_exit
+    ):
+        return TernaryExecutionStep(
+            previous=state,
+            route=None,
+            current=state,
         )
 
     current = TernaryExecutionState(
