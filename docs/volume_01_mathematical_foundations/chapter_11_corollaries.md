@@ -3707,7 +3707,7 @@ Specializations preserve core invariants and typed semantic boundaries.
 
 ### Scope
 
-Material-specific mappings are defined later in Volume 07.
+Material-specific mappings are defined by the applicable FLiBe material-specialization contract.
 
 ---
 
