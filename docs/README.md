@@ -2,7 +2,7 @@
 
 ## Ternary Resonant Equivariant Interatomic Framework
 
-This directory contains the committed mathematical and scientific documentation of the Ternary Resonant Equivariant Interatomic Framework (TR-EIF).
+This directory contains the committed mathematical, architectural, and specification documentation of the Ternary Resonant Equivariant Interatomic Framework (TR-EIF).
 
 TR-EIF defines interfaces between:
 
@@ -20,14 +20,16 @@ Continuous, resonance, ternary, interatomic, physical, numerical, and validation
 
 ## Current Documentation Structure
 
-The committed documentation contains four volumes:
+The committed documentation currently contains:
 
-1. `volume_01_mathematical_foundations/`
-2. `volume_02_ternary_resonance_theory/`
-3. `volume_03_equivariant_interatomic_framework/`
-4. `volume_04_learning_and_optimization/`
+- `volume_01_mathematical_foundations/`
+- `volume_02_ternary_resonance_theory/`
+- `volume_03_equivariant_interatomic_framework/`
+- `volume_04_learning_and_optimization/`
+- `architecture/`
+- `specifications/`
 
-This index lists committed documentation directories and files.
+This index lists committed documentation directories and files only.
 
 ## Volume 01 — Mathematical Foundations
 
@@ -105,178 +107,8 @@ Volume 02 contains formalisms for:
 - continuous-to-ternary target mappings;
 - active neutral-state dynamics;
 - neutral routing;
-- coupled continuous-discrete evolution.
-
-## Balanced Ternary State Space
-
-The balanced ternary state space is:
-
-`T = {-1, 0, 1}`
-
-The state `0` is an active neutral state.
-
-The active neutral state may participate in:
-
-- balancing;
-- routing;
-- damping;
-- mediation;
-- transition staging;
-- retention;
-- controlled neutralization.
-
-Direct committed opposite-state transitions are excluded:
-
-`-1 → 1`
-
-`1 → -1`
-
-Opposite-state transitions are neutral-mediated:
-
-`-1 → 0 → 1`
-
-`1 → 0 → -1`
-
-Each leg is a separate transition event.
-
-Completion of the first leg does not automatically execute the second leg.
-
-The intermediate neutral state may persist.
-
-## Ternary Execution Boundary
-
-TR-EIF distinguishes:
-
-- requested ternary target;
-- retained ternary state;
-- pending target;
-- transition route;
-- executed state transition.
-
-A requested target is not an executed retained state.
-
-A pending target is not the active neutral state.
-
-Missing data is not active neutral state `0`.
-
-Invalid data is not active neutral state `0`.
-
-Masking is not active neutral state `0`.
-
-Padding is not active neutral state `0`.
-
-NaN is not active neutral state `0`.
-
-Uncertainty is not active neutral state `0`.
-
-Abstention is not active neutral state `0`.
-
-Any mapping between these categories and ternary states requires an explicit model definition.
-
-## Resonance Coordinates
-
-TR-EIF uses a model-defined resonance-coordinate space:
-
-`X_R`
-
-A resonance-coordinate mapping is represented by:
-
-`P_R`
-
-For an admissible source state `x`:
-
-`r = P_R(x)`
-
-with:
-
-`r ∈ X_R`
-
-A resonance window is represented as:
-
-`W_R ⊂ X_R`
-
-with boundary:
-
-`∂W_R`
-
-A resonance window may depend on the model, state variables, history, hysteresis, topology, scale, or other explicitly defined coordinates.
-
-## Resonance Classification
-
-A minimal resonance-region classification contains:
-
-- `OUTSIDE`
-- `BOUNDARY`
-- `INSIDE`
-
-These classification states are not automatically mapped to balanced ternary states.
-
-In particular:
-
-`OUTSIDE ≠ -1`
-
-`BOUNDARY ≠ 0`
-
-`INSIDE ≠ 1`
-
-unless an explicit mapping defines that correspondence.
-
-## Resonance and Synchronization Distinctions
-
-The documentation distinguishes:
-
-- resonance from frequency equality;
-- resonance from synchronization;
-- synchronization from phase locking;
-- phase locking from resonance;
-- coherence from uniformity;
-- coherence from resonance;
-- phase order from complete coherence.
-
-The phase-order quantity `R(t)` is not identified with a separately defined coherence quantity `C(t)`:
-
-`R(t) ≠ C(t)`
-
-A resonance-window crossing is not identified with a bifurcation.
-
-A bifurcation is not identified with a ternary transition.
-
-## Continuous and Discrete State Separation
-
-Continuous quantities and balanced ternary states belong to separate state spaces.
-
-Continuous quantities may include:
-
-- positions;
-- velocities;
-- oscillator phases;
-- oscillator frequencies;
-- resonance coordinates;
-- feature values;
-- energy;
-- force;
-- stress;
-- other explicitly defined observables.
-
-A continuous quantity becomes a ternary target only through an explicit mapping.
-
-The general boundary is:
-
-`continuous state → descriptor → projection → ternary target → execution boundary → retained ternary state`
-
-The stages in this chain are not interchangeable.
-
-## Physical and Oscillator Phase Distinction
-
-Oscillator phase is not identified with physical phase of matter.
-
-Phase coupling is not identified with mechanical force.
-
-Phase relation is not identified with chemical bond.
-
-A structural transition is not identified with a physical phase transition.
-
-A ternary transition is not identified with a structural transition.
+- coupled continuous-discrete evolution;
+- numerical time evolution.
 
 ## Volume 03 — Equivariant Interatomic Framework
 
@@ -305,61 +137,19 @@ Volume 03 contains definitions and interfaces for:
 - E(3) group actions;
 - invariant representations;
 - equivariant representations;
-- scalar features;
-- vector features;
 - message passing;
-- resonance-conditioned features;
-- ternary-conditioned features;
-- conservative energy;
-- force interfaces;
-- stress interfaces;
-- TR-EIP model-family definitions.
+- resonance parameterization;
+- ternary feature channels;
+- conservative total energy;
+- force derivation;
+- stress derivation;
+- the TR-EIP model family.
 
-## E(3) Boundary
-
-Spatial transformations and ternary transformations belong to separate state spaces.
-
-A spatial rotation is not a ternary polarity reversal.
-
-Translation, rotation, reflection, and permutation behavior are defined through their corresponding mathematical actions.
-
-An interaction-graph edge is not automatically a chemical bond.
-
-## TR-EIP Model Family
-
-TR-EIP is defined as a model family within TR-EIF.
-
-The relation is:
+The model-family relation is:
 
 `TR-EIP ⊂ TR-EIF`
 
 TR-EIP and TR-EIF denote different levels of the framework hierarchy.
-
-TR-EIF defines framework-level mathematical and computational interfaces.
-
-TR-EIP denotes an interatomic model family defined within those interfaces.
-
-## Conservative Energy Boundary
-
-The conservative layer distinguishes:
-
-- atomic energy contribution;
-- total energy;
-- invariant energy functional;
-- force;
-- stress;
-- resonance state;
-- ternary state.
-
-Force is associated with the energy-gradient interface defined by the corresponding model contract.
-
-Stress is associated with the strain-derivative interface defined by the corresponding model contract.
-
-Ternary state is not energy.
-
-Ternary state is not force.
-
-Resonance classification is not energy.
 
 ## Volume 04 — Learning and Optimization
 
@@ -385,9 +175,7 @@ Volume 04 contains interfaces for:
 - learning problems;
 - training data;
 - loss functionals;
-- energy training;
-- force training;
-- stress training;
+- energy-force-stress training;
 - ternary regularization;
 - resonance regularization;
 - equivariance constraints;
@@ -400,6 +188,305 @@ Training-stage transitions are not ternary-state transitions.
 Classifier temperature is not thermodynamic temperature unless an explicit model definition establishes that correspondence.
 
 Uncertainty status is not a balanced ternary state.
+
+## Architecture
+
+Directory:
+
+`architecture/`
+
+Committed files:
+
+1. `framework_architecture.md`
+2. `continuous_discrete_contract.md`
+3. `energy_model_contract.md`
+4. `determinism_contract.md`
+
+### Framework Architecture
+
+`architecture/framework_architecture.md`
+
+defines the repository-level architectural boundaries between:
+
+- framework and model-family identity;
+- continuous and discrete state spaces;
+- resonance and ternary layers;
+- equivariant interatomic layers;
+- conservative energy interfaces;
+- molecular-dynamics interfaces;
+- multiscale interfaces;
+- material-specialization interfaces;
+- observables;
+- provenance;
+- validation.
+
+### Continuous-Discrete Contract
+
+`architecture/continuous_discrete_contract.md`
+
+defines the repository-level interface:
+
+`continuous state → descriptor → resonance representation → ternary target → execution control → retained ternary state → feedback`
+
+The contract separates:
+
+- model time;
+- numerical step;
+- target-evaluation coordinate;
+- execution coordinate;
+- scheduler state;
+- continuous integration;
+- target generation;
+- ternary execution;
+- history and memory;
+- coupled operator ordering.
+
+### Conservative Energy Model Contract
+
+`architecture/energy_model_contract.md`
+
+defines the repository-level energy chain:
+
+`atomic/interatomic state → invariant/equivariant representation → retained-state conditioning → scalar energy functional → total energy`
+
+and the derivative interfaces:
+
+`total energy → coordinate derivative → force`
+
+`total energy → strain derivative → stress`
+
+The reference force and stress differentiation contracts hold the supplied graph topology fixed inside each local finite-difference derivative evaluation.
+
+Graph topology may be reconstructed between separate physical states under the corresponding graph or molecular-dynamics contract.
+
+### Determinism Contract
+
+`architecture/determinism_contract.md`
+
+defines:
+
+- complete result-affecting state;
+- input closure;
+- parameter closure;
+- configuration closure;
+- operator-order closure;
+- scheduler and routing state;
+- history and memory state;
+- solver and adaptive state;
+- controlled random state where randomness is used;
+- canonical serialization;
+- deterministic replay;
+- comparison relations.
+
+The current trace replay path uses:
+
+`TraceSequence → canonical mapping → canonical JSON → UTF-8 bytes → direct byte comparison`
+
+SHA-256 digests and byte sizes are recorded as comparison metadata.
+
+## Specifications
+
+Directory:
+
+`specifications/`
+
+Committed files:
+
+1. `ternary_state_specification.md`
+2. `transition_semantics.md`
+
+### Ternary State Specification
+
+`specifications/ternary_state_specification.md`
+
+defines the canonical balanced ternary state space:
+
+`T = {-1, 0, 1}`
+
+with compact notation:
+
+`-1/0/1`
+
+and labels:
+
+- `NEGATIVE`
+- `NEUTRAL`
+- `POSITIVE`
+
+The specification separates:
+
+- ternary state from numerical equality;
+- target state from retained state;
+- pending destination from active neutral;
+- missingness from active neutral;
+- continuous state from ternary state;
+- resonance classification from ternary state;
+- physical observables from ternary state;
+- validation and provenance metadata from ternary state.
+
+### Transition Semantics
+
+`specifications/transition_semantics.md`
+
+defines the committed transition relation:
+
+`R_T = {(-1, -1), (-1, 0), (0, -1), (0, 0), (0, 1), (1, 0), (1, 1)}`
+
+The direct committed transitions:
+
+`-1 → 1`
+
+and:
+
+`1 → -1`
+
+are excluded.
+
+Opposite-polarity routes are:
+
+`-1 → 0 → 1`
+
+and:
+
+`1 → 0 → -1`
+
+Each leg is a separate committed transition event.
+
+Neutral-routing semantics are defined in:
+
+`volume_02_ternary_resonance_theory/chapter_07_neutral_routing.md`
+
+## Balanced Ternary State Space
+
+The balanced ternary state space is:
+
+`T = {-1, 0, 1}`
+
+The state `0` is active neutral.
+
+Active neutral may participate in:
+
+- balancing;
+- routing;
+- damping;
+- mediation;
+- transition staging;
+- retention;
+- controlled neutralization.
+
+A requested ternary target is distinct from an executed retained state.
+
+A pending destination is distinct from active neutral state.
+
+Missing, invalid, masked, padded, NaN, uncertain, unavailable, or abstained data are not represented by active neutral state `0` unless an explicit mapping defines such a representation.
+
+## Resonance Boundary
+
+TR-EIF distinguishes:
+
+- resonance from frequency equality;
+- resonance from synchronization;
+- synchronization from phase locking;
+- phase locking from resonance;
+- coherence from uniformity;
+- coherence from resonance;
+- phase order from complete coherence.
+
+The phase-order quantity `R(t)` is not identified with a separately defined coherence quantity `C(t)`:
+
+`R(t) ≠ C(t)`
+
+A model-defined resonance-coordinate space is denoted:
+
+`X_R`
+
+A resonance-coordinate mapping is denoted:
+
+`P_R`
+
+For an admissible source state `x`:
+
+`r = P_R(x)`
+
+with:
+
+`r ∈ X_R`
+
+A resonance window is:
+
+`W_R ⊂ X_R`
+
+with boundary:
+
+`∂W_R`
+
+The minimal resonance-region classification contains:
+
+- `OUTSIDE`
+- `BOUNDARY`
+- `INSIDE`
+
+These classes are not automatically identified with `-1/0/1`.
+
+## Continuous-Discrete Boundary
+
+Continuous quantities and balanced ternary states belong to separate state spaces.
+
+The repository-level chain is:
+
+`continuous state → descriptor → resonance representation → ternary target → execution control → retained ternary state → feedback`
+
+The stages in this chain are not interchangeable.
+
+A threshold crossing is not a committed ternary transition.
+
+A resonance-window crossing is not a bifurcation.
+
+A bifurcation is not a ternary transition.
+
+A ternary transition is not a structural transition.
+
+A structural transition is not a physical phase transition.
+
+## E(3) and Interatomic Boundary
+
+The interatomic documentation separates:
+
+- atomic configuration from interaction graph;
+- spatial transformation from ternary-state transformation;
+- oscillator phase from physical phase of matter;
+- phase coupling from mechanical force;
+- phase relation from chemical bond;
+- ternary state from energy;
+- ternary state from force.
+
+An interaction-graph edge is not automatically a chemical bond.
+
+A spatial rotation is not a ternary polarity reversal.
+
+## Conservative Energy Boundary
+
+The conservative model documentation separates:
+
+- feature representation;
+- scalar energy functional;
+- atomic energy contribution;
+- total energy;
+- force;
+- stress;
+- ternary execution state;
+- resonance state;
+- graph state.
+
+The reference derivative boundaries are:
+
+`energy → coordinate derivative → force`
+
+and:
+
+`energy → homogeneous strain derivative → stress`
+
+Energy, force, and stress are not balanced ternary states.
 
 ## Executable Package Boundary
 
@@ -423,7 +510,7 @@ Committed package directories are:
 
 Mathematical documentation and executable implementation are separate artifact classes.
 
-Executable interfaces implement specified mathematical and computational contracts.
+Executable interfaces implement declared mathematical and computational contracts.
 
 ## Molecular-Dynamics Boundary
 
@@ -547,6 +634,30 @@ Missing observables are represented separately from ternary state `0`.
 A trace is an observable computational artifact.
 
 A trace is not a mathematical proof.
+
+## Determinism Boundary
+
+The repository-level determinism contract separates:
+
+- mathematical determinism;
+- numerical determinism;
+- execution determinism;
+- serialization determinism;
+- replay determinism.
+
+The following relations are retained:
+
+`determinism ≠ physical validity`
+
+`determinism ≠ numerical accuracy`
+
+`determinism ≠ conservation`
+
+`determinism ≠ equivariance`
+
+`determinism ≠ empirical agreement`
+
+`determinism ≠ provenance`
 
 ## Validation Boundary
 
