@@ -1,20 +1,22 @@
-"""Public molecular-dynamics API for TR-EIF."""
+"""Molecular-dynamics interfaces for TR-EIF."""
 
 from tr_eif.md.dynamics import (
-    AccelerationEvaluator,
-    ForceEvaluator,
-    evaluate_accelerations,
+    AtomicAccelerations,
+    acceleration_from_force,
+    accelerations_from_forces,
 )
 from tr_eif.md.execution import (
-    MolecularDynamicsExecutionResult,
-    execute_velocity_verlet_step,
-)
-from tr_eif.md.integrator import (
-    VelocityVerletResult,
+    MolecularDynamicsStepResult,
     velocity_verlet_step,
 )
+from tr_eif.md.integrator import (
+    velocity_verlet_position,
+    velocity_verlet_positions,
+    velocity_verlet_velocity,
+    velocity_verlet_velocities,
+)
 from tr_eif.md.kinematics import (
-    advance_positions,
+    advance_position,
     advance_velocity,
 )
 from tr_eif.md.neighbor_list import (
@@ -25,45 +27,63 @@ from tr_eif.md.neighbor_list import (
     neighbor_list_requires_rebuild,
 )
 from tr_eif.md.observables import (
-    MolecularDynamicsEnergy,
+    AtomicKineticEnergies,
+    KineticEnergyState,
+    MolecularDynamicsEnergyState,
     kinetic_energy,
     molecular_dynamics_energy,
 )
-from tr_eif.md.state import MolecularDynamicsState
+from tr_eif.md.state import (
+    AtomicMasses,
+    AtomicVelocities,
+    MolecularDynamicsState,
+)
+from tr_eif.md.thermostat import (
+    kinetic_temperature,
+    rescale_to_kinetic_temperature,
+    rescale_velocities,
+    velocity_rescaling_factor,
+)
 from tr_eif.md.trajectory import (
     MolecularDynamicsTrajectory,
-    MolecularDynamicsTrajectoryFrame,
-    append_trajectory_frame,
-    initialize_trajectory,
+    run_velocity_verlet_trajectory,
 )
 from tr_eif.md.trajectory_observables import (
     MolecularDynamicsTrajectoryEnergy,
-    evaluate_trajectory_energies,
+    evaluate_trajectory_energy,
 )
 
 __all__ = [
-    "AccelerationEvaluator",
-    "ForceEvaluator",
-    "MolecularDynamicsEnergy",
-    "MolecularDynamicsExecutionResult",
+    "AtomicAccelerations",
+    "AtomicKineticEnergies",
+    "AtomicMasses",
+    "AtomicVelocities",
+    "KineticEnergyState",
+    "MolecularDynamicsEnergyState",
     "MolecularDynamicsState",
+    "MolecularDynamicsStepResult",
     "MolecularDynamicsTrajectory",
     "MolecularDynamicsTrajectoryEnergy",
-    "MolecularDynamicsTrajectoryFrame",
     "NeighborList",
     "NeighborPair",
-    "VelocityVerletResult",
-    "advance_positions",
+    "acceleration_from_force",
+    "accelerations_from_forces",
+    "advance_position",
     "advance_velocity",
-    "append_trajectory_frame",
     "build_neighbor_list",
-    "evaluate_accelerations",
-    "evaluate_trajectory_energies",
-    "execute_velocity_verlet_step",
-    "initialize_trajectory",
+    "evaluate_trajectory_energy",
     "interaction_graph_from_neighbor_list",
     "kinetic_energy",
+    "kinetic_temperature",
     "molecular_dynamics_energy",
     "neighbor_list_requires_rebuild",
+    "rescale_to_kinetic_temperature",
+    "rescale_velocities",
+    "run_velocity_verlet_trajectory",
+    "velocity_rescaling_factor",
+    "velocity_verlet_position",
+    "velocity_verlet_positions",
     "velocity_verlet_step",
+    "velocity_verlet_velocity",
+    "velocity_verlet_velocities",
 ]
