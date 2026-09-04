@@ -1,6 +1,11 @@
 """Multiscale interfaces for TR-EIF."""
 
 from .composition import compose_partitions
+from .electronic_reference import (
+    ElectronicReferenceEvaluator,
+    ElectronicReferenceRecord,
+    evaluate_electronic_reference,
+)
 from .geometry import (
     CoarsePositions,
     FineMasses,
@@ -33,13 +38,14 @@ from .state import (
 from .vector_average import mass_weighted_vector_average
 from .vector_reduction import reduce_vector_sum
 
-
 __all__ = [
     "CoarseMasses",
     "CoarsePositions",
     "CoarseScaleState",
     "CoarseScalars",
     "CoarseVectors",
+    "ElectronicReferenceEvaluator",
+    "ElectronicReferenceRecord",
     "FineMasses",
     "FinePositions",
     "FineScalars",
@@ -50,6 +56,7 @@ __all__ = [
     "build_coarse_scale_state",
     "build_multiscale_state_hierarchy",
     "compose_partitions",
+    "evaluate_electronic_reference",
     "mass_weighted_centroids",
     "mass_weighted_vector_average",
     "prolong_scalar_broadcast",
