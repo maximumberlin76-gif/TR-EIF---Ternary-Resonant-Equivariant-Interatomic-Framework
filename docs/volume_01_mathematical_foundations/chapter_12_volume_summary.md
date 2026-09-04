@@ -2396,49 +2396,47 @@ Optimization modifies parameterized mappings without redefining their formal out
 
 ---
 
-## 95. Interface to Volume 05
+## 95. Molecular-Dynamics Specialization Boundary
 
-Volume 05 develops Molecular Dynamics.
+The mathematical foundation supports molecular-dynamics specializations through the state, operator, invariant, and numerical contracts defined in Volume 01.
 
-It inherits:
+A molecular-dynamics specialization inherits:
 
 - dynamical state closure;
 - physical quantity typing;
 - deterministic state requirements;
 - memory-state requirements;
-- numerical realization boundaries;
+- numerical-realization boundaries;
 - integrated feedback semantics;
 - exact ternary execution invariants.
 
-Molecular dynamics becomes one dynamical realization connected to the broader TR-EIF architecture.
+Molecular dynamics remains a dynamical realization connected to the broader TR-EIF architecture.
 
 ---
 
-## 96. Interface to Volume 06
+## 96. Multiscale Materials Specialization Boundary
 
-Volume 06 develops Multiscale Materials Modeling.
+The mathematical foundation supports multiscale materials specializations through explicit scale-indexed state spaces and typed cross-scale mappings.
 
-It inherits:
+A multiscale specialization inherits:
 
 - explicit scale-indexed state spaces;
 - typed cross-scale mappings;
-- coarse-graining information loss;
+- coarse-graining information-loss requirements;
 - closure requirements;
-- scale-dependent resonance;
-- uncertainty transfer interfaces;
+- scale-dependent resonance interfaces;
+- uncertainty-transfer interfaces;
 - semantic type preservation.
 
-The multiscale layer extends the atomistic architecture toward mesoscale and continuum representations.
+The multiscale layer connects atomistic, mesoscale, continuum, or other declared scale representations without identifying their state spaces.
 
 ---
 
-## 97. Interface to Volume 07
+## 97. FLiBe Material-Specialization Boundary
 
-Volume 07 develops the FLiBe Reference Model.
+The FLiBe reference domain is a material-specific specialization of the general TR-EIF mathematical contracts.
 
-It inherits the complete TR-EIF mathematical foundation and specializes it for the defined FLiBe system.
-
-The specialization may introduce:
+A FLiBe specialization may define:
 
 - species;
 - composition;
@@ -2456,9 +2454,9 @@ The specialization remains subject to the framework-wide invariants established 
 
 ---
 
-## 98. Dependency Direction
+## 98. Committed Documentation Dependency Direction
 
-The conceptual dependency direction is:
+The documentation dependency chain contains the volumes committed in the repository:
 
 `Volume 01 — Mathematical Foundations`
 
@@ -2472,19 +2470,11 @@ The conceptual dependency direction is:
 
 `↓`
 
-`Volume 04 — Learning and Optimization`
+`Volume 04 — Learning and Optimization`.
 
-`↓`
+Each committed documentation layer may specialize or extend objects defined by its dependencies.
 
-`Volume 05 — Molecular Dynamics`
-
-`↓`
-
-`Volume 06 — Multiscale Materials Modeling`
-
-`↓`
-
-`Volume 07 — FLiBe Reference Model`.
+No committed layer retroactively redefines foundational objects without an explicit framework revision.
 
 Later volumes may provide concrete realizations and specializations of objects defined earlier.
 
