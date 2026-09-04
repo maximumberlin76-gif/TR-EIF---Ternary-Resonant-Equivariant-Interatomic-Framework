@@ -2635,40 +2635,44 @@ The canonical TR invariants remain binding.
 
 ---
 
-## 190. Interface to Volume 05
+## 190. Molecular-Dynamics Specialization Boundary
 
-Volume 05 introduces Molecular Dynamics.
+The Ternary Resonance Theory layer provides interfaces applicable to molecular-dynamics specializations.
 
-The TR layer provides:
+These interfaces include:
 
 - continuous-discrete coupling semantics;
 - numerical time structure;
-- resonance state propagation;
-- ternary state propagation;
+- resonance-state propagation;
+- ternary-state propagation;
 - feedback interfaces.
 
----
-
-## 191. Interface to Volume 06
-
-Volume 06 introduces multiscale mappings.
-
-Volume 02 already permits:
-
-- scale-indexed resonance;
-- scale-indexed coherence;
-- scale-indexed ternary state;
-- multirate numerical evolution.
-
-Volume 06 formalizes the cross-scale physical and engineering transfer architecture.
+Molecular-dynamics state and integration semantics remain separately defined by the applicable dynamical specialization.
 
 ---
 
-## 192. Interface to Volume 07
+## 191. Multiscale Specialization Boundary
 
-Volume 07 specializes the complete framework for FLiBe.
+The Ternary Resonance Theory layer permits scale-indexed resonance, coherence, ternary state, and multirate numerical evolution.
 
-Material-specific resonance parameters, ternary interpretation, thermodynamic quantities, transport properties, and validation structures are defined at that specialization layer.
+A multiscale specialization may define:
+
+- scale-indexed state spaces;
+- cross-scale mappings;
+- physical transfer relations;
+- engineering transfer relations;
+- closure variables;
+- uncertainty transfer.
+
+Cross-scale mappings do not identify state spaces belonging to different scales.
+
+---
+
+## 192. FLiBe Material-Specialization Boundary
+
+The FLiBe reference domain is a material-specific specialization of the general TR-EIF contracts.
+
+Material-specific resonance parameters, ternary interpretation, thermodynamic quantities, transport properties, structural descriptors, and validation criteria are defined by the applicable FLiBe material-specialization contract.
 
 ---
 
