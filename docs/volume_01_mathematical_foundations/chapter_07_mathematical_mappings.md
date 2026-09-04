@@ -1919,7 +1919,7 @@ For a selected integrator:
 
 `F_pos: X_pos × X_mom × X_aux → X_pos`.
 
-The precise mapping belongs to Volume 05.
+The precise mapping is defined by the selected molecular-dynamics specialization.
 
 ---
 
@@ -2172,7 +2172,7 @@ The FLiBe reference model will define mappings from composition state into:
 - interatomic parameters;
 - thermodynamic reference state.
 
-These mappings are specialized in Volume 07.
+These mappings are specialized by the applicable FLiBe material-specialization contract.
 
 ---
 
@@ -2182,7 +2182,7 @@ Define at the reference-model level:
 
 `M_FLiBe,int: X_FLiBe → X_EIF`.
 
-The exact source fields and parameterization belong to Volume 07.
+The exact source fields and parameterization are defined by the applicable FLiBe material-specialization contract.
 
 ---
 
@@ -2214,7 +2214,7 @@ A reference coolant model may map:
 
 `X_FLiBe,atom → X_FLiBe,meso → X_FLiBe,cont`.
 
-The exact mappings are defined in Volume 07.
+The exact mappings are defined by the applicable FLiBe multiscale material-specialization contract.
 
 ---
 
