@@ -263,12 +263,6 @@ The state:
 
 is active.
 
-The notation:
-
-`-1/0/1`
-
-is not used.
-
 ---
 
 ## 14. Executed Ternary State
