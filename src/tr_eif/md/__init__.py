@@ -38,6 +38,10 @@ from tr_eif.md.observables import (
     kinetic_energy,
     molecular_dynamics_energy,
 )
+from tr_eif.md.resonance_propagation import (
+    MolecularDynamicsResonanceStep,
+    propagate_md_resonance_state,
+)
 from tr_eif.md.state import (
     AtomicMasses,
     AtomicVelocities,
@@ -65,6 +69,7 @@ __all__ = [
     "AtomicVelocities",
     "KineticEnergyState",
     "MolecularDynamicsEnergyState",
+    "MolecularDynamicsResonanceStep",
     "MolecularDynamicsState",
     "MolecularDynamicsStepResult",
     "MolecularDynamicsTrajectory",
@@ -84,6 +89,7 @@ __all__ = [
     "kinetic_temperature",
     "molecular_dynamics_energy",
     "neighbor_list_requires_rebuild",
+    "propagate_md_resonance_state",
     "rescale_to_kinetic_temperature",
     "rescale_velocities",
     "run_velocity_verlet_trajectory",
