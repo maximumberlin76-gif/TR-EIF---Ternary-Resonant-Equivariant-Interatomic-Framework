@@ -793,7 +793,358 @@ Where a continuous dynamical system admits a flow, define:
 
 The flow satisfies the evolution law of the selected system.
 
-The exact conditions for existence and uniqueness are model-dependent and are treated in later mathematical analysis.
+The existence of a continuous solution, a single-valued flow, and a global trajectory are separate mathematical statements.
+
+### 41.1 Existence Scope
+
+TR-EIF does not impose one universal existence theorem on every specialization.
+
+Existence is established relative to the declared operator, domain, state space, input class, parameter state, temporal interval, and regularity assumptions.
+
+The statement:
+
+`an operator is syntactically defined`
+
+is distinct from:
+
+`an admissible output exists for every admissible input`.
+
+The statement:
+
+`a local continuous solution exists`
+
+is distinct from:
+
+`a global continuous solution exists`.
+
+### 41.2 Continuous Local-Existence Condition
+
+Consider the initial-value problem:
+
+`dx/dt = f(x, u, p, t)`
+
+with initial condition:
+
+`x(t_0) = x_0`.
+
+Let the admissible continuous domain be:
+
+`D_c ⊆ X_c × U × P × I_t`.
+
+A standard sufficient local-existence condition for a finite-dimensional Euclidean realization is that the effective vector field obtained from the declared input and parameter functions is continuous in its arguments on a neighborhood of the initial point.
+
+For fixed admissible input and parameter data, if:
+
+`f`
+
+is continuous on a neighborhood of:
+
+`(x_0, t_0)`
+
+then at least one local solution exists on some interval containing `t_0`, provided the resulting trajectory remains inside the declared domain of the vector field.
+
+This is an existence statement.
+
+It does not by itself establish uniqueness.
+
+### 41.3 Input-Dependent Continuous Existence
+
+When the vector field depends on time-dependent input:
+
+`u: I_t → U`
+
+the existence assumptions apply to the effective mapping:
+
+`(x, t) → f(x, u(t), p, t)`.
+
+The admissible input class must provide the regularity required by the selected existence theorem.
+
+A specialization using discontinuous, piecewise-continuous, measurable, delayed, impulsive, or distribution-valued inputs must state the corresponding solution concept and existence conditions explicitly.
+
+### 41.4 Local and Global Existence
+
+Local existence establishes a solution only on a nonzero interval around an admissible initial coordinate.
+
+Global existence on a declared interval requires additional conditions preventing loss of admissibility before the end of that interval.
+
+Such conditions may include, according to the selected model:
+
+- forward invariance of the admissible domain;
+- boundedness conditions;
+- growth bounds on the vector field;
+- absence of finite-time blow-up;
+- continuation conditions;
+- preservation of required geometric constraints.
+
+A local existence result must not be reported as a global existence result without these additional conditions.
+
+### 41.5 Flow-Existence Boundary
+
+The existence of at least one solution through each admissible initial state does not by itself define a single-valued flow operator.
+
+A flow:
+
+`phi_t: X → X`
+
+requires the selected solution concept to provide a well-defined state at the requested time for each admissible initial state in the flow domain.
+
+Conditions establishing uniqueness are therefore required before a solution family is identified with a single-valued flow.
+
+The uniqueness conditions are treated separately from the existence conditions.
+
+### 41.6 Discrete-Update Existence
+
+For a discrete update:
+
+`F_step: D_step → X`
+
+with:
+
+`D_step ⊆ X × U × P`,
+
+existence of the next state at an admissible input means:
+
+`F_step(x, u, p)`
+
+is defined and belongs to:
+
+`X`.
+
+If `F_step` is declared as a total mapping on `D_step`, then a next state exists for every element of `D_step`.
+
+If the implementation or mathematical rule is partial, its admissible domain must be restricted so that every accepted input has a defined output.
+
+### 41.7 Algebraic Operator Existence
+
+For a mapping:
+
+`F: D → Y`,
+
+operator existence on `D` requires that every:
+
+`x ∈ D`
+
+be assigned an output:
+
+`F(x) ∈ Y`.
+
+A formula fails to define a total operator at points where one of its required operations is undefined.
+
+Examples include:
+
+- division by zero;
+- evaluation outside a declared function domain;
+- inversion of a noninvertible object where inversion is required;
+- normalization of a zero object when nonzero norm is required;
+- projection requiring unavailable state components.
+
+The admissible domain must exclude such points or the operator must define their behavior explicitly.
+
+### 41.8 Projection Existence
+
+For a projection or descriptor mapping:
+
+`P: D_P → Y_P`,
+
+existence requires that the projection be defined for every admitted source state.
+
+A resonance projection:
+
+`P_R: D_R → X_R`
+
+therefore requires all coordinates, parameters, denominators, normalization operations, history variables, and auxiliary values used by `P_R` to be defined on `D_R`.
+
+Projection existence does not imply that the projection is injective, surjective, invertible, or physically calibrated.
+
+### 41.9 Ternary-Target Mapping Existence
+
+For a ternary-target mapping:
+
+`P_CT: D_CT → T`,
+
+existence requires that every admissible source state in:
+
+`D_CT`
+
+produce exactly one member of:
+
+`T = {-1, 0, 1}`
+
+under the declared classification rule.
+
+Threshold equality, missing-data behavior, invalid inputs, and history dependence must be resolved by the mapping domain and rule rather than by an implicit fallback to active neutral `0`.
+
+### 41.10 Ternary-Execution Existence
+
+Let:
+
+`D_exec`
+
+denote the admissible domain of a ternary execution operator.
+
+An admissible execution input contains every state component required by the selected execution contract, including where applicable:
+
+- retained ternary state;
+- requested ternary target;
+- pending destination;
+- transition guard;
+- execution-control state.
+
+Execution-step existence means that every input in `D_exec` produces a defined execution result.
+
+A blocked transition may produce a defined hold result when hold is part of the execution codomain.
+
+An invalid state combination or an incompatible pending-route request is outside `D_exec` or is rejected by the declared validation rule.
+
+The direct committed transitions:
+
+`-1 → 1`
+
+and:
+
+`1 → -1`
+
+are not introduced to satisfy existence.
+
+Opposite-polarity execution remains neutral-mediated.
+
+### 41.11 Finite-Memory Extended-State Existence
+
+For finite-memory discrete dynamics:
+
+`x[k+1] = F(x[k], x[k-1], ..., x[k-m])`
+
+with finite:
+
+`m`,
+
+define the extended state:
+
+`z[k] = (x[k], x[k-1], ..., x[k-m])`.
+
+When `F` is defined on the admissible memory tuples, a first-order extended-state update exists:
+
+`z[k+1] = G(z[k])`.
+
+The construction of `G` is established by the finite-memory state-closure theorem in the fundamental theorem layer.
+
+This converts finite retained history into explicit first-order state without deleting its result-affecting information.
+
+### 41.12 History-Dependent Evolution Existence
+
+For dynamics depending on a history segment rather than a finite tuple, the history belongs to a declared history space:
+
+`X_H`.
+
+A history-dependent evolution operator may be written:
+
+`F_H: D_H → X_H`
+
+or, for a derivative functional:
+
+`dx/dt = f_H(x_t, u, p, t)`
+
+where:
+
+`x_t`
+
+denotes the required history segment.
+
+Existence requires an admissible initial history and the regularity assumptions of the selected functional or delay-equation model.
+
+No universal delay-equation existence theorem is imposed by TR-EIF without a declared history space and solution concept.
+
+### 41.13 Constraint-Preserving Existence
+
+When state space is constrained:
+
+`X_adm ⊂ X`,
+
+an update is admissible only when its output remains in:
+
+`X_adm`.
+
+Existence of an unconstrained algebraic output does not establish existence of an admissible state update.
+
+The operator must preserve the declared constraint or define a valid projection, rejection, or correction mechanism.
+
+### 41.14 Composition Existence
+
+For mappings:
+
+`F: X → Y`
+
+and:
+
+`G: Y → Z`,
+
+the composition:
+
+`G ∘ F`
+
+exists on every source state for which:
+
+`F(x)`
+
+belongs to the admissible domain of `G`.
+
+Typed domain-codomain compatibility is therefore an existence condition for composed TR-EIF operator chains.
+
+### 41.15 Numerical-Step Existence
+
+A numerical step operator:
+
+`Phi_Delta_t: D_num → X_num`
+
+exists on its admissible numerical domain when all stages required by the selected method are defined and the final state belongs to `X_num`.
+
+For an explicit method this requires every stage evaluation to remain inside the domain of the vector field or other stage operator.
+
+A positive finite timestep alone does not establish numerical-step existence if a required stage evaluation is undefined.
+
+### 41.16 Existence and Rejection
+
+A validated computational interface may reject inputs outside its admissible domain.
+
+Deterministic rejection of an invalid input is not failure of existence on the declared admissible domain.
+
+The existence claim applies only to inputs satisfying the domain and precondition contract.
+
+### 41.17 Existence and Numerical Failure
+
+A mathematical existence result does not guarantee that every numerical method successfully computes the solution for every numerical configuration.
+
+The relation is:
+
+`mathematical existence ≠ numerical solver success`.
+
+Numerical failure remains a numerical or validation condition and is not represented by active ternary neutral `0`.
+
+### 41.18 Existence and Validation
+
+An existence statement must identify:
+
+1. the state space;
+2. the operator or evolution law;
+3. the admissible domain;
+4. the initial data;
+5. the input class;
+6. the parameter assumptions;
+7. the solution concept where continuous or history-dependent;
+8. whether the result is local or global;
+9. constraint-preservation requirements where applicable.
+
+A computational test can verify selected examples of defined execution.
+
+It does not replace a mathematical existence proof for an infinite domain.
+
+### 41.19 Existence Contract
+
+TR-EIF uses the following existence rule:
+
+`existence claim = declared operator + declared admissible domain + declared assumptions + proof or construction appropriate to that operator class`.
+
+No framework-wide statement asserts existence for every possible specialization solely from membership in TR-EIF.
 
 ---
 
@@ -2535,7 +2886,7 @@ A ternary regularizer may be defined:
 
 `Omega_T: X_feat → R`.
 
-Its exact form belongs to Volume 04.
+Its exact form belongs to the learning and optimization model in which it is defined.
 
 The operator must not alter the exact execution state domain:
 
@@ -2655,7 +3006,7 @@ for:
 
 A thermostat operator acts on the extended molecular-dynamics state according to its selected formalism.
 
-The exact operator is defined in Volume 05.
+Its exact operator must be defined by the selected molecular-dynamics specialization.
 
 No universal thermostat operator is imposed here.
 
@@ -2671,7 +3022,7 @@ A barostat operator acts on:
 
 according to the selected barostat model.
 
-Its detailed definition belongs to Volume 05.
+Its detailed definition belongs to the selected molecular-dynamics specialization.
 
 ---
 
@@ -2715,7 +3066,7 @@ A transport observable is represented by a mapping:
 
 where history is included when the observable depends on time correlations.
 
-The detailed operators belong to Volume 05.
+The detailed operator must be defined by the selected molecular-dynamics or material specialization.
 
 ---
 
