@@ -28,11 +28,9 @@ The canonical balanced ternary state space is defined separately by:
 
 `docs/specifications/ternary_state_specification.md`
 
-Neutral-routing control is specified separately by:
+Neutral-routing semantics are defined in:
 
-`docs/specifications/neutral_routing_specification.md`
-
-when that specification is present.
+`docs/volume_02_ternary_resonance_theory/chapter_07_neutral_routing.md`
 
 ---
 
