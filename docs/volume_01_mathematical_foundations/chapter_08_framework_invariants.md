@@ -2050,7 +2050,9 @@ A chapter assigned to one volume must not silently absorb unrelated later-volume
 
 ## 169. Volume Ordering Invariant
 
-The documentation dependency order is:
+The documentation dependency order follows the order of committed volumes.
+
+At the current repository state:
 
 `Volume 01 Mathematical Foundations`
 
@@ -2058,15 +2060,9 @@ The documentation dependency order is:
 
 `→ Volume 03 Equivariant Interatomic Framework`
 
-`→ Volume 04 Learning and Optimization`
+`→ Volume 04 Learning and Optimization`.
 
-`→ Volume 05 Molecular Dynamics`
-
-`→ Volume 06 Multiscale Materials Modeling`
-
-`→ Volume 07 FLiBe Reference Model`.
-
-Later volumes may depend on earlier volumes without silently redefining them.
+Any additional committed documentation layer must declare its dependency on existing layers without silently redefining them.
 
 ---
 
