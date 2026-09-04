@@ -1972,7 +1972,7 @@ The reference-system layer uses the general mathematical contracts established b
 
 ## 99. FLiBe Reference Domain
 
-The repository defines a dedicated FLiBe reference-model volume.
+The FLiBe reference domain is defined as a material-specific specialization of the general TR-EIF contracts.
 
 Its mathematical state and physical quantities are introduced through explicit model definitions and source records.
 
