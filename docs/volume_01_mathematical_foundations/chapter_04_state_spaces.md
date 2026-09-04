@@ -1672,7 +1672,7 @@ The FLiBe reference-model state space is denoted:
 
 `X_FLiBe`.
 
-Its detailed structure is defined in Volume 07.
+Its detailed structure is defined by the applicable material-specialization contract.
 
 At the foundational level it is understood as a specialization of the general interatomic, thermodynamic, resonance, ternary, molecular-dynamics, and multiscale state architecture.
 
@@ -1684,7 +1684,7 @@ The material composition component belongs to:
 
 `X_FLiBe,comp`.
 
-Its exact variables and admissible composition domain are defined in the FLiBe reference-model volume.
+Its exact variables and admissible composition domain are defined by the applicable FLiBe material-specialization contract.
 
 ---
 
@@ -2986,53 +2986,29 @@ The state-space architecture enforces:
 The following invariants govern state-space construction throughout TR-EIF.
 
 1. Every state variable belongs to a declared state space.
-
 2. Every state-space component has a defined semantic type.
-
 3. Continuous and discrete state remain separately typed.
-
 4. Circular phase remains an element of `S^1`.
-
 5. The balanced ternary state set remains exactly `T = {-1, 0, 1}`.
-
 6. The canonical ternary notation remains `-1/0/1`.
-
 7. Active neutral `0` remains a valid state.
-
 8. Missingness remains outside the balanced ternary state set.
-
 9. Error state remains outside the balanced ternary state set.
-
 10. Target and executed ternary state remain semantically distinct.
-
 11. Pending destination remains explicit where required.
-
 12. Direct opposite committed transitions remain excluded.
-
 13. Resonance classification remains distinct from ternary state.
-
 14. Resonance-coordinate space remains distinct from phase-order observable space.
-
 15. Local and global states remain distinguishable.
-
 16. Entity identity remains distinct from storage index.
-
 17. Geometry and topology remain separately represented.
-
 18. Invariant and equivariant representations retain separate transformation semantics.
-
 19. Energy, force, stress, phase, resonance, and ternary state remain separately typed.
-
 20. History and memory are explicit when result-affecting.
-
 21. Solver and execution-control state are explicit when result-affecting.
-
 22. Scale identity is explicit.
-
 23. Cross-scale states remain distinct until connected by mappings.
-
 24. Optionality does not overload valid model states.
-
 25. Validation and provenance remain outside physical and ternary state spaces.
 
 ---
