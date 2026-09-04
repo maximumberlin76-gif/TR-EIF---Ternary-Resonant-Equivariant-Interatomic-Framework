@@ -1,0 +1,180 @@
+name: TR-EIF Markdown Validation
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  markdown-validation:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate Markdown contracts
+        shell: bash
+        run: |
+          python3 <<'PY'
+          from __future__ import annotations
+
+          from pathlib import Path
+          import re
+          import sys
+
+
+          ROOT = Path(".")
+          MARKDOWN_FILES = tuple(
+              sorted(
+                  ROOT.rglob("*.md")
+              )
+          )
+
+          if not MARKDOWN_FILES:
+              print(
+                  "Markdown validation failed: "
+                  "no Markdown files found."
+              )
+              sys.exit(1)
+
+          errors: list[str] = []
+
+          for path in MARKDOWN_FILES:
+              relative = path.as_posix()
+
+              try:
+                  text = path.read_text(
+                      encoding="utf-8"
+                  )
+              except UnicodeDecodeError as error:
+                  errors.append(
+                      f"{relative}: "
+                      f"invalid UTF-8: {error}"
+                  )
+                  continue
+
+              if not text.strip():
+                  errors.append(
+                      f"{relative}: file is empty"
+                  )
+                  continue
+
+              lines = text.splitlines()
+
+              first_content = next(
+                  (
+                      line
+                      for line in lines
+                      if line.strip()
+                  ),
+                  "",
+              )
+
+              if not first_content.startswith("# "):
+                  errors.append(
+                      f"{relative}: "
+                      "first non-empty line must be "
+                      "a level-1 heading"
+                  )
+
+              in_fence = False
+
+              for line_number, line in enumerate(
+                  lines,
+                  start=1,
+              ):
+                  if line.rstrip() != line:
+                      errors.append(
+                          f"{relative}:{line_number}: "
+                          "trailing whitespace"
+                      )
+
+                  if line.startswith("```"):
+                      if line != "```":
+                          errors.append(
+                              f"{relative}:{line_number}: "
+                              "fenced blocks must use "
+                              "bare triple backticks"
+                          )
+                      else:
+                          in_fence = not in_fence
+
+                      continue
+
+                  if in_fence:
+                      continue
+
+                  if ":::writing" in line:
+                      errors.append(
+                          f"{relative}:{line_number}: "
+                          "service writing marker "
+                          "is forbidden"
+                      )
+
+                  if (
+                      re.search(
+                          r"\\[A-Za-z]+",
+                          line,
+                      )
+                      or "$$" in line
+                  ):
+                      errors.append(
+                          f"{relative}:{line_number}: "
+                          "raw LaTeX is forbidden"
+                      )
+
+                  if re.search(
+                      r"\b(?:TODO|FIXME|TBD|PLACEHOLDER)\b",
+                      line,
+                  ):
+                      errors.append(
+                          f"{relative}:{line_number}: "
+                          "placeholder marker "
+                          "is forbidden"
+                      )
+
+                  if re.search(
+                      r"-1\s*/\s*0\s*/\s*\+1",
+                      line,
+                  ):
+                      errors.append(
+                          f"{relative}:{line_number}: "
+                          "balanced ternary kernel "
+                          "must use -1/0/1"
+                      )
+
+                  if re.search(
+                      r"\{-1\s*,\s*0\s*,\s*\+1\}",
+                      line,
+                  ):
+                      errors.append(
+                          f"{relative}:{line_number}: "
+                          "balanced ternary set "
+                          "must use {-1, 0, 1}"
+                      )
+
+              if in_fence:
+                  errors.append(
+                      f"{relative}: "
+                      "unclosed fenced block"
+                  )
+
+          if errors:
+              print(
+                  "Markdown validation failed:"
+              )
+
+              for error in errors:
+                  print(
+                      f"- {error}"
+                  )
+
+              sys.exit(1)
+
+          print(
+              "Markdown validation passed: "
+              f"{len(MARKDOWN_FILES)} files checked."
+          )
+          PY
