@@ -2544,7 +2544,7 @@ The FLiBe reference model is a specialization containing:
 - ternary interpretation;
 - multiscale coolant representation.
 
-Its detailed construction belongs to Volume 07.
+Its detailed construction is defined by the applicable FLiBe material-specialization contract.
 
 ---
 
