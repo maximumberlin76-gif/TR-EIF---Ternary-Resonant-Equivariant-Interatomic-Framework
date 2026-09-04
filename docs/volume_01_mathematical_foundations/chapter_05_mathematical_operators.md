@@ -1146,6 +1146,357 @@ TR-EIF uses the following existence rule:
 
 No framework-wide statement asserts existence for every possible specialization solely from membership in TR-EIF.
 
+### 41.20 Uniqueness Scope
+
+TR-EIF does not impose one universal uniqueness theorem on every specialization.
+
+Uniqueness is established relative to the declared operator, admissible domain, state space, input class, parameter state, temporal interval, solution concept, and regularity assumptions.
+
+The statements:
+
+`at least one admissible solution exists`
+
+and:
+
+`exactly one admissible solution exists for the declared initial data`
+
+are distinct.
+
+Therefore:
+
+`existence ≠ uniqueness`.
+
+A uniqueness claim requires both a defined class of admissible solutions and assumptions sufficient to exclude more than one solution in that class.
+
+### 41.21 Continuous Local-Uniqueness Sufficient Condition
+
+Consider the initial-value problem:
+
+`dx/dt = f(x, u, p, t)`
+
+with:
+
+`x(t_0) = x_0`.
+
+For fixed admissible input and parameter data, define the effective vector field:
+
+`g(x, t) = f(x, u(t), p, t)`.
+
+A sufficient local-uniqueness condition for a finite-dimensional Euclidean realization is that:
+
+- `g` is continuous on a neighborhood of `(x_0, t_0)`;
+- `g` is locally Lipschitz in the state variable `x` on that neighborhood.
+
+Under these conditions, the local solution through the declared initial state is unique on a sufficiently small interval on which the solution remains inside the admissible domain.
+
+The local-Lipschitz condition is sufficient.
+
+TR-EIF does not state that it is necessary for every model class or solution concept.
+
+### 41.22 Continuous Existence without Uniqueness
+
+Continuity of the effective vector field may establish local existence without establishing uniqueness.
+
+Therefore the existence condition in Section 41.2 must not be interpreted as a uniqueness condition.
+
+When the selected regularity assumptions establish only existence, the mathematical result remains a potentially non-single-valued solution relation rather than a single-valued flow.
+
+### 41.23 Input-Dependent Continuous Uniqueness
+
+When:
+
+`u: I_t → U`
+
+is time-dependent, uniqueness conditions apply to the effective mapping:
+
+`(x, t) → f(x, u(t), p, t)`.
+
+The admissible input class must preserve the regularity required by the selected uniqueness theorem.
+
+A specialization using discontinuous, measurable, delayed, impulsive, or other nonclassical inputs must state:
+
+- the admissible input class;
+- the solution concept;
+- the regularity condition used to establish uniqueness.
+
+No uniqueness statement is inherited automatically from the autonomous or smooth-input case.
+
+### 41.24 Local and Global Uniqueness
+
+Local uniqueness states that two admissible solutions with the same initial data coincide on their common local interval of definition.
+
+Global uniqueness on a declared interval additionally requires that the solution exist throughout that interval and that the uniqueness conditions remain applicable along the continuation.
+
+A local uniqueness result must not be reported as a global uniqueness result when global existence has not been established.
+
+### 41.25 Single-Valued Flow Condition
+
+A single-valued flow:
+
+`phi_t: X → X`
+
+requires that each admissible initial state determine at most one admissible state at the requested time under the selected solution concept.
+
+When existence and uniqueness both hold on the declared flow domain, the solution family may define a single-valued flow there.
+
+If uniqueness fails, the evolution may require a set-valued solution relation or another explicitly defined representation.
+
+The notation:
+
+`phi_t`
+
+must not be used to imply single-valued evolution where uniqueness has not been established.
+
+### 41.26 Discrete-Update Uniqueness
+
+For a discrete update:
+
+`F_step: D_step → X`,
+
+uniqueness of the next state means that each admissible input:
+
+`(x, u, p) ∈ D_step`
+
+is assigned exactly one output:
+
+`F_step(x, u, p) ∈ X`.
+
+A mathematical function is single-valued by definition.
+
+If a discrete rule permits several admissible next states, it is a relation or set-valued operator until an explicit selection rule is added.
+
+### 41.27 Algebraic Operator Uniqueness
+
+For:
+
+`F: D → Y`,
+
+operator uniqueness on `D` requires one defined output for each admitted input.
+
+Ambiguous branch selection, unresolved sign choice, nonunique inversion, or an unspecified tie-breaking rule can prevent a formula from defining a single-valued operator.
+
+A specialization must either:
+
+- restrict the admissible domain;
+- define a branch or selector;
+- or represent the result as a set-valued object.
+
+### 41.28 Projection Uniqueness
+
+For a projection:
+
+`P: D_P → Y_P`,
+
+uniqueness means that each admitted source state has one declared projected output.
+
+An explicitly defined descriptor mapping can be single-valued by construction.
+
+A nearest-point or optimization-defined projection may require additional geometric or optimization conditions to guarantee a unique selected point.
+
+Existence of at least one projection candidate does not establish uniqueness of the projected result.
+
+### 41.29 Ternary-Target Mapping Uniqueness
+
+For:
+
+`P_CT: D_CT → T`,
+
+uniqueness requires exactly one target in:
+
+`T = {-1, 0, 1}`
+
+for each admissible source state.
+
+For an ordered two-threshold classifier, disjoint and exhaustive classification rules establish one target when threshold-equality behavior is explicitly defined.
+
+Missing or invalid data must not be resolved by an implicit neutral fallback.
+
+Such inputs must follow the declared admissibility or missing-data contract.
+
+### 41.30 Ternary-Execution Uniqueness
+
+Let:
+
+`E_T: D_exec → X_exec,result`
+
+be the complete ternary execution operator.
+
+Execution uniqueness requires one defined result for each complete admissible execution input.
+
+The complete input includes every result-affecting component required by the execution semantics, including where applicable:
+
+- retained state;
+- requested target;
+- pending destination;
+- execution guard;
+- scheduler or authorization state;
+- conflict-resolution state.
+
+If two requests compete and no arbitration rule is declared, the execution rule is not single-valued on that conflict state.
+
+A deterministic arbitration or rejection rule restores a single-valued execution operator on the declared domain.
+
+The prohibition of direct committed:
+
+`-1 → 1`
+
+and:
+
+`1 → -1`
+
+remains invariant under every such selector.
+
+### 41.31 Hold and Retention Uniqueness
+
+A hold result and a committed same-state retention event are distinct execution outcomes under the reference semantics.
+
+A single-valued execution rule must specify which outcome applies when an otherwise valid transition is blocked.
+
+Therefore:
+
+`hold ≠ committed retention transition`
+
+remains part of the uniqueness domain rather than an interchangeable representation choice.
+
+### 41.32 Finite-Memory Extended-State Uniqueness
+
+For finite-memory dynamics:
+
+`x[k+1] = F(x[k], x[k-1], ..., x[k-m])`,
+
+if `F` is single-valued on the admissible memory tuples, then the induced extended-state update:
+
+`z[k+1] = G(z[k])`
+
+is also single-valued.
+
+The complete extended state must include every retained history component required by `F`.
+
+Omitting a result-affecting memory component can make an apparently identical visible state correspond to different valid next states.
+
+### 41.33 History-Dependent Evolution Uniqueness
+
+For history-dependent dynamics:
+
+`dx/dt = f_H(x_t, u, p, t)`,
+
+uniqueness is defined relative to an admissible initial history and the selected history-space solution concept.
+
+A sufficient uniqueness condition for many functional differential-equation realizations is an appropriate Lipschitz condition of the history functional on the declared history domain.
+
+The exact norm, history space, time regularity, and Lipschitz condition must be stated by the specialization.
+
+TR-EIF does not impose one universal delay-equation uniqueness theorem without these declarations.
+
+### 41.34 Constraint-Preserving Uniqueness
+
+When an unconstrained update is followed by a correction or projection into:
+
+`X_adm`,
+
+uniqueness of the final admissible state requires the correction rule itself to be single-valued.
+
+If several admissible corrections satisfy the same constraint and no selector is defined, the corrected update is not a single-valued operator.
+
+A deterministic selection rule, or additional mathematical conditions guaranteeing one correction, must be stated.
+
+### 41.35 Composition Uniqueness
+
+For single-valued mappings:
+
+`F: X → Y`
+
+and:
+
+`G: Y → Z`,
+
+the composition:
+
+`G ∘ F`
+
+is single-valued on every source state for which the composition is defined.
+
+If any component is set-valued or has unresolved branch selection, uniqueness of the complete composition requires an explicit selector before the chain is represented as an ordinary function.
+
+### 41.36 Numerical-Step Uniqueness
+
+A numerical step operator:
+
+`Phi_Delta_t: D_num → X_num`
+
+is unique on its admissible domain when the selected numerical algorithm defines one next numerical state for each complete numerical input.
+
+This requires all result-affecting choices to be explicit, including where applicable:
+
+- stage ordering;
+- branch selection;
+- solver tolerances;
+- stopping criteria;
+- adaptive state;
+- random state;
+- event arbitration.
+
+If an implicit numerical method admits several algebraic roots, a root-selection rule is required before the numerical step is a single-valued operator.
+
+### 41.37 Mathematical Uniqueness and Numerical Solver Behavior
+
+A mathematically unique solution does not guarantee that a numerical solver converges to it under every numerical configuration.
+
+The relation is:
+
+`mathematical uniqueness ≠ numerical solver convergence`.
+
+Conversely, a numerical algorithm that deterministically selects one numerical result does not establish uniqueness of the underlying mathematical solution.
+
+Therefore:
+
+`deterministic numerical selection ≠ mathematical uniqueness`.
+
+### 41.38 Uniqueness and Determinism
+
+Mathematical uniqueness and computational determinism are separate properties.
+
+Mathematical uniqueness concerns the number of admissible solutions defined by the mathematical problem.
+
+Computational determinism concerns repeated output of the declared numerical or execution operator under identical complete result-affecting inputs.
+
+A unique mathematical solution may be approximated by a nondeterministic implementation.
+
+A deterministic implementation may select one branch of a mathematical problem that has multiple admissible solutions.
+
+### 41.39 Uniqueness and Validation
+
+A uniqueness statement must identify:
+
+1. the state space;
+2. the operator or evolution law;
+3. the admissible domain;
+4. the initial data or complete discrete input;
+5. the input class;
+6. the parameter assumptions;
+7. the solution concept;
+8. the regularity or single-valuedness conditions;
+9. whether uniqueness is local or global;
+10. any selector, arbitration, or branch rule required by the operator.
+
+Testing a finite set of examples with one observed result does not prove uniqueness over an infinite mathematical domain.
+
+A computational test can qualify a declared deterministic implementation path.
+
+It remains distinct from a mathematical uniqueness proof.
+
+### 41.40 Uniqueness Contract
+
+TR-EIF uses the following uniqueness rule:
+
+`uniqueness claim = existence domain + declared solution class + declared uniqueness assumptions + proof or single-valued construction appropriate to that operator class`.
+
+For continuous finite-dimensional evolution, a local-Lipschitz condition in state is one sufficient route to local uniqueness under the declared continuity and domain assumptions.
+
+For discrete, algebraic, ternary, numerical, and composed operators, uniqueness requires a single-valued rule on the complete admissible input domain.
+
+No framework-wide statement asserts uniqueness for every possible specialization solely from membership in TR-EIF.
+
 ---
 
 ## 42. Numerical Step Operator
