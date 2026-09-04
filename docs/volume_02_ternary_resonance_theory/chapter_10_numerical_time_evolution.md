@@ -3054,11 +3054,11 @@ The numerical interface will require explicit treatment of:
 
 ---
 
-## 265. Interface to Volume 05
+## 265. Molecular-Dynamics Numerical Specialization Boundary
 
-The numerical definitions in this chapter provide a foundation for later molecular-dynamics integration.
+The numerical definitions in this chapter provide the foundation for molecular-dynamics integration.
 
-Volume 05 will specialize:
+A molecular-dynamics specialization may define:
 
 - physical timestep;
 - equations of motion;
