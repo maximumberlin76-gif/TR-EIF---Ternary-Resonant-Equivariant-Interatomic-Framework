@@ -1,5 +1,10 @@
 """Molecular-dynamics interfaces for TR-EIF."""
 
+from tr_eif.md.barostat import (
+    apply_isotropic_barostat,
+    isotropic_barostat_scale,
+    scale_periodic_configuration,
+)
 from tr_eif.md.dynamics import (
     AtomicAccelerations,
     acceleration_from_force,
@@ -70,9 +75,11 @@ __all__ = [
     "accelerations_from_forces",
     "advance_position",
     "advance_velocity",
+    "apply_isotropic_barostat",
     "build_neighbor_list",
     "evaluate_trajectory_energy",
     "interaction_graph_from_neighbor_list",
+    "isotropic_barostat_scale",
     "kinetic_energy",
     "kinetic_temperature",
     "molecular_dynamics_energy",
@@ -80,6 +87,7 @@ __all__ = [
     "rescale_to_kinetic_temperature",
     "rescale_velocities",
     "run_velocity_verlet_trajectory",
+    "scale_periodic_configuration",
     "velocity_rescaling_factor",
     "velocity_verlet_position",
     "velocity_verlet_positions",
