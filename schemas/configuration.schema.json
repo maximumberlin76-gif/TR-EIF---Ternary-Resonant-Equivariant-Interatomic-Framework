@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TR-EIF Atomic Configuration",
+  "description": "Structural JSON schema for atomic configurations accepted by the TR-EIF configuration parser.",
+  "type": "object",
+  "required": [
+    "species",
+    "positions"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "species": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "pattern": ".*\\S.*"
+      }
+    },
+    "positions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/vector3"
+      }
+    },
+    "cell": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/$defs/cell3x3"
+        }
+      ]
+    },
+    "periodic": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "boolean"
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "required": [
+          "periodic"
+        ],
+        "properties": {
+          "periodic": {
+            "contains": {
+              "const": true
+            }
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "cell"
+        ],
+        "properties": {
+          "cell": {
+            "$ref": "#/$defs/cell3x3"
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "vector3": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "number"
+      }
+    },
+    "cell3x3": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "$ref": "#/$defs/vector3"
+      }
+    }
+  },
+  "$comment": "Duplicate JSON keys, finite numeric values, equal species and positions cardinality, and nonzero cell determinant are enforced by the TR-EIF configuration parser and AtomicConfiguration invariants."
+}
