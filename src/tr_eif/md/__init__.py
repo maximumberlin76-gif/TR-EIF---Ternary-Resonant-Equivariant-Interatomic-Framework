@@ -57,6 +57,12 @@ from tr_eif.md.thermostat import (
     rescale_velocities,
     velocity_rescaling_factor,
 )
+from tr_eif.md.transport import (
+    MeanSquaredDisplacementSeries,
+    VelocityAutocorrelationSeries,
+    mean_squared_displacement,
+    velocity_autocorrelation,
+)
 from tr_eif.md.trajectory import (
     MolecularDynamicsTrajectory,
     run_velocity_verlet_trajectory,
@@ -72,6 +78,7 @@ __all__ = [
     "AtomicMasses",
     "AtomicVelocities",
     "KineticEnergyState",
+    "MeanSquaredDisplacementSeries",
     "MolecularDynamicsEnergyState",
     "MolecularDynamicsResonanceStep",
     "MolecularDynamicsState",
@@ -81,6 +88,7 @@ __all__ = [
     "MolecularDynamicsTrajectoryEnergy",
     "NeighborList",
     "NeighborPair",
+    "VelocityAutocorrelationSeries",
     "acceleration_from_force",
     "accelerations_from_forces",
     "advance_position",
@@ -92,6 +100,7 @@ __all__ = [
     "isotropic_barostat_scale",
     "kinetic_energy",
     "kinetic_temperature",
+    "mean_squared_displacement",
     "molecular_dynamics_energy",
     "neighbor_list_requires_rebuild",
     "propagate_md_resonance_state",
@@ -100,6 +109,7 @@ __all__ = [
     "rescale_velocities",
     "run_velocity_verlet_trajectory",
     "scale_periodic_configuration",
+    "velocity_autocorrelation",
     "velocity_rescaling_factor",
     "velocity_verlet_position",
     "velocity_verlet_positions",
