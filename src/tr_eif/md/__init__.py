@@ -47,6 +47,10 @@ from tr_eif.md.state import (
     AtomicVelocities,
     MolecularDynamicsState,
 )
+from tr_eif.md.ternary_propagation import (
+    MolecularDynamicsTernaryStep,
+    propagate_md_ternary_state,
+)
 from tr_eif.md.thermostat import (
     kinetic_temperature,
     rescale_to_kinetic_temperature,
@@ -72,6 +76,7 @@ __all__ = [
     "MolecularDynamicsResonanceStep",
     "MolecularDynamicsState",
     "MolecularDynamicsStepResult",
+    "MolecularDynamicsTernaryStep",
     "MolecularDynamicsTrajectory",
     "MolecularDynamicsTrajectoryEnergy",
     "NeighborList",
@@ -90,6 +95,7 @@ __all__ = [
     "molecular_dynamics_energy",
     "neighbor_list_requires_rebuild",
     "propagate_md_resonance_state",
+    "propagate_md_ternary_state",
     "rescale_to_kinetic_temperature",
     "rescale_velocities",
     "run_velocity_verlet_trajectory",
