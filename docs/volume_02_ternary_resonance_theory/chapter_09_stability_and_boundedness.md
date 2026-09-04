@@ -3383,11 +3383,11 @@ The mathematical stability definitions remain those declared by the correspondin
 
 ---
 
-## 294. Interface to Volume 05
+## 294. Molecular-Dynamics Stability Specialization Boundary
 
-Volume 05 develops Molecular Dynamics.
+The stability and boundedness framework applies to molecular-dynamics specializations through explicitly declared dynamical state, equations of motion, numerical integration, control extensions, and conservation diagnostics.
 
-The boundedness and stability framework will interface with:
+A molecular-dynamics specialization may connect the stability framework to:
 
 - equations of motion;
 - integrators;
@@ -3396,6 +3396,8 @@ The boundedness and stability framework will interface with:
 - energy conservation;
 - resonance-state propagation;
 - ternary-state propagation.
+
+No molecular-dynamics stability property is inferred solely from the existence of the TR stability layer.
 
 ---
 
