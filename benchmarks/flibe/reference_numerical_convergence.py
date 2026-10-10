@@ -232,9 +232,7 @@ def run_benchmark() -> dict[str, object]:
         execution=execution,
     )
 
-    conditioned_features = (
-        tr_eip_result.resonance_conditioned_features
-    )
+    conditioned_features = tr_eip_result.resonance_conditioned_features
 
     reference_forces = _force_components(
         REFERENCE_STEP,
@@ -269,3 +267,103 @@ def run_benchmark() -> dict[str, object]:
             {
                 "step": step,
                 "max_force_component_error": error,
+            }
+        )
+
+    reduction_ratios = tuple(
+        previous / current
+        for previous, current in zip(
+            errors[:-1],
+            errors[1:],
+            strict=True,
+        )
+    )
+
+    retained_states = tuple(
+        state.value
+        for state in execution.retained_states
+    )
+
+    checks = {
+        "finite_errors": all(
+            isfinite(error)
+            for error in errors
+        ),
+        "strict_error_reduction": all(
+            current < previous
+            for previous, current in zip(
+                errors[:-1],
+                errors[1:],
+                strict=True,
+            )
+        ),
+        "second_order_reduction": all(
+            ratio >= MINIMUM_ERROR_REDUCTION_RATIO
+            for ratio in reduction_ratios
+        ),
+        "final_error_bounded": (
+            errors[-1]
+            <= FINAL_ERROR_TOLERANCE
+        ),
+        "resonance_coordinate_fixed": (
+            descriptor.coordinate
+            == tr_eip_result.resonance.coordinate
+        ),
+        "retained_ternary_state_preserved": (
+            retained_states
+            == (-1, 0, 1, 0, -1, 1, 0)
+        ),
+    }
+
+    status = (
+        "PASS"
+        if all(checks.values())
+        else "FAIL"
+    )
+
+    return {
+        "benchmark_id": BENCHMARK_ID,
+        "provenance": PROVENANCE,
+        "status": status,
+        "reference_step": REFERENCE_STEP,
+        "minimum_error_reduction_ratio": MINIMUM_ERROR_REDUCTION_RATIO,
+        "final_error_tolerance": FINAL_ERROR_TOLERANCE,
+        "checks": checks,
+        "observed": {
+            "steps": step_reports,
+            "error_reduction_ratios": list(
+                reduction_ratios
+            ),
+            "reference_force_components": [
+                list(vector)
+                for vector in reference_forces
+            ],
+            "resonance_coordinate": list(
+                descriptor.coordinate
+            ),
+            "retained_ternary_state": list(
+                retained_states
+            ),
+        },
+    }
+
+
+def main() -> None:
+    """Run the benchmark and emit deterministic structured JSON."""
+
+    report = run_benchmark()
+
+    print(
+        json.dumps(
+            report,
+            indent=2,
+            sort_keys=True,
+        )
+    )
+
+    if report["status"] != "PASS":
+        raise SystemExit(1)
+
+
+if __name__ == "__main__":
+    main()
