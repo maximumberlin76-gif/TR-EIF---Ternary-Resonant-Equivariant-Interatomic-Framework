@@ -458,7 +458,7 @@ def test_split_isolation_rejects_untyped_sample() -> None:
 
     with pytest.raises(
         TypeError,
-        match=r"samples0 must be an FLiBeDatasetConfiguration instance",
+        match=r"samples\[0\] must be an FLiBeDatasetConfiguration instance",
     ):
         validate_flibe_split_isolation((None,))  # type: ignore[arg-type]
 
@@ -659,4 +659,79 @@ def test_group_and_trajectory_may_repeat_within_same_split() -> None:
         _sample(
             sample_id="sample-b",
             configuration_id="configuration-b",
-            split=
+            split=FLiBeDatasetSplit.VALIDATION,
+            configuration=_configuration(offset=10.0),
+            group_id="group-a",
+            trajectory_id="trajectory-a",
+        ),
+    )
+
+    assert validate_flibe_split_isolation(samples) is samples
+
+
+def test_unknown_parent_reference_does_not_invent_lineage() -> None:
+    """The validator must not infer a parent sample absent from the collection."""
+
+    samples = (
+        _sample(
+            sample_id="sample-a",
+            configuration_id="configuration-a",
+            split=FLiBeDatasetSplit.TEST,
+            parent_sample_id="external-parent",
+        ),
+    )
+
+    assert validate_flibe_split_isolation(samples) is samples
+
+
+def test_distinct_configurations_may_use_distinct_splits() -> None:
+    """Strict isolation must not collapse genuinely distinct configuration values."""
+
+    samples = (
+        _sample(
+            sample_id="sample-a",
+            configuration_id="configuration-a",
+            split=FLiBeDatasetSplit.TRAINING,
+            configuration=_configuration(offset=0.0),
+        ),
+        _sample(
+            sample_id="sample-b",
+            configuration_id="configuration-b",
+            split=FLiBeDatasetSplit.VALIDATION,
+            configuration=_configuration(offset=10.0),
+        ),
+        _sample(
+            sample_id="sample-c",
+            configuration_id="configuration-c",
+            split=FLiBeDatasetSplit.TEST,
+            configuration=_configuration(offset=20.0),
+        ),
+    )
+
+    assert validate_flibe_split_isolation(samples) is samples
+
+
+def test_split_validation_is_deterministic() -> None:
+    """Repeated validation of one immutable manifest must return the same input."""
+
+    samples = (
+        _sample(
+            sample_id="sample-a",
+            configuration_id="configuration-a",
+            split=FLiBeDatasetSplit.TRAINING,
+            configuration=_configuration(offset=0.0),
+        ),
+        _sample(
+            sample_id="sample-b",
+            configuration_id="configuration-b",
+            split=FLiBeDatasetSplit.VALIDATION,
+            configuration=_configuration(offset=10.0),
+        ),
+    )
+
+    first = validate_flibe_split_isolation(samples)
+    second = validate_flibe_split_isolation(samples)
+
+    assert first is samples
+    assert second is samples
+    assert first == second
