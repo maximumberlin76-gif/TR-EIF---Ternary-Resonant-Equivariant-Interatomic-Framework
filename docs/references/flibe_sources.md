@@ -408,17 +408,225 @@ Thermal conductivity, diffusivity, electrical conductivity, viscosity correlatio
 
 ---
 
-## 11. Structural-Reference Boundary
+## 11. Structural Reference Data
 
-Phase-diagram data are not structural reference data.
+Structural reference data are separated by physical state, measurement method, composition, and evidence class.
 
-Coordination numbers, radial distribution functions, bond-angle distributions, speciation fractions, and other local-structure observables require separate experimental or first-principles provenance.
+A graph-relative coordination count in TR-EIF is not automatically a chemical bond count or an experimentally measured coordination number.
 
-No structural quantity is inferred from phase-equilibrium sources in this file.
+A structural observable is not automatically a resonance descriptor.
+
+A structural classification is not automatically a ternary state.
 
 ---
 
-## 12. First-Principles Boundary
+### FLIBE-PRIMARY-FAYFAR-2024-TOTAL-SCATTERING
+
+S. Fayfar, R. Chahal, H. Williams, D. N. Gardner, G. Zheng, D. Sprouster, J. C. Neuefeind, D. Olds, A. Hwang, J. McFarlane, R. C. Gallagher, M. Asta, S. Lam, R. O. Scarlat, and B. Khaykovich.
+
+"Complex Structure of Molten FLiBe (2LiF-BeF2) Examined by Experimental Neutron Scattering, X-Ray Scattering, and Deep-Neural-Network Based Molecular Dynamics."
+
+PRX Energy, 3, 013001, 2024.
+
+DOI:
+
+`10.1103/PRXEnergy.3.013001`
+
+Experimental scope:
+
+- liquid `2 LiF : 1 BeF2`;
+- neutron total scattering;
+- X-ray total scattering;
+- atomic liquid structure;
+- short-range ordering;
+- intermediate-range ordering.
+
+Computational scope reported in the same work:
+
+- ab initio molecular dynamics;
+- neural-network molecular dynamics;
+- comparison of simulated and experimentally measured structure.
+
+Source role:
+
+- primary experimental total-scattering reference for liquid FLiBe;
+- experimental reference for validation of structural simulation output;
+- source for structure-factor and pair-correlation qualification where the exact observable, composition, state, and extraction location are recorded.
+
+Allowed provenance:
+
+`PRIMARY_SOURCE`
+
+for directly reported experimental scattering observations.
+
+Simulation-derived structural quantities from the same publication must remain explicitly identified as computational results and must not be relabeled as experimental measurements.
+
+The paper reports Be-F tetrahedral units and intermediate-range structural ordering.
+
+Those structural entities must not be identified with TR-EIF graph edges, ternary states, or resonance classes without an explicit validated mapping.
+
+---
+
+### FLIBE-PRIMARY-FU-2023-NMR
+
+X. Fu, Y. Liu, H. Huang, H. Wu, J. Sun, L. Han, M. Ge, Y. Qian, and H. Liu.
+
+"Probing the Local Structure of FLiBe Melts and Solidified Salts by In Situ High-Temperature NMR."
+
+Physical Chemistry Chemical Physics, 25, 19446-19452, 2023.
+
+DOI:
+
+`10.1039/D3CP01096A`
+
+Experimental scope:
+
+- high-temperature in situ NMR of LiF-BeF2 melts;
+- local ionic coordination;
+- composition-dependent structural evolution;
+- solid-state NMR of solidified salts.
+
+Reported structural classes include:
+
+- tetrahedral BeF4 units;
+- Be2F7 units;
+- Be3F10 units;
+- polymeric intermediate-range Be-F structures.
+
+Source role:
+
+- primary experimental local-structure reference;
+- spectroscopic evidence for Be-F coordination environments;
+- source for composition-dependent structural classification.
+
+Allowed provenance:
+
+`PRIMARY_SOURCE`
+
+for directly reported NMR observations and source-supported structural assignments.
+
+NMR-derived structural assignments must retain the composition and measurement conditions reported by the source.
+
+A spectroscopic structural assignment is not automatically equivalent to a graph-relative coordination count generated from an arbitrary geometric cutoff.
+
+---
+
+### FLIBE-PRIMARY-GARDNER-2025-SOLID-DIFFRACTION
+
+D. N. Gardner, H. Williams, S. C. Vogel, S. Fayfar, B. Khaykovich, S. Srivastava, A. Hwang, M. Asta, D. Sprouster, D. Olds, G. Vershbow, J. C. Neuefeind, and R. O. Scarlat.
+
+"Solid Structure of Li2BeF4 (FLiBe) from Room Temperature to Melting Studied by Neutron and X-Ray Diffraction."
+
+Journal of Applied Crystallography, 58, 435-446, 2025.
+
+DOI:
+
+`10.1107/S1600576725000548`
+
+Experimental scope:
+
+- solid Li2BeF4;
+- neutron diffraction;
+- X-ray diffraction;
+- lattice parameters;
+- unit-cell volume;
+- temperature-dependent crystal structure;
+- solid-state thermal expansion up to melting.
+
+Source role:
+
+- primary solid-state structural reference;
+- structural boundary for distinguishing crystalline Li2BeF4 from liquid FLiBe;
+- temperature-dependent solid-structure validation.
+
+Allowed provenance:
+
+`PRIMARY_SOURCE`
+
+for directly reported diffraction measurements.
+
+Solid-state lattice parameters and crystal-structure observables must not be transferred to liquid FLiBe without an explicit physical transformation model and validation.
+
+---
+
+### FLIBE-COMPUTATIONAL-SALANNE-2006-NETWORK
+
+M. Salanne, C. Simon, P. Turq, R. J. Heaton, and P. A. Madden.
+
+"A First-Principles Description of Liquid BeF2 and Its Mixtures with LiF: 2. Network Formation in LiF-BeF2."
+
+Journal of Physical Chemistry B, 110(23), 11461-11467, 2006.
+
+DOI:
+
+`10.1021/jp061002u`
+
+Computational scope:
+
+- liquid BeF2-LiF mixtures;
+- first-principles-derived polarizable interaction model;
+- composition-dependent Be-F network formation;
+- structural and transport relationships.
+
+Source role:
+
+- computational structural reference;
+- comparison source for BeF4-network formation across composition;
+- historical computational evidence path for local and intermediate-range structure.
+
+This source is not an experimental structural measurement.
+
+Numerical quantities imported from this source must retain explicit computational-method provenance.
+
+---
+
+## 12. Structural Data Admission Rule
+
+Before structural reference data enter executable TR-EIF validation, each record must establish:
+
+1. observable identity;
+2. composition;
+3. temperature;
+4. pressure when relevant;
+5. solid or liquid state;
+6. experimental or computational method;
+7. source identifier;
+8. provenance class;
+9. source location;
+10. independent variable and unit;
+11. observable value and unit where applicable;
+12. uncertainty where reported;
+13. preprocessing or normalization;
+14. interpolation or digitization procedure when used;
+15. mapping to the executable TR-EIF observable being validated.
+
+Structural observables remain distinct.
+
+In particular:
+
+`structure factor ≠ pair-distribution function`
+
+`pair-distribution function ≠ coordination number`
+
+`coordination number ≠ chemical bond`
+
+`graph coordination ≠ experimental coordination unless the mapping is defined and validated`
+
+`local structural unit ≠ ternary state`
+
+`structural transition ≠ ternary transition`
+
+`structural transition ≠ physical phase transition`
+
+`structural descriptor ≠ resonance classification`
+
+No coordination cutoff may be introduced as a physical FLiBe parameter without provenance or an explicit model-defined status.
+
+No experimental structural observable is encoded through ternary state `0`.
+
+---
+
+## 13. First-Principles Boundary
 
 A first-principles calculation is not classified as an experimental `PRIMARY_SOURCE` measurement.
 
@@ -438,23 +646,28 @@ First-principles reference data and experimental reference data remain distinct 
 
 ---
 
-## 13. Current Phase 10 Source Status
+## 14. Current Phase 10 Source Status
 
-The source register currently establishes audited provenance anchors for:
+The source register currently establishes provenance anchors for:
 
 - LiF-BeF2 phase equilibria;
 - liquidus qualification;
 - density;
 - viscosity;
 - Li2BeF4 enthalpy and derived thermodynamic properties;
-- selected modern density and heat-capacity measurements.
+- selected modern density and heat-capacity measurements;
+- experimental liquid total-scattering structure;
+- experimental NMR local structure;
+- solid Li2BeF4 diffraction structure;
+- computational Be-F network formation.
+
+Structural-source provenance is established, but executable numerical structural datasets are not introduced by this document.
 
 The following Phase 10 evidence groups remain separate work items:
 
-- structural reference data;
 - complete transport reference data;
 - training and validation configurations;
-- FLiBe-specific resonance descriptors backed by an explicit model provenance;
+- FLiBe-specific resonance descriptors backed by explicit model provenance;
 - FLiBe TR-EIP realization;
 - molecular-dynamics validation;
 - multiscale coolant validation;
