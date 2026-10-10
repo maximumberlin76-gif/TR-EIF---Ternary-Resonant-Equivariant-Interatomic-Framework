@@ -398,13 +398,311 @@ and must not be presented as a validated physical property.
 
 ---
 
-## 10. Transport-Property Boundary
+## 10. Transport Reference Data
 
-Transport reference data are a separate Phase 10 work item.
+Transport-property evidence is separated by observable, composition, temperature domain, measurement method, and evidence class.
 
-Density and viscosity sources listed here establish provenance candidates, but this file does not yet close the complete transport-reference-data requirement.
+A transport coefficient measured for one transported species is not automatically a transport coefficient of the molten salt as a whole.
 
-Thermal conductivity, diffusivity, electrical conductivity, viscosity correlations, and other transport quantities require property-specific source qualification before executable use.
+In particular:
+
+`tritium diffusivity ≠ salt-ion self-diffusivity`
+
+`deuterium diffusivity ≠ lithium diffusivity`
+
+`electrical conductivity ≠ thermal conductivity`
+
+`viscosity ≠ diffusivity`
+
+`thermal diffusivity ≠ thermal conductivity`
+
+A transport coefficient is not a resonance descriptor and is not a ternary state.
+
+---
+
+### FLIBE-PRIMARY-CANTOR-WARD-MOYNIHAN-1969-VISCOSITY
+
+S. Cantor, W. T. Ward, and C. T. Moynihan.
+
+"Viscosity and Density in Molten BeF2-LiF Solutions."
+
+Journal of Chemical Physics, 50(7), 2874-2879, 1969.
+
+DOI:
+
+`10.1063/1.1671478`
+
+Transport role:
+
+- experimental molten LiF-BeF2 viscosity;
+- composition dependence;
+- temperature dependence.
+
+Allowed provenance:
+
+`PRIMARY_SOURCE`
+
+for directly reported viscosity measurements within the experimental composition and temperature domains.
+
+Any interpolation, extrapolation, or TR-EIF correlation constructed from these measurements must use `DERIVED` provenance.
+
+---
+
+### FLIBE-PRIMARY-COOKE-1971-THERMAL-CONDUCTIVITY
+
+J. W. Cooke.
+
+Thermal-conductivity measurements reported in:
+
+M. W. Rosenthal, R. B. Briggs, and P. N. Haubenreich.
+
+"Molten-Salt Reactor Program: Semiannual Progress Report for Period Ending August 31, 1971."
+
+Oak Ridge National Laboratory.
+
+Report:
+
+`ORNL-4728`
+
+Publication:
+
+`February 1972`
+
+Relevant section:
+
+`5.2 Thermophysical Properties`
+
+Experimental scope reported for the LiF-BeF2 mixture:
+
+- composition: approximately `66 mol% LiF : 34 mol% BeF2`;
+- thermal conductivity;
+- solid and liquid temperature regions;
+- variable-gap measurement technique;
+- measurement range extending through the molten state.
+
+The report states that measurements were made over approximately `300–870 °C` and gives an estimated maximum uncertainty below approximately `±10%` for the reported measurement series.
+
+Source role:
+
+- primary FLiBe thermal-conductivity measurement;
+- temperature-dependent thermal-conductivity reference;
+- validation source for later thermal-conductivity models.
+
+Allowed provenance:
+
+`PRIMARY_SOURCE`
+
+for values directly extracted from the reported experimental series.
+
+Digitized graph values, fitted correlations, or interpolated values use:
+
+`DERIVED`
+
+unless an exact tabulated source value is available.
+
+---
+
+### FLIBE-METHOD-COOKE-1973-VARIABLE-GAP
+
+J. W. Cooke.
+
+"Development of the Variable-Gap Technique for Measuring the Thermal Conductivity of Fluoride Salt Mixtures."
+
+Oak Ridge National Laboratory.
+
+Report:
+
+`ORNL-4831`
+
+Publication:
+
+`February 1973`
+
+Source role:
+
+- experimental-method qualification;
+- variable-gap apparatus definition;
+- high-temperature fluoride-salt thermal-conductivity methodology;
+- measurement-error and correction analysis.
+
+This report qualifies the measurement method.
+
+It must not be used by itself as provenance for a FLiBe numerical thermal-conductivity value unless that exact value is explicitly reported in the document.
+
+---
+
+### FLIBE-PRIMARY-ROBBINS-BRAUNSTEIN-1970-ELECTRICAL-CONDUCTIVITY
+
+G. D. Robbins and J. Braunstein.
+
+Electrical-conductivity measurements reported in:
+
+M. W. Rosenthal.
+
+"Molten-Salt Reactor Program: Semiannual Progress Report for Period Ending February 28, 1970."
+
+Oak Ridge National Laboratory.
+
+Report:
+
+`ORNL-4548`
+
+Publication:
+
+`August 1970`
+
+Relevant section:
+
+`Electrical Conductivities and Ionic Mobilities in the Molten LiF-BeF2 System`
+
+Experimental scope:
+
+- molten LiF-BeF2 mixtures;
+- electrical conductivity;
+- composition dependence;
+- temperature dependence;
+- ionic-mobility analysis using conductivity, transference, and density information.
+
+Source role:
+
+- primary electrical-conductivity evidence;
+- composition-dependent conductivity reference;
+- ionic-transport evidence.
+
+Allowed provenance:
+
+`PRIMARY_SOURCE`
+
+for directly reported electrical-conductivity measurements.
+
+Derived ionic mobilities must retain their derived status and the complete dependency chain used by the source.
+
+Electrical conductivity must not be interpreted as a direct salt-ion self-diffusion measurement.
+
+---
+
+### FLIBE-PRIMARY-ANDERL-2004-DEUTERIUM-TRANSPORT
+
+R. A. Anderl, S. Fukada, G. R. Smolik, R. J. Pawelko, S. T. Schuetz, J. P. Sharpe, B. J. Merrill, D. A. Petti, H. Nishimura, T. Terai, and S. Tanaka.
+
+"Deuterium/tritium behavior in Flibe and Flibe-facing materials."
+
+Journal of Nuclear Materials, 329-333, 1327-1331, 2004.
+
+DOI:
+
+`10.1016/j.jnucmat.2004.04.220`
+
+Experimental scope:
+
+- molten `2 LiF : 1 BeF2`;
+- deuterium transport;
+- diffusion;
+- solubility;
+- permeation-probe measurements;
+- temperature-dependent transport behavior.
+
+Source role:
+
+- primary experimental deuterium-transport reference;
+- diffusion and solubility validation for hydrogen-isotope transport.
+
+Allowed provenance:
+
+`PRIMARY_SOURCE`
+
+for directly reported experimental observations.
+
+Diffusion coefficients obtained by fitting the measured transient transport process must retain the source-described derivation method.
+
+These values describe deuterium transport and must not be relabeled as intrinsic Li, Be, or F self-diffusion coefficients.
+
+---
+
+### FLIBE-PRIMARY-CALDERONI-2008-TRITIUM-PERMEATION
+
+P. Calderoni, P. Sharpe, M. Hara, and Y. Oya.
+
+"Measurement of tritium permeation in flibe (2LiF-BeF2)."
+
+Fusion Engineering and Design, 83(7-9), 1331-1334, 2008.
+
+DOI:
+
+`10.1016/j.fusengdes.2008.05.016`
+
+Experimental scope:
+
+- molten `2 LiF : 1 BeF2`;
+- temperature range approximately `500–700 °C`;
+- tritium permeation;
+- tritium diffusivity;
+- tritium solubility;
+- steady-state and transient transport measurements.
+
+Source role:
+
+- primary experimental tritium-transport reference;
+- independent hydrogen-isotope transport validation path.
+
+Allowed provenance:
+
+`PRIMARY_SOURCE`
+
+for directly reported experimental measurements and source-derived transport quantities when their derivation method is retained.
+
+Tritium permeability, diffusivity, and solubility are separate observables.
+
+None is automatically equivalent to bulk molten-salt ionic diffusivity.
+
+---
+
+## 10.1 Transport Data Admission Rule
+
+Before a transport quantity enters executable FLiBe validation, its record must establish:
+
+1. transport observable;
+2. transported species when applicable;
+3. LiF-BeF2 composition;
+4. additional species when applicable;
+5. temperature or temperature range;
+6. pressure when relevant;
+7. liquid or solid state;
+8. measurement or computational method;
+9. numerical value or functional form;
+10. unit;
+11. source identifier;
+12. provenance class;
+13. exact source location;
+14. uncertainty when reported;
+15. fitted or directly measured status;
+16. interpolation or extrapolation status;
+17. any unit conversion;
+18. applicable state-domain limits.
+
+A correlation constructed from primary measurements is:
+
+`DERIVED`
+
+unless the correlation itself is explicitly reported by the primary source.
+
+---
+
+## 10.2 Current Transport Evidence Boundary
+
+The source register now contains provenance anchors for:
+
+- viscosity;
+- thermal conductivity;
+- electrical conductivity;
+- deuterium diffusivity and solubility;
+- tritium diffusivity, permeability, and solubility.
+
+Experimental salt-ion self-diffusion coefficients for Li, Be, and F are not established here.
+
+Computational self-diffusion data may be introduced later through an explicitly identified computational evidence path and must not be relabeled as experimental measurements.
+
+Executable numerical transport datasets are not introduced by this source-register section.
 
 ---
 
