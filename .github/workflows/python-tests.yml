@@ -24,6 +24,10 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -e ".[dev]"
 
+      - name: Prepare validation artifacts
+        run: |
+          mkdir -p artifacts
+
       - name: Smoke test
         run: |
           python -m compileall -q src/tr_eif
@@ -41,8 +45,29 @@ jobs:
           python -m pytest \
             tests/determinism/test_trace_file_export.py \
             tests/invariants/test_trace_schema_contract.py \
-            -q
+            -q \
+            --junitxml=artifacts/structured-output.xml
+
+      - name: Deterministic validation bench
+        run: |
+          python -m pytest \
+            tests/determinism \
+            tests/equivariance \
+            tests/conservation \
+            tests/numerical \
+            -q \
+            --junitxml=artifacts/deterministic-validation-bench.xml
 
       - name: Full self-test
         run: |
-          python -m pytest -q
+          python -m pytest \
+            -q \
+            --junitxml=artifacts/full-self-test.xml
+
+      - name: Upload validation reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tr-eif-python-validation-reports
+          path: artifacts/*.xml
+          if-no-files-found: ignore
