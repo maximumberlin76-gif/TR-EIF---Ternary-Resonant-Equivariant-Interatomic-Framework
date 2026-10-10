@@ -1,0 +1,48 @@
+name: TR-EIF Python Tests
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  python-validation:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install package and validation dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+
+      - name: Smoke test
+        run: |
+          python -m compileall -q src/tr_eif
+          python - <<'PY'
+          import tr_eif
+          import tr_eif.md
+          import tr_eif.multiscale
+          import tr_eif.observables
+
+          print("TR-EIF smoke test: PASS")
+          PY
+
+      - name: Structured output test
+        run: |
+          python -m pytest \
+            tests/determinism/test_trace_file_export.py \
+            tests/invariants/test_trace_schema_contract.py \
+            -q
+
+      - name: Full self-test
+        run: |
+          python -m pytest -q
