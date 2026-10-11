@@ -1,0 +1,279 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TR-EIF TR-EIP Model Manifest",
+  "description": "Structural schema for a concrete TR-EIP model manifest inside the TR-EIF framework. The manifest identifies result-affecting model architecture, parameter artifact, admissible species, units, E(3) symmetry, graph rule, representation structure, resonance structure, balanced-ternary structure, output capabilities, numerical semantics, and provenance. Runtime state is not part of the model manifest.",
+  "type": "object",
+  "required": [
+    "format",
+    "schema_version",
+    "model_family",
+    "model_family_version",
+    "architecture_id",
+    "parameter_artifact",
+    "supported_species",
+    "unit_system_id",
+    "symmetry_group",
+    "graph_rule",
+    "representation",
+    "message_depth",
+    "resonance",
+    "ternary",
+    "capabilities",
+    "numerical_semantics",
+    "provenance"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "format": {
+      "const": "tr_eif.model_manifest"
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "model_family": {
+      "const": "TR-EIP",
+      "description": "Concrete interatomic model family inside TR-EIF. TR-EIP is not the TR-EIF framework itself."
+    },
+    "model_family_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "architecture_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Identifier of the result-affecting model architecture, separate from parameter values."
+    },
+    "parameter_artifact": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/$defs/parameter_artifact"
+        }
+      ],
+      "description": "Versioned parameter artifact when the concrete model has learned, calibrated, or otherwise externalized parameters. JSON null explicitly declares that no separate parameter artifact is used."
+    },
+    "supported_species": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "unit_system_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Explicit identifier of the model unit convention. No unit system is inferred by this schema."
+    },
+    "symmetry_group": {
+      "const": "E(3)",
+      "description": "TR-EIP operates under the declared E(3)-equivariant interatomic contract."
+    },
+    "graph_rule": {
+      "$ref": "#/$defs/graph_rule"
+    },
+    "representation": {
+      "$ref": "#/$defs/representation"
+    },
+    "message_depth": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Declared number of message-passing stages in the concrete model realization."
+    },
+    "resonance": {
+      "$ref": "#/$defs/resonance_structure"
+    },
+    "ternary": {
+      "$ref": "#/$defs/ternary_structure"
+    },
+    "capabilities": {
+      "$ref": "#/$defs/capabilities"
+    },
+    "numerical_semantics": {
+      "$ref": "#/$defs/numerical_semantics"
+    },
+    "provenance": {
+      "type": "string",
+      "enum": [
+        "PRIMARY_SOURCE",
+        "DERIVED",
+        "CALIBRATED",
+        "AUTHOR_DEFINED",
+        "BENCHMARK",
+        "TEST_FIXTURE",
+        "REQUIRES_SOURCE",
+        "REQUIRES_TEST"
+      ]
+    }
+  },
+  "$defs": {
+    "parameter_artifact": {
+      "type": "object",
+      "required": [
+        "artifact_id",
+        "artifact_version"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "artifact_version": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "graph_rule": {
+      "type": "object",
+      "required": [
+        "rule_id",
+        "cutoff"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "rule_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "cutoff": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Declared graph cutoff in the manifest unit convention."
+        }
+      }
+    },
+    "representation": {
+      "type": "object",
+      "required": [
+        "representation_id",
+        "scalar_channels",
+        "polar_vector_channels",
+        "higher_order_channels"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "representation_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "scalar_channels": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "polar_vector_channels": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "higher_order_channels": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "May be zero for an executable realization that implements only scalar and polar-vector channels. Formal higher-order support in documentation does not imply executable higher-order channels."
+        }
+      }
+    },
+    "resonance_structure": {
+      "type": "object",
+      "required": [
+        "structure_id",
+        "descriptor_id",
+        "state_domain"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "structure_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "descriptor_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "state_domain": {
+          "const": "continuous",
+          "description": "Resonance state remains continuous and is not identified with balanced-ternary execution state."
+        }
+      }
+    },
+    "ternary_structure": {
+      "type": "object",
+      "required": [
+        "structure_id",
+        "canonical_states",
+        "active_neutral_state",
+        "direct_opposite_committed_transitions"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "structure_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "canonical_states": {
+          "const": [
+            -1,
+            0,
+            1
+          ]
+        },
+        "active_neutral_state": {
+          "const": 0,
+          "description": "State 0 is active neutral: balancing, routing, damping, mediation, transition staging, retention, and controlled neutralization."
+        },
+        "direct_opposite_committed_transitions": {
+          "const": false,
+          "description": "Committed -1 -> 1 and 1 -> -1 transitions are forbidden. Opposite-polarity execution proceeds through separate events via active neutral state 0."
+        }
+      }
+    },
+    "capabilities": {
+      "type": "object",
+      "required": [
+        "energy",
+        "forces",
+        "stress"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "energy": {
+          "type": "boolean"
+        },
+        "forces": {
+          "type": "boolean"
+        },
+        "stress": {
+          "type": "boolean"
+        }
+      }
+    },
+    "numerical_semantics": {
+      "type": "object",
+      "required": [
+        "precision_id",
+        "differentiation_id",
+        "determinism_id"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "precision_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "differentiation_id": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Explicit identifier of the force/stress differentiation path used by the concrete realization."
+        },
+        "determinism_id": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  },
+  "$comment": "The model manifest defines a concrete TR-EIP model realization; runtime configuration, resonance state, ternary execution state, pending targets, and observables are separate artifacts. TR-EIP is a model family inside TR-EIF: TR-EIP subset TR-EIF. Resonance remains continuous. Balanced ternary execution remains -1/0/1 with active neutral state 0. Validation status, missing data, unknown values, NaN, errors, and abstention are not encoded through ternary 0. Manifest-schema validity alone does not establish determinism; reproducibility additionally requires that execution consume only declared result-affecting state and configuration."
+}
