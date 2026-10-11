@@ -15,7 +15,19 @@
   "domain": {
     "material": "FLiBe (LiF-BeF2)",
     "reported_composition": "2 LiF : 1 BeF2 (nominal)",
-    "composition_status": "NOMINAL_NOT_MEASURED_FRACTIONS_IN_THIS_DATASET",
+    "composition_status": "NOMINAL_AND_MEASURED_SOURCE_BACKED",
+    "measured_composition": {
+      "observable": "BeF2 molar fraction of salt",
+      "bef2_mol_percent": 33.58,
+      "bef2_reported_uncertainty_mol_percent": 0.05,
+      "bef2_source_notation": "33.58(5) mol% BeF2",
+      "method": "ICP-MS",
+      "source_location": "Section 4.6 (Elemental Analysis), Figure 7",
+      "sample_scope": "Salt composition measured before and after density runs; no change observed within reported precision.",
+      "uncertainty_basis": "Source-reported uncertainty for average composition; Figure 7 point uncertainties are one standard deviation from three ICP-MS runs on one digest.",
+      "evidence_kind": "EXPERIMENTAL",
+      "provenance": "PRIMARY_SOURCE"
+    },
     "model_composition_67_33_direct_match": false,
     "pressure_kpa": 102,
     "pressure_standard_uncertainty_kpa": 1,
@@ -101,7 +113,7 @@
       [619, 6, 1994, 3],
       [638, 6, 1986, 3],
       [657, 6, 1979, 3],
-      [677, 7, 1971, 3],
+      [677, 6, 1971, 3],
       [697, 7, 1962, 3],
       [716, 7, 1953, 3],
       [746, 7, 1939, 3],
@@ -112,7 +124,7 @@
   "qualification_boundary": {
     "source_data_status": "MEASURED_POINTS_TRANSCRIBED",
     "physical_validation_status": "NOT_EVALUATED",
-    "warning": "The original paper contains measured composition analysis that is not transcribed here. Do not assert a composition-exact match to 67:33 or infer a matched thermodynamic state. Raw measured points are neither TR-EIP predictions nor experimental proof of TR-EIP.",
+    "warning": "The nominal 2 LiF : 1 BeF2 designation is not the measured salt composition. ICP-MS reports 33.58(5) mol% BeF2 (Section 4.6), whereas the density benchmark correlation declares 33 mol% BeF2. No composition-exact comparison, matched thermodynamic state, or TR-EIP density prediction is established by this dataset.",
     "below_melting_warning": "Three nominal temperatures (447, 452, 457 deg C) fall below the cited 459.1 deg C melting point. No liquid-phase equivalence is asserted for those points.",
     "range_warning": "Density correlation and experimental-measurement domains must be intersected before comparison; do not extrapolate.",
     "independent_model_prediction": "REQUIRES_MODEL_OUTPUT"
