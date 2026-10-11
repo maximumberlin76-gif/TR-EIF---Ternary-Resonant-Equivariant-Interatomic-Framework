@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TR-EIF Resonance State",
+  "description": "Structural JSON schema for the continuous oscillator state represented by tr_eif.resonance.ResonanceState.",
+  "type": "object",
+  "required": [
+    "phases",
+    "frequencies"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "phases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "number"
+      }
+    },
+    "frequencies": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "number"
+      }
+    }
+  },
+  "$comment": "Equal phases/frequencies cardinality and phase normalization into [0, 2pi) are ResonanceState invariants enforced by the executable model. Strict JSON excludes NaN and Infinity from valid serialized input."
+}
