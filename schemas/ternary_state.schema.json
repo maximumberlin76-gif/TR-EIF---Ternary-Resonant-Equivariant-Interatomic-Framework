@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TR-EIF Active Ternary Execution State",
+  "description": "Structural JSON schema for one retained balanced-ternary execution state. The canonical state space is -1/0/1. State 0 is an active neutral execution state used for balancing, routing, damping, mediation, transition staging, retention, and controlled neutralization; it is not a passive null value and must not encode missing, invalid, NaN, error, unknown, or abstention states.",
+  "type": "object",
+  "required": [
+    "retained_state",
+    "pending_target"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "retained_state": {
+      "type": "integer",
+      "enum": [
+        -1,
+        0,
+        1
+      ],
+      "description": "Executed retained ternary state. Value 0 is the active neutral state."
+    },
+    "pending_target": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "integer",
+          "enum": [
+            -1,
+            1
+          ]
+        }
+      ],
+      "description": "Optional nonneutral target retained while execution is staged through active neutral state 0. Pending target is distinct from executed state."
+    }
+  },
+  "oneOf": [
+    {
+      "properties": {
+        "retained_state": {
+          "enum": [
+            -1,
+            0,
+            1
+          ]
+        },
+        "pending_target": {
+          "type": "null"
+        }
+      }
+    },
+    {
+      "properties": {
+        "retained_state": {
+          "const": 0
+        },
+        "pending_target": {
+          "type": "integer",
+          "enum": [
+            -1,
+            1
+          ]
+        }
+      }
+    }
+  ],
+  "$comment": "TR-EIF balanced ternary semantics: 0 is an active neutral execution state supporting balancing, routing, damping, mediation, transition staging, retention, and controlled neutralization. It is not missing data, invalid data, NaN, error, unknown, or abstention. pending_target != retained_state and pending_target != active neutral. A non-null pending_target is permitted only while retained_state == 0. Direct committed -1 -> 1 and 1 -> -1 transitions are forbidden; opposite-polarity execution requires separate committed events -1 -> 0 -> 1 or 1 -> 0 -> -1. target != executed state and pending != neutral."
+}
