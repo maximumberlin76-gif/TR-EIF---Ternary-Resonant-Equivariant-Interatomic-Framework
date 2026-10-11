@@ -1,0 +1,120 @@
+
+{
+  "dataset_id": "tr-eif.flibe.vidrio-2022.experimental-density.v1",
+  "evidence_kind": "EXPERIMENTAL",
+  "provenance": "PRIMARY_SOURCE",
+  "observable_id": "mass_density",
+  "source": {
+    "citation": "Vidrio et al., Density and Thermal Expansivity of Molten 2LiF-BeF2 (FLiBe): Measurements and Uncertainty Quantification, Journal of Chemical & Engineering Data 67 (2022), 3517-3531",
+    "doi": "10.1021/acs.jced.2c00212",
+    "source_location": "Table 4, density data (runs 0A, 1A, 1B, 1C)",
+    "publication_license": "CC BY 4.0",
+    "publication_url": "https://doi.org/10.1021/acs.jced.2c00212",
+    "measurement_method": "hydrostatic buoyancy"
+  },
+  "domain": {
+    "material": "FLiBe (LiF-BeF2)",
+    "reported_composition": "2 LiF : 1 BeF2 (nominal)",
+    "composition_status": "NOMINAL_NOT_MEASURED_FRACTIONS_IN_THIS_DATASET",
+    "model_composition_67_33_direct_match": false,
+    "pressure_kpa": 102,
+    "pressure_standard_uncertainty_kpa": 1,
+    "reported_melting_temperature_c": 459.1,
+    "reported_melting_temperature_standard_uncertainty_c": 0.2,
+    "temperature_range_c": [447, 817],
+    "below_reported_melting_temperature_point_count": 3
+  },
+  "columns": [
+    "temperature_c",
+    "temperature_standard_uncertainty_c",
+    "density_kg_m3",
+    "density_standard_uncertainty_kg_m3"
+  ],
+  "uncertainty_convention": "Parenthetical Table 4 values are standard measurement uncertainties, not model tolerances.",
+  "sample_count": 61,
+  "sample_count_by_run": {
+    "0A": 28,
+    "1A": 7,
+    "1B": 13,
+    "1C": 13
+  },
+  "runs": {
+    "0A": [
+      [461, 3, 2043, 3],
+      [466, 3, 2041, 3],
+      [471, 4, 2039, 3],
+      [476, 4, 2037, 3],
+      [481, 4, 2035, 3],
+      [486, 4, 2032, 3],
+      [491, 4, 2030, 3],
+      [501, 4, 2026, 3],
+      [511, 4, 2022, 3],
+      [521, 4, 2018, 3],
+      [531, 4, 2014, 3],
+      [541, 4, 2010, 3],
+      [551, 4, 2006, 3],
+      [561, 4, 2002, 3],
+      [571, 4, 1997, 3],
+      [581, 4, 1993, 3],
+      [591, 4, 1989, 3],
+      [601, 5, 1984, 3],
+      [611, 5, 1980, 3],
+      [621, 5, 1976, 3],
+      [630, 5, 1972, 3],
+      [640, 5, 1968, 3],
+      [650, 5, 1963, 3],
+      [660, 5, 1959, 3],
+      [670, 5, 1954, 3],
+      [680, 5, 1949, 3],
+      [690, 5, 1943, 3],
+      [700, 5, 1939, 3]
+    ],
+    "1A": [
+      [467, 5, 2046, 3],
+      [491, 5, 2037, 3],
+      [501, 5, 2033, 3],
+      [511, 5, 2030, 3],
+      [571, 6, 2004, 3],
+      [630, 6, 1974, 4],
+      [675, 6, 1958, 4]
+    ],
+    "1B": [
+      [447, 19, 2054, 4],
+      [452, 19, 2051, 4],
+      [457, 19, 2049, 4],
+      [461, 19, 2047, 4],
+      [506, 19, 2030, 3],
+      [539, 19, 2020, 3],
+      [564, 19, 2011, 3],
+      [589, 19, 2001, 3],
+      [614, 19, 1990, 3],
+      [716, 19, 1941, 4],
+      [770, 19, 1912, 5],
+      [792, 19, 1904, 4],
+      [817, 19, 1893, 7]
+    ],
+    "1C": [
+      [481, 5, 2045, 3],
+      [517, 6, 2030, 3],
+      [551, 6, 2015, 3],
+      [591, 6, 1998, 3],
+      [619, 6, 1994, 3],
+      [638, 6, 1986, 3],
+      [657, 6, 1979, 3],
+      [677, 7, 1971, 3],
+      [697, 7, 1962, 3],
+      [716, 7, 1953, 3],
+      [746, 7, 1939, 3],
+      [766, 7, 1930, 3],
+      [795, 7, 1916, 3]
+    ]
+  },
+  "qualification_boundary": {
+    "source_data_status": "MEASURED_POINTS_TRANSCRIBED",
+    "physical_validation_status": "NOT_EVALUATED",
+    "warning": "The original paper contains measured composition analysis that is not transcribed here. Do not assert a composition-exact match to 67:33 or infer a matched thermodynamic state. Raw measured points are neither TR-EIP predictions nor experimental proof of TR-EIP.",
+    "below_melting_warning": "Three nominal temperatures (447, 452, 457 deg C) fall below the cited 459.1 deg C melting point. No liquid-phase equivalence is asserted for those points.",
+    "range_warning": "Density correlation and experimental-measurement domains must be intersected before comparison; do not extrapolate.",
+    "independent_model_prediction": "REQUIRES_MODEL_OUTPUT"
+  }
+}
