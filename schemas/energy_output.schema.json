@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TR-EIF Conservative Energy Output",
+  "description": "Structural JSON schema for the scalar conservative energy output represented by tr_eif.energy.EnergyState.",
+  "type": "object",
+  "required": [
+    "atomic_energies",
+    "total_energy"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "atomic_energies": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "number"
+      },
+      "description": "Ordered finite scalar atomic energy contributions, one contribution per represented atom."
+    },
+    "total_energy": {
+      "type": "number",
+      "description": "Finite scalar total conservative energy."
+    }
+  },
+  "$comment": "Energy is a continuous scalar observable and is not a balanced-ternary state. No energy value, sign, zero value, missing value, validation status, or physical condition is mapped automatically to -1/0/1. The current conservative energy functional constructs total_energy from deterministic atomic contributions. Algebraic consistency between total_energy and atomic_energies, finite-value enforcement, and atom-count consistency with the associated configuration remain executable validation responsibilities rather than being approximated by structural JSON Schema constraints. This schema does not impose an implicit physical unit."
+}
