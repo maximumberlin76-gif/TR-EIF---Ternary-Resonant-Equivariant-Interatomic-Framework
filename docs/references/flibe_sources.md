@@ -210,6 +210,69 @@ Values outside those domains must not inherit `PRIMARY_SOURCE` status through ex
 
 ---
 
+### FLIBE-REFERENCE-JANZ-1974-DENSITY
+
+G. J. Janz, G. L. Gardner, U. Krebs, and R. P. T. Tomkins.
+
+"Molten Salts: Volume 4, Part 1, Fluorides and Mixtures: Electrical Conductance, Density, Viscosity, and Surface Tension Data."
+
+Journal of Physical and Chemical Reference Data, 3, 1-115, 1974.
+
+DOI:
+
+`10.1063/1.3253134`
+
+Source class:
+
+reference-data compilation.
+
+Source role:
+
+- external density-correlation reference;
+- temperature-dependent FLiBe density benchmark anchor;
+- cross-check against primary density measurements.
+
+A later Idaho National Laboratory thermophysical assessment reproduces the Janz-attributed LiF-BeF2 density correlation as:
+
+`rho(T) = 2413 - 0.488 T`
+
+with:
+
+- `rho` in `kg/m^3`;
+- `T` in `K`;
+- reference composition: `67 mol% LiF : 33 mol% BeF2`;
+- stated temperature range: `800-1080 K`.
+
+The correlation is admitted as a reference correlation, not as a direct primary experimental measurement.
+
+Values calculated from this correlation use:
+
+`DERIVED`
+
+provenance.
+
+The composition boundary is explicit:
+
+`67 mol% LiF : 33 mol% BeF2 != exact 2 LiF : 1 BeF2`
+
+Therefore this correlation must not be relabeled as an exact `2:1` composition property without an additional composition-equivalence justification.
+
+Benchmark values generated from the correlation must retain:
+
+- source identifier;
+- composition;
+- temperature;
+- unit;
+- correlation coefficients;
+- validity range;
+- `DERIVED` provenance.
+
+Interpolation inside `800-1080 K` is permitted by the declared linear correlation.
+
+Extrapolation outside `800-1080 K` must not be presented as source-qualified property reproduction.
+
+---
+
 ## 6. Enthalpy and Heat-Capacity Sources
 
 ### FLIBE-PRIMARY-DOUGLAS-PAYNE-1969
