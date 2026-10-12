@@ -1,0 +1,95 @@
+
+{
+  "dataset_id": "tr-eif.flibe.baral-2021.aimd-structural-density.v1",
+  "evidence_kind": "FIRST_PRINCIPLES",
+  "provenance": "PRIMARY_SOURCE",
+  "observable_id": "mass_density",
+  "source": {
+    "title": "Temperature-Dependent Properties of Molten Li2BeF4 Salt Using Ab Initio Molecular Dynamics",
+    "citation": "Baral et al., ACS Omega 6 (2021), 19822–19835",
+    "doi": "10.1021/acsomega.1c02528",
+    "publication_url": "https://doi.org/10.1021/acsomega.1c02528",
+    "source_location": "Table 1, simulated FLiBe structural parameters at labeled temperatures",
+    "publication_year": 2021,
+    "computational_method": "ab initio molecular dynamics",
+    "reported_supercell_atom_count": 504
+  },
+  "material": {
+    "formula": "Li2BeF4",
+    "nominal_formula_unit_ratio": "2 LiF : 1 BeF2",
+    "lif_formula_unit_fraction": "2/3",
+    "bef2_formula_unit_fraction": "1/3",
+    "relation_to_vidrio_2022_measured_bef2_mol_percent": "NOT_EXACT_MATCH_TO_33.58",
+    "relation_to_67_33_mol_percent": "NOT_EXACT_MATCH"
+  },
+  "table_units": {
+    "temperature": "K",
+    "cubic_cell_edge": "angstrom",
+    "reported_cell_volume": "angstrom^3",
+    "simulated_density": "g/cm^3"
+  },
+  "columns": [
+    "temperature_k",
+    "cubic_cell_edge_angstrom",
+    "reported_cell_volume_angstrom3",
+    "simulated_density_g_cm3"
+  ],
+  "source_temperature_labels_included": [
+    "T300",
+    "T450",
+    "T700",
+    "T730",
+    "T750",
+    "T850",
+    "T1000",
+    "T1500",
+    "T2000"
+  ],
+  "sample_count": 9,
+  "samples": [
+    [300, 18.538, 6370.928, 1.866],
+    [450, 18.625, 6460.838, 1.840],
+    [700, 18.760, 6602.824, 1.800],
+    [730, 18.801, 6645.732, 1.788],
+    [750, 18.915, 6767.367, 1.757],
+    [850, 19.009, 6868.752, 1.731],
+    [1000, 19.214, 7093.522, 1.675],
+    [1500, 19.519, 7437.105, 1.597],
+    [2000, 19.597, 7525.745, 1.571]
+  ],
+  "excluded_table_rows": {
+    "T0": {
+      "reason": "The T0 configuration is not registered as a positive-absolute-temperature thermodynamic sample.",
+      "reported_cubic_cell_edge_angstrom": 18.405,
+      "reported_cell_volume_angstrom3": 6234.582,
+      "reported_density_g_cm3": 1.908
+    },
+    "crystal-exp": "Experimental crystal structure, not an AIMD molten-salt density record.",
+    "crystal-sim": "Simulated crystal structure, not a liquid AIMD density record."
+  },
+  "state_matching": {
+    "simulation_pressure": "NOT_REGISTERED_FROM_SOURCE_TABLE",
+    "simulation_density_uncertainty": "NOT_REPORTED_IN_SOURCE_TABLE",
+    "simulation_phase_per_row": "REQUIRES_INDEPENDENT_PHASE_ASSESSMENT",
+    "vidrio_experimental_composition_match": false,
+    "vidrio_experimental_pressure_match": "NOT_ESTABLISHED",
+    "vidrio_experimental_temperature_range_c": [447, 817],
+    "vidrio_reported_melting_temperature_c": 459.1,
+    "temperature_screened_candidate_rows": [
+      750,
+      850,
+      1000
+    ],
+    "temperature_screening_rule": "Candidate temperatures lie within the Vidrio 2022 nominal measurement-temperature range and above its reported melting-temperature central value; this is not thermodynamic-state matching."
+  },
+  "qualification_boundary": {
+    "source_data_status": "FIRST_PRINCIPLES_TABLE_VALUES_TRANSCRIBED",
+    "comparison_status": "REQUIRES_MATCHED_STATE_AND_INDEPENDENT_COMPARISON",
+    "physical_validation_status": "NOT_EVALUATED",
+    "tr_eip_prediction_status": "REQUIRES_MODEL_OUTPUT",
+    "warning": "These are published first-principles simulation outputs, not experimental measurements or TR-EIP predictions. Cell-derived density is a distinct simulation observable. Do not use an experimental measurement range quoted in the source table as simulated density or uncertainty.",
+    "uncertainty_policy": "No model uncertainty has been invented or inferred; the number of decimal places is not an uncertainty estimate.",
+    "composition_policy": "The exact 2:1 formula-unit ratio differs from both 67:33 mol% and the ICP-MS measured 33.58 mol% BeF2. Do not silently relabel the compositions or claim a composition-exact match.",
+    "physical_state_policy": "Overlapping temperatures alone do not establish equal composition, pressure, phase, normalization, or ensemble. Raw AIMD density comparison cannot validate a TR-EIP energy model."
+  }
+}
