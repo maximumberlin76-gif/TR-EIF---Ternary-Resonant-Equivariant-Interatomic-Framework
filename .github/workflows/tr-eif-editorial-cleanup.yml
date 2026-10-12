@@ -1,0 +1,241 @@
+
+name: TR-EIF One-File Editorial Cleanup
+
+on:
+  workflow_dispatch:
+    inputs:
+      operation:
+        description: "Audit, apply one reviewed exact replacement, or finalize cleanup"
+        required: true
+        type: choice
+        default: audit
+        options:
+          - audit
+          - apply
+          - finalize
+      file_path:
+        description: "Repository-relative path for apply (one existing file)"
+        required: false
+        type: string
+      expected_sha256:
+        description: "SHA-256 of the complete existing file before apply"
+        required: false
+        type: string
+      replacements_json:
+        description: "Author-reviewed JSON array of exact old/new text pairs for ONE file"
+        required: false
+        type: string
+      final_confirmation:
+        description: "Type EDITORIAL_AUDIT_COMPLETE only after the complete registry is cleared"
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: tr-eif-one-file-editorial-cleanup
+  cancel-in-progress: false
+
+jobs:
+  review:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact main commit
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Audit candidate phrases
+        if: inputs.operation == 'audit'
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          import re
+
+          patterns = {
+              "editorial_review": re.compile(
+                  r"\b(?:physical validation|physical evidence|not independently"
+                  r"|not scientifically|not a validation|not model validation"
+                  r"|cannot validate|does not validate|does not prove"
+                  r"|not a proof|unmatched.source)\b", re.I
+              ),
+              "status_review": re.compile(
+                  r"\b(?:DIAGNOSTIC_ONLY|NOT_EVALUATED|NOT_ESTABLISHED"
+                  r"|REQUIRES_MODEL_OUTPUT|REQUIRES_SOURCE)\b"
+              ),
+          }
+          roots = (Path('docs'), Path('src'), Path('tests'),
+                   Path('benchmarks'), Path('data'), Path('schemas'))
+          matches = []
+          for root in roots:
+              if not root.exists():
+                  continue
+              for path in sorted(root.rglob('*')):
+                  if not path.is_file() or path.suffix not in ('.md', '.py', '.json'):
+                      continue
+                  for number, line in enumerate(path.read_text(encoding='utf-8').splitlines(), 1):
+                      categories = [name for name, regex in patterns.items() if regex.search(line)]
+                      if categories:
+                          matches.append({
+                              'file': path.as_posix(), 'line': number,
+                              'categories': categories, 'text': line.strip(),
+                          })
+          Path('editorial-audit.json').write_text(
+              json.dumps(matches, indent=2, ensure_ascii=False) + '\n', encoding='utf-8'
+          )
+          files = sorted({entry['file'] for entry in matches})
+          with Path('editorial-audit.md').open('w', encoding='utf-8') as out:
+              out.write('# TR-EIF editorial review candidates\n\n')
+              out.write(f'{len(files)} files, {len(matches)} matching lines.\n\n')
+              out.write('Matches require line-by-line author review. Scientific identities and invariants are retained.\n\n')
+              for entry in matches:
+                  out.write(f"- `{entry['file']}:{entry['line']}` ({', '.join(entry['categories'])}): "
+                            + entry['text'].replace('`', '\\`') + '\n')
+          print(f'Audit complete: {len(files)} candidate files, {len(matches)} lines')
+          PY
+
+      - name: Upload audit register
+        if: inputs.operation == 'audit'
+        uses: actions/upload-artifact@v4
+        with:
+          name: tr-eif-editorial-audit
+          path: |
+            editorial-audit.json
+            editorial-audit.md
+          if-no-files-found: error
+
+      - name: Apply exactly one author-reviewed edit
+        if: inputs.operation == 'apply'
+        env:
+          INPUT_PATH: ${{ inputs.file_path }}
+          INPUT_HASH: ${{ inputs.expected_sha256 }}
+          INPUT_REPLACEMENTS: ${{ inputs.replacements_json }}
+        shell: bash
+        run: |
+          python - <<'PY'
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+          import re
+
+          path_text = os.environ['INPUT_PATH']
+          expected = os.environ['INPUT_HASH'].lower()
+          if not re.fullmatch(r'[0-9a-f]{64}', expected):
+              raise SystemExit('Expected complete SHA-256 precondition')
+          try:
+              replacements = json.loads(os.environ['INPUT_REPLACEMENTS'])
+          except (ValueError, TypeError) as exc:
+              raise SystemExit(f'Invalid JSON replacement list: {exc}') from exc
+          if not isinstance(replacements, list) or not 1 <= len(replacements) <= 100:
+              raise SystemExit('Expected 1 to 100 reviewed replacements for one file')
+          for item in replacements:
+              if (not isinstance(item, dict) or set(item) != {'old', 'new'}
+                      or not all(isinstance(item[key], str) for key in ('old', 'new'))
+                      or not item['old'] or not item['new']
+                      or item['old'] == item['new']):
+                  raise SystemExit('Each edit requires distinct nonempty old/new strings')
+          rel = Path(path_text)
+          if rel.is_absolute() or '..' in rel.parts or not rel.parts:
+              raise SystemExit('Invalid repository-relative path')
+          if rel.parts[0] not in ('docs', 'src', 'tests', 'benchmarks', 'data', 'schemas'):
+              raise SystemExit('Target outside the approved editorial scope')
+          if rel.suffix not in ('.md', '.py', '.json'):
+              raise SystemExit('Unsupported file format')
+          if rel.is_symlink() or not rel.is_file():
+              raise SystemExit('Target must be one existing regular file')
+          if not rel.resolve().is_relative_to(Path.cwd().resolve()):
+              raise SystemExit('Target resolves outside the repository')
+          original_bytes = rel.read_bytes()
+          if hashlib.sha256(original_bytes).hexdigest() != expected:
+              raise SystemExit('Target SHA-256 mismatch; no changes applied')
+          original = original_bytes.decode('utf-8')
+          updated = original
+          for item in replacements:
+              if updated.count(item['old']) != 1:
+                  raise SystemExit('Each old text must occur exactly once; no changes applied')
+              updated = updated.replace(item['old'], item['new'], 1)
+          if rel.suffix == '.json':
+              import json
+              before = json.loads(original)
+              after = json.loads(updated)
+              if isinstance(before, dict) and isinstance(after, dict):
+                  if 'runs' in before and before.get('runs') != after.get('runs'):
+                      raise SystemExit('Protected experimental rows changed')
+                  if 'samples' in before and before.get('samples') != after.get('samples'):
+                      raise SystemExit('Protected published numerical rows changed')
+          elif rel.suffix == '.py':
+              import ast
+              ast.parse(updated, filename=path_text)
+          rel.write_text(updated, encoding='utf-8')
+          print(f'Edited exactly one file: {path_text}')
+          PY
+          git diff --check
+          test "$(git diff --name-only | wc -l)" -eq 1
+          test "$(git diff --name-only)" = "$INPUT_PATH"
+          git diff -- "$INPUT_PATH"
+
+      - name: Install repository validation dependencies
+        if: inputs.operation == 'apply' || inputs.operation == 'finalize'
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e '.[dev]'
+
+      - name: Run complete repository tests
+        if: inputs.operation == 'apply' || inputs.operation == 'finalize'
+        run: |
+          python -m compileall -q src/tr_eif
+          python -m pytest -q
+
+      - name: Commit one checked editorial change
+        if: inputs.operation == 'apply'
+        env:
+          INPUT_PATH: ${{ inputs.file_path }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- "$INPUT_PATH"
+          git diff --cached --check
+          test "$(git diff --cached --name-only | wc -l)" -eq 1
+          git commit -m 'Refine reviewed TR-EIF editorial wording'
+          git push origin HEAD:main
+
+      - name: Verify independent CI on exact HEAD before finalization
+        if: inputs.operation == 'finalize'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          INPUT_CONFIRMATION: ${{ inputs.final_confirmation }}
+        shell: bash
+        run: |
+          test "$INPUT_CONFIRMATION" = 'EDITORIAL_AUDIT_COMPLETE'
+          test -z "$(git status --porcelain)"
+          HEAD_SHA=$(git rev-parse HEAD)
+          for WORKFLOW in python-tests.yml schema-validation.yml; do
+            gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/${WORKFLOW}/runs?branch=main&per_page=100" \
+              --jq ".workflow_runs[] | select(.head_sha == \"${HEAD_SHA}\" and .conclusion == \"success\") | .id" \
+              | grep -q '[0-9]'
+          done
+
+      - name: Delete temporary workflow after approved completion
+        if: inputs.operation == 'finalize'
+        env:
+          GH_TOKEN: ${{ secrets.TR_EIF_WORKFLOW_TOKEN }}
+        shell: bash
+        run: |
+          test -n "$GH_TOKEN" || { echo 'Missing TR_EIF_WORKFLOW_TOKEN'; exit 1; }
+          WORKFLOW_PATH='.github/workflows/tr-eif-editorial-cleanup.yml'
+          SHA=$(gh api "repos/${GITHUB_REPOSITORY}/contents/${WORKFLOW_PATH}?ref=main" --jq '.sha')
+          gh api --method DELETE "repos/${GITHUB_REPOSITORY}/contents/${WORKFLOW_PATH}" \
+            -f message='Remove completed TR-EIF editorial cleanup workflow' \
+            -f sha="$SHA" -f branch=main
