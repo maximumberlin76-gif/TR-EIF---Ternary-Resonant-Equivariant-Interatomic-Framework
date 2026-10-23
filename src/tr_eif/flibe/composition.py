@@ -220,10 +220,21 @@ class FLiBeComposition:
         )
 
 
-def eutectic_flibe_composition() -> FLiBeComposition:
-    """Return the reference 2 LiF : 1 BeF2 formula-unit composition."""
+def stoichiometric_flibe_composition() -> FLiBeComposition:
+    """Return the exact Li2BeF4 composition: 2 LiF : 1 BeF2."""
 
     return FLiBeComposition(
         lif_fraction=2.0,
         bef2_fraction=1.0,
     )
+
+
+def eutectic_flibe_composition() -> FLiBeComposition:
+    """Preserve the existing API name for the exact 2:1 reference ratio.
+
+    The returned Li2BeF4 compound composition has x_BeF2 = 1/3.
+    Romberger et al. (1972), DOI 10.1021/j100652a012, report
+    x_BeF2 = 0.3280 +/- 0.0004 for the LiF-Li2BeF4 eutectic.
+    """
+
+    return stoichiometric_flibe_composition()
