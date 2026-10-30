@@ -1,0 +1,174 @@
+{
+  "dataset_id": "tr-eif.flibe.smith-2020.pim-pair-coefficients.v1",
+  "record_kind": "PUBLISHED_INTERATOMIC_PARAMETER_TABLE",
+  "provenance": "PRIMARY_SOURCE",
+  "source": {
+    "authors": [
+      "A. L. Smith",
+      "E. Capelli",
+      "R. J. M. Konings",
+      "A. E. Gheribi"
+    ],
+    "title": "A new approach for coupled modelling of the structural and thermo-physical properties of molten salts. Case of a polymeric liquid LiF-BeF2",
+    "journal": "Journal of Molecular Liquids",
+    "year": 2020,
+    "volume": 299,
+    "article_number": "112165",
+    "doi": "10.1016/j.molliq.2019.112165",
+    "source_location": "Table 1, Parameter values for the LiF-BeF2 potentials",
+    "source_model_family": "polarizable ion model (PIM)",
+    "parameter_note": "The source identifies corrected A_ij and a_ij values relative to the original Heaton et al. parameter publication."
+  },
+  "independent_table_crosscheck": {
+    "authors": [
+      "M. Salanne",
+      "C. Simon",
+      "P. Turq",
+      "P. A. Madden"
+    ],
+    "title": "Simulation of the liquid-vapor interface of molten LiBeF3",
+    "year": 2007,
+    "doi": "10.1016/j.crci.2007.03.002",
+    "source_location": "Table 1, Potential parameters",
+    "table_relation": "Same six pair coefficient sets in atomic units"
+  },
+  "material": {
+    "system": "LiF-BeF2",
+    "ionic_species_order": ["Li", "Be", "F"],
+    "formal_charges_e": {
+      "Li": 1,
+      "Be": 2,
+      "F": -1
+    },
+    "composition_domain": "LiF-BeF2 binary mixture"
+  },
+  "parameter_units": {
+    "born_amplitude_hartree": "hartree",
+    "born_decay_inverse_bohr": "bohr^-1",
+    "c6_hartree_bohr6": "hartree*bohr^6",
+    "c8_hartree_bohr8": "hartree*bohr^8",
+    "b6_inverse_bohr": "bohr^-1",
+    "b8_inverse_bohr": "bohr^-1"
+  },
+  "pair_functional": {
+    "functional_id": "flibe.finite_cluster.coulomb_born_mayer_tt.v1",
+    "coulomb": "q_i*q_j/r",
+    "born_repulsion": "A_ij*exp(-alpha_ij*r)",
+    "damped_dispersion": "-C6_ij*f6(b6_ij*r)/r^6-C8_ij*f8(b8_ij*r)/r^8",
+    "damping": "f_n(z)=1-exp(-z)*sum(z^k/k!,k=0..n)",
+    "distance_unit": "bohr",
+    "energy_unit": "hartree"
+  },
+  "source_table_pair_order": [
+    ["F", "F"],
+    ["Be", "F"],
+    ["Li", "F"],
+    ["Be", "Be"],
+    ["Li", "Be"],
+    ["Li", "Li"]
+  ],
+  "canonical_pair_order": [
+    ["Li", "Li"],
+    ["Li", "Be"],
+    ["Li", "F"],
+    ["Be", "Be"],
+    ["Be", "F"],
+    ["F", "F"]
+  ],
+  "pair_coefficients": [
+    {
+      "species_a": "Li",
+      "species_b": "Li",
+      "born_amplitude_hartree": 195.91,
+      "born_decay_inverse_bohr": 4.252,
+      "c6_hartree_bohr6": 0.0,
+      "c8_hartree_bohr8": 0.0,
+      "b6_inverse_bohr": 1.0,
+      "b8_inverse_bohr": 1.0
+    },
+    {
+      "species_a": "Li",
+      "species_b": "Be",
+      "born_amplitude_hartree": 0.0,
+      "born_decay_inverse_bohr": 1.0,
+      "c6_hartree_bohr6": 0.0,
+      "c8_hartree_bohr8": 0.0,
+      "b6_inverse_bohr": 1.0,
+      "b8_inverse_bohr": 1.0
+    },
+    {
+      "species_a": "Li",
+      "species_b": "F",
+      "born_amplitude_hartree": 20.42,
+      "born_decay_inverse_bohr": 2.052,
+      "c6_hartree_bohr6": 0.0,
+      "c8_hartree_bohr8": 0.0,
+      "b6_inverse_bohr": 1.0,
+      "b8_inverse_bohr": 1.0
+    },
+    {
+      "species_a": "Be",
+      "species_b": "Be",
+      "born_amplitude_hartree": 106.16,
+      "born_decay_inverse_bohr": 3.944,
+      "c6_hartree_bohr6": 0.0,
+      "c8_hartree_bohr8": 0.0,
+      "b6_inverse_bohr": 1.0,
+      "b8_inverse_bohr": 1.0
+    },
+    {
+      "species_a": "Be",
+      "species_b": "F",
+      "born_amplitude_hartree": 41.72,
+      "born_decay_inverse_bohr": 2.254,
+      "c6_hartree_bohr6": 0.0,
+      "c8_hartree_bohr8": 0.0,
+      "b6_inverse_bohr": 1.0,
+      "b8_inverse_bohr": 1.0
+    },
+    {
+      "species_a": "F",
+      "species_b": "F",
+      "born_amplitude_hartree": 181.84,
+      "born_decay_inverse_bohr": 2.267,
+      "c6_hartree_bohr6": 15.0,
+      "c8_hartree_bohr8": 150.0,
+      "b6_inverse_bohr": 1.9,
+      "b8_inverse_bohr": 1.9
+    }
+  ],
+  "additional_source_model_terms": {
+    "fluoride_polarizability_bohr3": 7.09,
+    "charge_dipole_damping": [
+      {
+        "species_pair": ["Be", "F"],
+        "b_inverse_bohr": 1.78,
+        "c_dimensionless": 0.99
+      },
+      {
+        "species_pair": ["Li", "F"],
+        "b_inverse_bohr": 1.81,
+        "c_dimensionless": 1.40
+      }
+    ],
+    "term_roles": [
+      "induced-dipole polarization",
+      "periodic long-range electrostatics"
+    ]
+  },
+  "implementation_mapping": {
+    "target_module": "src/tr_eif/flibe/independent_pair_potential.py",
+    "target_model": "FLiBeIndependentPairModel",
+    "parameter_type": "FLiBePairCoefficients",
+    "target_boundary": "isolated nonperiodic finite cluster",
+    "mapped_terms": [
+      "formal-charge Coulomb",
+      "Born-Mayer repulsion",
+      "Tang-Toennies-damped C6 and C8 dispersion"
+    ],
+    "separately_modeled_terms": [
+      "induced-dipole polarization",
+      "periodic long-range electrostatics"
+    ]
+  }
+}
