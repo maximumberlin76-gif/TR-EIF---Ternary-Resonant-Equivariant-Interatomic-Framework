@@ -1,0 +1,555 @@
+"""Independent checks for periodic FLiBe structural-relaxation evidence.
+
+Reconstruct cell geometry, minimum-image distances, the accepted energy
+history, force stopping decisions, parameter identity, and budget-prefix
+consistency from the benchmark's serialized result. Compare two independent
+command-line executions and exercise corruption detection of recorded data.
+"""
+
+from __future__ import annotations
+
+import copy
+import hashlib
+import json
+import os
+import subprocess
+import sys
+from math import floor, fsum, isclose, isfinite, sqrt
+from pathlib import Path
+
+import pytest
+
+
+ROOT = Path(__file__).resolve().parents[2]
+BENCHMARK = ROOT / "benchmarks/flibe/periodic_structural_relaxation_benchmark.py"
+SOURCE = ROOT / "data/reference/flibe_smith_2020_pim_pair_coefficients.json"
+BENCHMARK_ID = "tr-eif.flibe.periodic-structural-relaxation.v1"
+SOURCE_DOI = "10.1016/j.molliq.2019.112165"
+EDGES = (9.0, 10.0, 12.0, 10.0)
+BUDGETS = (8, 8, 8, 24)
+SPECIES = ("Li", "Li", "Be", "F", "F", "F", "F")
+BASE_POSITIONS = (
+    (0.0, 0.0, 0.0), (8.0, 0.0, 0.0), (4.0, 7.0, 0.0),
+    (2.0, 1.0, 6.0), (8.0, 5.0, 6.0), (1.0, 8.0, 8.0),
+    (8.0, 10.0, 11.0),
+)
+FORCE_LIMIT = 1.0e-5
+DIPOLE_LIMIT = 1.0e-10
+DISPLACEMENT_LIMIT = 0.08
+TRIAL_LIMIT = 16
+CHECKS = {
+    "registered_parameter_source",
+    "declared_cell_and_species_conservation",
+    "energy_monotone_on_accepted_steps",
+    "energy_step_chain_complete",
+    "displacement_and_trial_limits",
+    "stop_reason_matches_force_and_budget",
+    "independent_final_energy_and_force",
+    "final_dipole_stationarity",
+    "net_force_balance",
+    "geometric_center_invariance",
+    "positive_pair_separation",
+    "extended_budget_reuses_exact_prefix",
+    "deterministic_identical_input_replay",
+    "translation_covariance",
+    "finite_recorded_observables",
+}
+
+
+def _number(value: object) -> float:
+    assert type(value) in (int, float)
+    number = float(value)
+    assert isfinite(number)
+    return number
+
+
+def _near(
+    actual: object,
+    expected: float,
+    *,
+    atol: float = 1.0e-12,
+) -> None:
+    assert isclose(
+        _number(actual),
+        expected,
+        rel_tol=1.0e-12,
+        abs_tol=atol,
+    )
+
+
+def _run_cli() -> tuple[dict, bytes]:
+    environment = os.environ.copy()
+    environment["PYTHONPATH"] = os.pathsep.join(
+        part for part in (
+            str(ROOT / "src"),
+            environment.get("PYTHONPATH", ""),
+        )
+        if part
+    )
+    completed = subprocess.run(
+        [sys.executable, str(BENCHMARK)],
+        cwd=ROOT,
+        env=environment,
+        capture_output=True,
+        check=False,
+        timeout=420,
+    )
+    assert completed.returncode == 0, (
+        completed.stderr.decode("utf-8", errors="replace")
+        + completed.stdout.decode("utf-8", errors="replace")[-3000:]
+    )
+    assert completed.stderr == b""
+    report = json.loads(completed.stdout)
+    assert isinstance(report, dict)
+    return report, completed.stdout
+
+
+@pytest.fixture(scope="module")
+def execution() -> tuple[dict, bytes]:
+    assert BENCHMARK.is_file() and SOURCE.is_file()
+    return _run_cli()
+
+
+@pytest.fixture(scope="module")
+def report(execution) -> dict:
+    return execution[0]
+
+
+def _minimum_image_distance(
+    positions: list[list[float]],
+    edge: float,
+) -> float:
+    distances = []
+    for index, first in enumerate(positions):
+        for second in positions[index + 1:]:
+            separation = (
+                first[axis] - second[axis]
+                - edge * floor(
+                    (first[axis] - second[axis]) / edge + 0.5
+                )
+                for axis in range(3)
+            )
+            distances.append(
+                sqrt(fsum(delta * delta for delta in separation))
+            )
+    return min(distances)
+
+
+def _center_shift(
+    first: list[list[float]],
+    last: list[list[float]],
+) -> float:
+    return max(
+        abs(
+            fsum(p[axis] for p in last) / len(last)
+            - fsum(p[axis] for p in first) / len(first)
+        )
+        for axis in range(3)
+    )
+
+
+def _audit_case(
+    case: dict,
+    edge: float,
+    budget: int,
+    source_hash: str,
+) -> None:
+    assert case["cell_edge_bohr"] == edge
+    _near(case["cell_volume_bohr3"], edge**3)
+    assert case["iteration_budget"] == budget
+    assert case["source_file_sha256"] == source_hash
+    assert case["source_doi"] == SOURCE_DOI
+    assert case["fixed_cell_retained"] is True
+    assert case["species_retained"] is True
+
+    initial = case["initial_positions_bohr"]
+    final = case["final_positions_bohr"]
+    assert len(initial) == len(final) == len(SPECIES)
+
+    for position, base in zip(
+        initial,
+        BASE_POSITIONS,
+        strict=True,
+    ):
+        assert len(position) == 3
+        for axis in range(3):
+            _near(
+                position[axis],
+                (edge / 18.0) * base[axis],
+            )
+
+    assert all(
+        len(point) == 3
+        and all(isfinite(_number(x)) for x in point)
+        for point in final
+    )
+
+    _near(
+        case["minimum_initial_periodic_pair_distance_bohr"],
+        _minimum_image_distance(initial, edge),
+    )
+    _near(
+        case["minimum_final_periodic_pair_distance_bohr"],
+        _minimum_image_distance(final, edge),
+    )
+    assert _number(
+        case["minimum_final_periodic_pair_distance_bohr"]
+    ) > 0.0
+
+    _near(
+        case["maximum_geometric_center_shift_bohr"],
+        _center_shift(initial, final),
+    )
+    assert _number(
+        case["maximum_geometric_center_shift_bohr"]
+    ) <= 1.0e-12
+
+    history = case["accepted_step_history"]
+    assert isinstance(history, list)
+    assert type(case["accepted_steps"]) is int
+    assert 0 <= case["accepted_steps"] == len(history) <= budget
+
+    previous = _number(case["initial_energy_hartree"])
+    total_displacement_budget = 0.0
+
+    for iteration, step in enumerate(history, start=1):
+        assert step["iteration"] == iteration
+        assert type(step["line_search_trials"]) is int
+        assert 1 <= step["line_search_trials"] <= TRIAL_LIMIT
+
+        displacement = _number(
+            step["maximum_atom_displacement_bohr"]
+        )
+        assert (
+            0.0 < displacement
+            <= DISPLACEMENT_LIMIT * (1.0 + 1.0e-12)
+        )
+        total_displacement_budget += displacement
+
+        assert step["energy_before_hartree"] == previous
+        new_energy = _number(step["energy_after_hartree"])
+        assert new_energy < previous
+        previous = new_energy
+
+        assert _number(
+            step["maximum_force_after_hartree_per_bohr"]
+        ) >= 0.0
+        assert (
+            0.0
+            <= _number(step["dipole_stationarity_after_atomic"])
+            <= DIPOLE_LIMIT
+        )
+
+    assert case["final_energy_hartree"] == previous
+    assert previous <= case["initial_energy_hartree"]
+
+    for position, starting in zip(
+        final,
+        initial,
+        strict=True,
+    ):
+        distance = sqrt(
+            fsum(
+                (position[axis] - starting[axis])**2
+                for axis in range(3)
+            )
+        )
+        assert (
+            distance
+            <= total_displacement_budget * (1.0 + 1.0e-10)
+            + 1.0e-12
+        )
+
+    final_force = _number(
+        case["final_maximum_force_hartree_per_bohr"]
+    )
+    assert final_force >= 0.0
+    assert _number(
+        case["initial_maximum_force_hartree_per_bohr"]
+    ) >= 0.0
+
+    reason = case["stop_reason"]
+    assert reason in {
+        "FORCE_TOLERANCE",
+        "MAXIMUM_ITERATIONS",
+        "LINE_SEARCH_EXHAUSTED",
+    }
+    assert case["force_threshold_reached"] is (
+        reason == "FORCE_TOLERANCE"
+    )
+
+    if reason == "FORCE_TOLERANCE":
+        assert final_force <= FORCE_LIMIT
+    else:
+        assert final_force > FORCE_LIMIT
+
+    if reason == "MAXIMUM_ITERATIONS":
+        assert len(history) == budget
+
+    if reason == "LINE_SEARCH_EXHAUSTED":
+        assert len(history) < budget
+
+    _near(
+        case["direct_final_energy_hartree"],
+        previous,
+    )
+    _near(
+        case["direct_final_energy_component_sum_hartree"],
+        previous,
+    )
+    _near(
+        case["direct_final_maximum_force_hartree_per_bohr"],
+        final_force,
+    )
+    _near(
+        case["direct_final_dipole_stationarity_residual_atomic"],
+        _number(
+            case["final_dipole_stationarity_residual_atomic"]
+        ),
+    )
+
+    assert (
+        0.0
+        <= _number(
+            case["final_dipole_stationarity_residual_atomic"]
+        )
+        <= DIPOLE_LIMIT
+    )
+    assert (
+        0.0
+        <= _number(
+            case[
+                "direct_final_net_force_maximum_component_hartree_per_bohr"
+            ]
+        )
+        <= 1.0e-10
+    )
+
+
+def _audit_full_report(document: dict) -> None:
+    assert document["benchmark_id"] == BENCHMARK_ID
+    assert document["status"] == "PASS"
+    assert set(document["checks"]) == CHECKS
+    assert all(
+        value is True
+        for value in document["checks"].values()
+    )
+
+    source_hash = hashlib.sha256(
+        SOURCE.read_bytes()
+    ).hexdigest()
+
+    assert document["source"] == {
+        "doi": SOURCE_DOI,
+        "relative_path": (
+            "data/reference/"
+            "flibe_smith_2020_pim_pair_coefficients.json"
+        ),
+        "sha256": source_hash,
+        "provenance": "PRIMARY_SOURCE",
+    }
+
+    method = document["method"]
+    assert method["model_id"] == (
+        "FLIBE-STRUCTURAL-RELAXATION-BENCHMARK"
+    )
+    assert method["periodic_axes"] == [True, True, True]
+    assert method["species"] == list(SPECIES)
+    assert method["cell_edges_bohr"] == [9.0, 10.0, 12.0]
+    assert method["short_iteration_budget"] == 8
+    assert method["long_iteration_budget"] == 24
+    assert method["long_iteration_cell_edge_bohr"] == 10.0
+    assert (
+        method["force_tolerance_hartree_per_bohr"]
+        == FORCE_LIMIT
+    )
+    assert (
+        method["maximum_atom_displacement_bohr"]
+        == DISPLACEMENT_LIMIT
+    )
+    assert (
+        method["maximum_line_search_trials"]
+        == TRIAL_LIMIT
+    )
+    assert method["relaxation_state"] == (
+        "FIXED_CELL_ZERO_K_POTENTIAL_ENERGY_MINIMIZATION"
+    )
+    assert method["translation_bohr"] == [
+        0.41, -0.27, 0.31
+    ]
+
+    cases = document["cases"]
+    assert isinstance(cases, list)
+    assert len(cases) == len(EDGES)
+
+    for case, edge, budget in zip(
+        cases,
+        EDGES,
+        BUDGETS,
+        strict=True,
+    ):
+        _audit_case(
+            case,
+            edge,
+            budget,
+            source_hash,
+        )
+
+    short, extended = cases[1], cases[3]
+    assert (
+        extended["accepted_step_history"][
+            :short["accepted_steps"]
+        ]
+        == short["accepted_step_history"]
+    )
+    assert (
+        extended["final_energy_hartree"]
+        <= short["final_energy_hartree"]
+    )
+
+    translation = document["translation_replay"]
+    assert (
+        0.0
+        <= _number(
+            translation[
+                "maximum_final_position_covariance_error_bohr"
+            ]
+        )
+        <= 1.0e-10
+    )
+    assert (
+        0.0
+        <= _number(
+            translation[
+                "absolute_final_energy_difference_hartree"
+            ]
+        )
+        <= 1.0e-11
+    )
+
+
+def test_complete_evidence_contract_and_all_independent_recalculations(
+    report,
+):
+    _audit_full_report(report)
+
+
+def test_numerical_force_stopping_is_separate_from_energy_decrease(
+    report,
+):
+    for case in report["cases"]:
+        assert (
+            case["final_energy_hartree"]
+            <= case["initial_energy_hartree"]
+        )
+        assert case["force_threshold_reached"] == (
+            case["stop_reason"] == "FORCE_TOLERANCE"
+        )
+    assert any(
+        not case["force_threshold_reached"]
+        for case in report["cases"]
+    )
+
+
+def test_long_budget_preserves_short_budget_history(report):
+    short, extended = report["cases"][1], report["cases"][3]
+    assert (
+        short["cell_edge_bohr"]
+        == extended["cell_edge_bohr"]
+        == 10.0
+    )
+    assert (
+        extended["accepted_step_history"][
+            :short["accepted_steps"]
+        ]
+        == short["accepted_step_history"]
+    )
+    assert (
+        extended["accepted_steps"]
+        >= short["accepted_steps"]
+    )
+
+
+def test_cli_json_is_canonical_and_reexecution_byte_identical(
+    execution,
+):
+    document, original = execution
+    assert original.decode("utf-8") == json.dumps(
+        document,
+        sort_keys=True,
+        indent=2,
+        allow_nan=False,
+    ) + "\n"
+
+    repeat, stdout = _run_cli()
+    assert repeat == document
+    assert stdout == original
+
+
+@pytest.mark.parametrize(
+    "mutation",
+    (
+        "fingerprint",
+        "cell",
+        "first_position",
+        "final_pair_distance",
+        "energy_link",
+        "energy_increase",
+        "force",
+        "stop_reason",
+        "prefix",
+        "translation",
+        "dipole",
+        "net_force",
+    ),
+)
+def test_mutated_benchmark_records_are_rejected(
+    report,
+    mutation,
+):
+    altered = copy.deepcopy(report)
+    short = altered["cases"][1]
+
+    if mutation == "fingerprint":
+        altered["source"]["sha256"] = "0" * 64
+    elif mutation == "cell":
+        altered["cases"][0]["cell_volume_bohr3"] += 1.0
+    elif mutation == "first_position":
+        short["initial_positions_bohr"][0][0] += 0.1
+    elif mutation == "final_pair_distance":
+        short[
+            "minimum_final_periodic_pair_distance_bohr"
+        ] += 0.25
+    elif mutation == "energy_link":
+        short["accepted_step_history"][1][
+            "energy_before_hartree"
+        ] += 0.01
+    elif mutation == "energy_increase":
+        short["final_energy_hartree"] += 0.1
+    elif mutation == "force":
+        short[
+            "direct_final_maximum_force_hartree_per_bohr"
+        ] += 0.1
+    elif mutation == "stop_reason":
+        short["force_threshold_reached"] = not short[
+            "force_threshold_reached"
+        ]
+    elif mutation == "prefix":
+        altered["cases"][3]["accepted_step_history"][0][
+            "energy_after_hartree"
+        ] += 0.1
+    elif mutation == "translation":
+        altered["translation_replay"][
+            "absolute_final_energy_difference_hartree"
+        ] = 1.0
+    elif mutation == "dipole":
+        short[
+            "final_dipole_stationarity_residual_atomic"
+        ] = 1.0
+    elif mutation == "net_force":
+        short[
+            "direct_final_net_force_maximum_component_hartree_per_bohr"
+        ] = 1.0
+
+    with pytest.raises(AssertionError):
+        _audit_full_report(altered)
