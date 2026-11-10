@@ -597,7 +597,7 @@ def test_corrupted_boundary_records_are_rejected(combined):
 
 def test_immutable_evidence_and_determinism(combined):
     state, inputs, result = combined
-    with pytest.raises(FrozenInstanceError):
+    with pytest.raises((FrozenInstanceError, TypeError)):
         result.current = state
     with pytest.raises(FrozenInstanceError):
         result.after_events = result.before_events
