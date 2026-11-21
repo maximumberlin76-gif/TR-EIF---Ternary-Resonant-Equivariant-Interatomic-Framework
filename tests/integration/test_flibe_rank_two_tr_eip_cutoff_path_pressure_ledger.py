@@ -168,25 +168,35 @@ def test_baseline_three_step_schedule_has_no_cutoff_crossing(completed_path_ledg
                          item.total_pressure_work_residual_j)
 
 
-@pytest.mark.parametrize("scale,added,removed,direction", (
-    (0.900, 2, 0, FLiBeCutoffSweepDirection.COMPRESSION),
-    (1.012, 0, 4, FLiBeCutoffSweepDirection.EXPANSION),
+@pytest.mark.parametrize("scale,added,removed,direction,expected_crossings", (
+    (0.900, 2, 0, FLiBeCutoffSweepDirection.COMPRESSION, 1),
+    (1.012, 0, 4, FLiBeCutoffSweepDirection.EXPANSION, 2),
 ))
 def test_forced_cutoff_events_localized_at_critical_scales(
-    forced_path_ledgers, scale, added, removed, direction,
+    forced_path_ledgers, scale, added, removed, direction, expected_crossings,
 ):
     trajectory, _, source, ledger = forced_path_ledgers[scale]
     assert trajectory.interval_count == 1
-    assert ledger.crossing_count == source.graph_event_count == 1
-    assert ledger.smooth_segment_count == 2
+    assert source.graph_event_count == 1
+    assert ledger.crossing_count == expected_crossings
+    assert ledger.smooth_segment_count == expected_crossings + 1
     assert ledger.directed_edges_added == added
     assert ledger.directed_edges_removed == removed
     item = ledger.intervals[0]
     assert item.original.has_graph_event
-    assert item.crossing_count == 1
-    assert item.path.scan.crossings[0].direction is direction
-    assert item.path.segments[0].graph == item.path.scan.crossings[0].graph_before
-    assert item.path.segments[1].graph == item.path.scan.crossings[0].graph_after
+    assert item.crossing_count == expected_crossings
+    assert item.smooth_segment_count == expected_crossings + 1
+    assert len(item.path.scan.crossings) == expected_crossings
+    assert len(item.path.segments) == expected_crossings + 1
+    assert sum(len(crossing.added_edges) for crossing in item.path.scan.crossings) == added
+    assert sum(len(crossing.removed_edges) for crossing in item.path.scan.crossings) == removed
+    for index, crossing in enumerate(item.path.scan.crossings):
+        assert crossing.direction is direction
+        assert item.path.segments[index].graph == crossing.graph_before
+        assert item.path.segments[index + 1].graph == crossing.graph_after
+        assert item.path.segments[index].final_linear_scale == crossing.linear_scale
+        assert item.path.segments[index + 1].initial_linear_scale == crossing.linear_scale
+        assert crossing.linear_scale != pytest.approx(scale, abs=1e-12)
     _assert_channels(item.total_energy_change_j, item.original.total_energy_change_j)
     _assert_channels(item.total_energy_change_j, tuple(
         a + b for a, b in zip(
@@ -196,7 +206,6 @@ def test_forced_cutoff_events_localized_at_critical_scales(
     ))
     assert abs(item.localized_graph_energy_change_j[2]) > ENERGY_ABS
     assert abs(item.localized_minus_endpoint_jump_j[2]) > ENERGY_ABS
-    assert item.path.scan.crossings[0].linear_scale != scale
     assert item.path.segments[-1].final_linear_scale == pytest.approx(scale, rel=1e-10)
 
 
