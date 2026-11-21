@@ -28,6 +28,12 @@ from test_flibe_rank_two_tr_eip_cutoff_pressure_work import (
     aligned,
     graph_event_cases,
 )
+from test_flibe_rank_two_tr_eip_pressure_coupled_trajectory import (
+    prepared_trajectory as prepared_trajectory,
+)
+from test_flibe_rank_two_tr_eip_pressure_volume_work import (
+    qualified_work as qualified_work,
+)
 from test_flibe_rank_two_tr_eip_stress import CUTOFF, _fixture
 
 
