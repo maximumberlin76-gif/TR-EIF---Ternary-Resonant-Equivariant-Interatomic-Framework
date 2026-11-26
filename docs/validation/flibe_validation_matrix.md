@@ -202,7 +202,7 @@ Each route leg is a separate execution event.
 | 10.7 | FLiBe-specific TR-EIP realization | `tr_eip.py` | `test_flibe_tr_eip.py` | `EXECUTABLE_QUALIFIED` |
 | 10.8 | Molecular-dynamics validation | existing TR-EIF MD layer plus FLiBe TR-EIP realization | `test_flibe_molecular_dynamics_validation.py` | `EXECUTABLE_QUALIFIED` |
 | 10.9 | Multiscale coolant closure | `multiscale_coolant.py` plus generic multiscale closures | FLiBe coolant invariant and integration tests | `EXECUTABLE_QUALIFIED` |
-| 10.10 | Experimental and first-principles comparison | `reference_comparison.py` | `test_flibe_reference_comparison.py` | `CONTRACT_QUALIFIED` |
+| 10.10 | Experimental and first-principles comparison | `reference_comparison.py`, `registered_density_sources.py`, `registered_density_cross_model.py`, `rank_two_tr_eip_registered_density_correspondence.py` | `test_flibe_reference_comparison.py`, `test_flibe_registered_density_sources.py`, `test_flibe_registered_density_cross_model.py`, `test_flibe_rank_two_tr_eip_registered_density_correspondence.py` | `CONTRACT_QUALIFIED` |
 
 ---
 
@@ -1025,8 +1025,12 @@ This matrix distinguishes functional executable coverage from physical evidence 
 | 11.6 | Scaling | `reference_scaling.py` | `tests/determinism/test_flibe_reference_scaling_benchmark.py` | `BENCHMARK_CI_QUALIFIED` |
 | 11.7 | Memory use | `reference_memory.py` | `tests/numerical/test_flibe_reference_memory_benchmark.py` | `BENCHMARK_CI_QUALIFIED` |
 | 11.8 | Runtime | `reference_runtime.py` | `tests/numerical/test_flibe_reference_runtime_benchmark.py` | `BENCHMARK_CI_QUALIFIED` |
-| 11.9 | FLiBe property reproduction | `reference_property_reproduction.py` | no dedicated committed benchmark qualification test in the current snapshot | `BENCHMARK_IMPLEMENTED`, `REQUIRES_TEST` |
-| 11.10 | Cross-model comparison | no dedicated FLiBe cross-model benchmark artifact in the current snapshot | none | `NOT_IMPLEMENTED` |
+| 11.9 | FLiBe property reproduction | `reference_property_reproduction.py` | `tests/numerical/test_flibe_reference_property_reproduction_benchmark.py` | `BENCHMARK_CI_QUALIFIED` |
+| 11.10 | Cross-model comparison | `reference_cross_model_energy.py` | `tests/integration/test_flibe_reference_cross_model_energy.py` | `BENCHMARK_CI_QUALIFIED` |
+
+The Phase 11.9 and 11.10 file and test inventory was checked against repository commit `2f29fb821445f95ec4637953d7eded863f04ef46`, which passed TR-EIF Python CI #237 and Schema Validation #204. Benchmark classification follows the Section 2 definition and retains the comparison scope of each artifact.
+
+The earlier matrix snapshot recorded 11.9 as `BENCHMARK_IMPLEMENTED` with `REQUIRES_TEST`, and 11.10 as `NOT_IMPLEMENTED`. Those statuses are preserved here as the revision history preceding the committed benchmark and qualification-test artifacts.
 
 ---
 
@@ -1215,17 +1219,15 @@ The benchmark checks:
 
 ### Current qualification status
 
-The benchmark implementation exists.
+The benchmark implementation and its dedicated CI qualification test are committed:
 
-A dedicated committed CI qualification test invoking this benchmark is not present in the current reviewed snapshot.
+`tests/numerical/test_flibe_reference_property_reproduction_benchmark.py`
 
-Therefore current status is:
+The test executes the benchmark in a separate Python interpreter and checks its output identity, registered density parameters, numerical samples, domain behavior, and deterministic serialization.
 
-`BENCHMARK_IMPLEMENTED`
+Current executable status:
 
-plus:
-
-`REQUIRES_TEST`
+`BENCHMARK_CI_QUALIFIED`
 
 ---
 
@@ -1246,27 +1248,31 @@ Each observable requires its own source-backed comparison.
 
 ## 46. Phase 11.10 Cross-Model Comparison
 
-A dedicated FLiBe cross-model benchmark is not present in the current reviewed snapshot.
+The committed executable benchmark is:
 
-The existing:
+`benchmarks/flibe/reference_cross_model_energy.py`
 
-`reference_comparison.py`
+Its committed qualification test is:
 
-compares experimental and first-principles reference observables.
+`tests/integration/test_flibe_reference_cross_model_energy.py`
 
-That is not automatically the Phase 11.10 cross-model benchmark.
+The benchmark compares `ReferenceEnergyModel` (`REFERENCE-ONE-CHANNEL`) and the resonance-conditioned `FLiBeTREIPModel` (`TR-EIP-RESONANCE-THREE-CHANNEL`) on the same seven-atom Li2BeF4 analytic fixture. It records the model-specific atomic energies, total energies, signed energy difference, analytical forces, deterministic replays, E(3) energy invariance and force covariance.
 
-A cross-model benchmark requires at least two concrete model outputs under a common declared comparison domain.
+The qualification test executes the benchmark as a separate Python process, independently reconstructs its expected energy and force values, and checks its structured output.
 
-### Current status
+The separate `reference_comparison.py` contract compares experimental and first-principles reference observables and retains its own evidence boundary.
 
-`NOT_IMPLEMENTED`
+### Current executable status
+
+`BENCHMARK_CI_QUALIFIED`
+
+The cross-model benchmark comparison domain is the declared analytical fixture; independent physical-source comparisons retain their separately declared state and provenance requirements.
 
 ---
 
 ## 47. Cross-Model Comparison Requirements
 
-A future valid cross-model comparison must preserve identical or explicitly mapped:
+Every additional cross-model comparison must preserve identical or explicitly mapped:
 
 - atomic configuration;
 - composition;
@@ -1302,7 +1308,7 @@ Therefore:
 | Evidence domain | Current source state | Executable comparison state |
 | --- | --- | --- |
 | Phase equilibrium | source provenance registered | no dedicated executable reproduction benchmark |
-| Density | source provenance registered | source-derived density model and reproduction benchmark exist |
+| Density | source provenance and numerical tables registered (Vidrio experimental, 61 records; Baral AIMD, 9 records) | source-derived density model, reproduction benchmark, cross-source diagnostics, and rank-two MD state-correspondence operator with qualification tests |
 | Viscosity | source provenance registered | no dedicated physical reproduction benchmark |
 | Enthalpy / heat capacity | source provenance registered | no dedicated physical reproduction benchmark |
 | Total scattering | source provenance registered | no committed numerical structural comparison dataset |
@@ -1317,15 +1323,15 @@ Therefore:
 
 ## 50. First-Principles Evidence Matrix
 
-The current repository contains an explicit first-principles evidence admission boundary.
+The repository contains an explicit first-principles evidence admission boundary.
 
-The current reviewed snapshot does not contain a matched executable first-principles numerical dataset used through:
+The registered source tables include nine AIMD density records from Baral (2021) and 61 experimental density records from Vidrio (2022). The source-to-source diagnostic and rank-two MD density correspondence preserve dataset identities, numerical values, uncertainties where reported, and temperature/composition/pressure/physical-state availability.
 
-`FLiBeReferenceComparison`
+The rank-two TR-EIP executable benchmark `benchmarks/flibe/rank_two_tr_eip_registered_density_state_gate.py` and its committed qualification test `tests/integration/test_flibe_rank_two_tr_eip_registered_density_state_gate.py` record the seven-atom analytical MD fixture, observed post-barostat density, kinetic temperature, signed pressure, registered source rows, correspondence flags and source fingerprints. The benchmark retains unmatched physical-state coordinates and does not replace observed pressure with the barostat target.
 
-against experimental values.
+The `FLiBeReferenceComparison` contract requires matched experimental and first-principles observable coordinates. The registered-source comparisons retain unresolved pressure and physical-state coordinates where those coordinates are absent from a source record; they do not convert incomplete matches into numerical residuals.
 
-Therefore the actual Phase 10.10 physical comparison remains:
+The Phase 10.10 source-comparison condition remains:
 
 `REQUIRES_SOURCE`
 
@@ -1575,13 +1581,13 @@ A discrepancy between them requires investigation.
 
 ## 66. Current Unresolved Validation Conditions
 
-The current revision matrix identifies the following explicit unresolved conditions:
+The current revision matrix identifies the following explicit unresolved evidence conditions:
 
 1. Transport source coverage does not establish experimental Li/Be/F salt-ion self-diffusion data.
 2. Registered structural sources are not yet represented as complete executable numerical structural datasets.
-3. The experimental-versus-first-principles comparison contract is qualified, but a committed matched source-backed numerical comparison pair is not present.
-4. The FLiBe property-reproduction benchmark exists but lacks a dedicated committed CI qualification test in the reviewed snapshot.
-5. A dedicated Phase 11.10 FLiBe cross-model comparison benchmark is not present.
+3. The experimental-versus-first-principles comparison contract is qualified; the registered numerical sources require complete matching physical-state coordinates for a source-backed comparison pair under that contract.
+
+Phase 11.9 and 11.10 have dedicated benchmark implementations and committed qualification tests. Their current executable status is recorded in Section 35.
 
 These are validation-state statements.
 
@@ -1647,7 +1653,7 @@ The matrix therefore does not represent Phase 10.10 as fully source-closed.
 
 ## 71. Phase 11 Revision Boundary
 
-The current revision confirms CI-qualified benchmark coverage through:
+The current revision records CI-qualified benchmark coverage for:
 
 - correctness;
 - determinism;
@@ -1656,11 +1662,11 @@ The current revision confirms CI-qualified benchmark coverage through:
 - numerical convergence;
 - scaling;
 - memory;
-- runtime.
+- runtime;
+- property reproduction with the source-derived density relation;
+- cross-model energy and force comparison on a matched analytical reference fixture.
 
-Property reproduction is implemented but requires dedicated CI qualification.
-
-Cross-model comparison remains unimplemented as a dedicated benchmark.
+The property-reproduction and cross-model benchmark results retain their declared model domains, source identities, physical coordinates and provenance. Phase 10.10 experimental/first-principles state correspondence is recorded separately.
 
 ---
 
